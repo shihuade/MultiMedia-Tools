@@ -1,4 +1,12 @@
 #!/bin/bash
+#***************************************************
+#for ffmpeg:
+# install:
+# git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+# cd FFMPEG
+# ./configure $yout option
+# make install
+#***************************************************
 
 
 VideoDouYin="ios_android_douyin.mp4"
