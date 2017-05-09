@@ -12,9 +12,9 @@ YUVMuse="${VideoMuse}.JM.dec.yuv"
 
 git clean -fdx
 
-ffmpeg -i ${VideoDouYin} -vbsf h264_mp4toannexb -vcodec copy -an ${BitStreamDouYin} >FFMPEGTrans.log
-ffmpeg -i ${VideoMuse} -vbsf h264_mp4toannexb -vcodec copy   -an ${BitStreamMuse}   >>FFMPEGTrans.log
+ffmpeg -i ${VideoDouYin} -vbsf h264_mp4toannexb -vcodec copy -an ${BitStreamDouYin}  >FFMPEGTrans.log   2>&1
+ffmpeg -i ${VideoMuse} -vbsf h264_mp4toannexb -vcodec copy   -an ${BitStreamMuse}    >>FFMPEGTrans.log  2>&1
 
-./JMDecoder -p "InputFile=${BitStreamDouYin}" -p "OutputFile=${YUVDouYin}" >JMDec.log
-./JMDecoder -p "InputFile=${BitStreamMuse}"   -p "OutputFile=${YUVMuse}"   >>>JMDec.log
+./JMDecoder -p "InputFile=${BitStreamDouYin}" -p "OutputFile=${YUVDouYin}" >JMDecoded.log
+./JMDecoder -p "InputFile=${BitStreamMuse}"   -p "OutputFile=${YUVMuse}"   >>JMDecoded.log
 
