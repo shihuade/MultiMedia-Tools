@@ -1,5 +1,12 @@
 #!/bin/bash
-
+#******************************************************************
+#
+#   MP4Parser, install and refer to:
+#              http://atomicparsley.sourceforge.net/
+#
+#   mp4info, please download and install before running this script
+#
+#******************************************************************
 
 runInit()
 {
