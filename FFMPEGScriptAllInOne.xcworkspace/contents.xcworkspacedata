@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:Analyse.sh">
+   </FileRef>
+   <FileRef
+      location = "group:FFMPEG_All.sh">
+   </FileRef>
+   <FileRef
+      location = "group:run_GetMP4Info.sh">
+   </FileRef>
+   <FileRef
+      location = "group:FFMPEGTrans.log">
+   </FileRef>
+   <FileRef
+      location = "group:ios_android_douyin.mp4">
+   </FileRef>
+   <FileRef
+      location = "group:ios_muse_broswer.mp4">
+   </FileRef>
+   <FileRef
+      location = "group:JMDecoded.log">
+   </FileRef>
+   <FileRef
+      location = "group:JMDecoder">
+   </FileRef>
+   <FileRef
+      location = "group:reference.txt">
+   </FileRef>
+</Workspace>
