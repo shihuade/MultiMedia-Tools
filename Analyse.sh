@@ -21,26 +21,35 @@ runInit()
     MuseStreamDir="${MuseDestDir}/videos"
 
     #remove previous data
-    [ -d ${DouYinDestDir} ] && rm -rf ${DouYinDestDir} && mkdir ${DouYinDestDir}
-    [ -d ${MuseDestDir} ]   && rm -rf ${MuseDestDir}   && mkdir ${MuseDestDir}
+    [ -d ${DouYinDestDir} ] && rm -rf ${DouYinDestDir}
+    [ -d ${MuseDestDir} ]   && rm -rf ${MuseDestDir}
 
+    #create new dest dir
+    mkdir ${DouYinDestDir}
+    mkdir ${MuseDestDir}
 }
 
 runPullFromAndroid()
 {
 
     #pull and extract from douyin cache
+    Command="adb pull -a ${DouYinCacheDir} ${DouYinDestDir}"
     echo "**********************************************"
     echo "Start to pull from douyin"
+    echo "Command is:"
+    echo " ${Command}"
     echo "**********************************************"
-    adb pull -a ${DouYinCacheDir} ${DouYinDestDir}
+    ${Command}
     [ ! $? -eq 0 ] && exit 1
 
     #pull and extract from muse cache
+    Command="adb pull -a ${MuseCacheDir} ${MuseDestDir}"
     echo "**********************************************"
     echo "Start to pull from muse"
+    echo "Command is:"
+    echo " ${Command}"
     echo "**********************************************"
-    adb pull -a ${MuseCacheDir} ${MuseCacheDir}
+    ${Command}
     [ ! $? -eq 0 ] && exit 1
 }
 
@@ -58,9 +67,10 @@ runExtract264FromMP4()
         echo "**********************************************"
 
         cp ${file} ${file}.mp4
+        FFMPEGCMD="ffmpeg -i ${file}  -vbsf h264_mp4toannexb -vcodec copy -f h264 ${file}.264"
         echo "start to extract h264 bit stream from mp4 file"
-        ffmpeg -i ${file}  -vbsf h264_mp4toannexb -vcodec copy  -f h264 ${file}.264
-
+        echo "FFMPEGCMD is: ${FFMPEGCMD}"
+        ${FFMPEGCMD}
     done
 
     #extract from muse mp4
@@ -74,7 +84,9 @@ runExtract264FromMP4()
         echo "start to extract h264 bit stream from mp4 file"
         echo "**********************************************"
 
-        ffmpeg -i ${file}  -vbsf h264_mp4toannexb -vcodec copy  -f h264 ${file}.264
+        FFMPEGCMD="ffmpeg -i ${file}  -vbsf h264_mp4toannexb -vcodec copy -f h264 ${file}.264"
+        echo "FFMPEGCMD is: ${FFMPEGCMD}"
+        ${FFMPEGCMD}
     done
 
     echo "*******************************************************"
