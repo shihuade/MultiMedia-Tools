@@ -13,6 +13,9 @@ ffmpeg -re -i test_02.mp4  -c copy -f flv rtmp://push1.arenazb.hupu.com/test/sld
 # --pull live  stream from rtmp server and save to local disk at the same time
 ffmpeg -i  rtmp://push1.arenazb.hupu.com/test/sld -c copy test_02_dump.mp4
 
+#ffplay for rtmp server
+ffplay rtmp://push1.arenazb.hupu.com/test/sld
+
 #there sha1 string for test_02_dump.mp4 test_02.mp4 are the same
 #*****************************************************************************
 
