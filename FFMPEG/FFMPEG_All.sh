@@ -66,6 +66,17 @@ adb pull -a /sdcard/Android/data/com.ss.android.ugc.aweme/cache/video/cache/  Do
 /sdcard/Android/data/com.zhiliaoapp.musically/files/videos
 
 
+# Extract audio
+#  http://blog.csdn.net/xiaocao9903/article/details/53420519
+ffmpeg -i 3.mp4 -vn -y -acodec copy 3.aac
+ffmpeg -i 3.mp4 -vn -y -acodec copy 3.m4a
+
+
+#mix audio and video to mp4 file
+ffmpeg -i video2.avi -i audio.mp3 -vcodec copy -acodec copy output.avi
+
+#moov size 
+ff
 
 
 
