@@ -91,7 +91,10 @@ runInitForFrame()
     let " FrameQPMinI =0"
     let " FrameQPMinP =0"
     let " FrameQPMinB =0"
+}
 
+runInitHeadLineFrame()
+{
     #headline for output statistic table
     FrameHeadline1_Size="FrmNum,,,,FrmNumRatio,,,FrmSize,,,, FrmSizeRatio,,,,AvgSize,,,,MaxSize,,,MinSize,,,"
     FrameHeadline2_Size="All,I,P,B, I,   P,   B, All, I, P, B, All, I, P, B,  Avg, I, P, B, I, P, B,  I, P, B,"
@@ -118,10 +121,10 @@ runInitForSequence()
     Duration=""
     PSNR=""
 
-    FrameNumAll=""
-    FrameNumI=""
-    FrameNumP=""
-    FrameNumB=""
+    SFrameNumAll=""
+    SFrameNumI=""
+    SFrameNumP=""
+    SFrameNumB=""
 
     SFrameNumRatioI=""
     SFrameNumRatioP=""
@@ -132,10 +135,10 @@ runInitForSequence()
     FrameSizeAverageP=""
     FrameSizeAverageB=""
 
-    CompressedRatio=""
-    CompressedRatioI=""
-    CompressedRatioP=""
-    CompressedRatioB=""
+    SCompressedRatio=""
+    SCompressedRatioI=""
+    SCompressedRatioP=""
+    SCompressedRatioB=""
 
     QPAvg=""
     QPMin=""
@@ -144,6 +147,10 @@ runInitForSequence()
     let "PicW = 540"
     let "PicH = 960"
     let "FramePixelSize = $PicW * $PicH"
+}
+
+runInitHeadLineSequence()
+{
     #headline for output statistic table
     SequenceHeadLine1_Basic="Basic info, , , , , , ,"
     SequenceHeadLine2_Basic="prof, level, EncM, Resol, FrRate, Dura,PSNR,"
@@ -178,16 +185,23 @@ runInitForStatisticFile()
 
     echo "${FrameHeadline1}"  >${FrameStatiFile}
     echo "${FrameHeadline2}" >>${FrameStatiFile}
+
+    declare -a aParsedMP4FileList
+    declare -a aSkipMP4FileList
+
+    let "ParsedMum = 0"
+    let "SkipNum = 0"
 }
 
 runInit()
 {
     runInitForFrame
-
     runInitForSequence
 
-    runInitForStatisticFile
+    runInitHeadLineFrame
+    runInitHeadLineSequence
 
+    runInitForStatisticFile
 }
 
 
@@ -208,8 +222,8 @@ runUpdateFrameInfo_I()
         let "FrameSizeMaxI = ${FrameSize}"
         let "FrameSizeMinI = ${FrameSize}"
 
-        FramePSNRMaxI=`echo "scale=2;${FramePSNR}" | bc`
-        FramePSNRMinI=`echo "scale=2;${FramePSNR}" | bc`
+        let "FramePSNRMaxI = ${FramePSNR}"
+        let "FramePSNRMinI = ${FramePSNR}"
 
         let "FrameQPMaxI   = ${FrameQP}"
         let "FrameQPMinI   = ${FrameQP}"
@@ -218,13 +232,13 @@ runUpdateFrameInfo_I()
 
     let " FrameSizeI += ${FrameSize}"
     let " FrameQPI   += ${FrameQP}"
-    FramePSNRI=`echo "scale=2; ${FramePSNRI} + ${FramePSNR}" | bc`
+    FramePSNRI=`echo "scale=0; ${FramePSNRI} + ${FramePSNR}" | bc`
 
     [ ${FrameSizeMaxI} -lt ${FrameSize} ] && let " FrameSizeMaxI = ${FrameSize}"
     [ ${FrameSizeMinI} -gt ${FrameSize} ] && let " FrameSizeMinI = ${FrameSize}"
 
-    [ ${FramePSNRMaxI} -lt ${FramePSNR} ] && FramePSNRMaxI=`echo "scale=2;${FramePSNR}" | bc`
-    [ ${FramePSNRMinI} -gt ${FramePSNR} ] && FramePSNRMinI=`echo "scale=2;${FramePSNR}" | bc`
+    [ ${FramePSNRMaxI} -lt ${FramePSNR} ] && FramePSNRMaxI=`echo "scale=0;${FramePSNR}" | bc`
+    [ ${FramePSNRMinI} -gt ${FramePSNR} ] && FramePSNRMinI=`echo "scale=0;${FramePSNR}" | bc`
 
     [ ${FrameQPMaxI}   -lt ${FrameQP} ]   && let " FrameQPMaxI   = ${FrameQP}"
     [ ${FrameQPMinI}   -gt ${FrameQP} ]   && let " FrameQPMinI   = ${FrameQP}"
@@ -239,17 +253,16 @@ runUpdateFrameInfo_P()
         let "FrameSizeMaxP = ${FrameSize}"
         let "FrameSizeMinP = ${FrameSize}"
 
-        FramePSNRMaxP=`echo "scale=2;${FramePSNR}" | bc`
-        FramePSNRMinP=`echo "scale=2;${FramePSNR}" | bc`
+        let "FramePSNRMaxP = ${FramePSNR}"
+        let "FramePSNRMinP = ${FramePSNR}"
 
         let "FrameQPMaxP   = ${FrameQP}"
         let "FrameQPMinP   = ${FrameQP}"
-
     fi
 
     let " FrameSizeP += ${FrameSize}"
     let " FrameQPP   += ${FrameQP}"
-    FramePSNRB=`echo "scale=2; ${FramePSNRI} + ${FramePSNR}" | bc`
+    FramePSNRB=`echo "scale=0; ${FramePSNRI} + ${FramePSNR}" | bc`
 
     [ ${FrameSizeMaxP} -lt ${FrameSize} ] && let " FrameSizeMaxP = ${FrameSize}"
     [ ${FrameSizeMinP} -gt ${FrameSize} ] && let " FrameSizeMinP = ${FrameSize}"
@@ -270,17 +283,16 @@ runUpdateFrameInfo_B()
         let "FrameSizeMaxB = ${FrameSize}"
         let "FrameSizeMinB = ${FrameSize}"
 
-        FramePSNRMaxB=`echo "scale=2;${FramePSNR}" | bc`
-        FramePSNRMinB=`echo "scale=2;${FramePSNR}" | bc`
+        let "FramePSNRMaxB = ${FramePSNR}"
+        let "FramePSNRMinB = ${FramePSNR}"
 
         let "FrameQPMaxB   = ${FrameQP}"
         let "FrameQPMinB   = ${FrameQP}"
-
     fi
 
     let " FrameSizeB += ${FrameSize}"
     let " FrameQPB   += ${FrameQP}"
-    FramePSNRB=`echo "scale=2; ${FramePSNRI} + ${FramePSNR}" | bc`
+    FramePSNRB=`echo "scale=0; ${FramePSNRI} + ${FramePSNR}" | bc`
 
     [ ${FrameSizeMaxB} -lt ${FrameSize} ] && let " FrameSizeMaxB = ${FrameSize}"
     [ ${FrameSizeMinB} -gt ${FrameSize} ] && let " FrameSizeMinB = ${FrameSize}"
@@ -309,24 +321,30 @@ runParseFrameStaticInfo()
 
     if [ ! -e ${FrameIndexFile} ]
     then
-return 0
         echo "  ****************************************************"
         echo "      ${FrameIndexFile} does not exist             "
         echo "      so skip to parse frame static info for ${mp4}"
         echo "  ****************************************************"
+        let "SkipFlag = 1"
         return 0
     fi
 
     while read line
     do
         #parse frame level statistic info
-        FrameType=`echo $line || awk 'BEGIN {FS=";"} ${print $5}'`
-        FrameSize=`echo $line || awk 'BEGIN {FS=";"} ${print $7}'`
-        FrameQP=`echo $line || awk 'BEGIN {FS=";"} ${print $8}'`
-        FramePSNR=`echo $line || awk 'BEGIN {FS=";"} ${print $13}'`
+        FrameType=`echo $line | awk 'BEGIN {FS=";"} {print $5}'`
+        FrameSize=`echo $line | awk 'BEGIN {FS=";"} {print $7}'`
+        FrameQP=`echo $line   | awk 'BEGIN {FS=";"} {print $8}'`
+        FramePSNR=`echo $line | awk 'BEGIN {FS=";"} {print $13}'`
+        #muliplt of 100
+        FramePSNR=`echo "scale=0;${FramePSNR}*100" | bc`
+        FramePSNR=`echo ${FramePSNR} | awk 'BEGIN {FS="."} {print $1}'`
+
+        FrameQP=`echo "scale=2;${FrameQP}*100" | bc`
+        FrameQP=`echo ${FrameQP} | awk 'BEGIN {FS="."} {print $1}'`
 
         #frame play time stamp
-        FramePts=`echo $line || awk 'BEGIN {FS=";"} ${print $6}'`
+        FramePts=`echo $line | awk 'BEGIN {FS=";"}  {print $6}'`
         runUpdateBitRate
 
         #update statistic info based on frame type
@@ -352,7 +370,7 @@ runUpdateFrameStatisticInfo()
     FrameSizeRatioB=`echo "scale=2; ${FrameSizeB}/${FrameSizeAll}"|bc`
 
     FrameSizeAvg=`echo  "scale=2; ${FrameSizeAll}/${FrameNumAll}"|bc`
-    FrameSizeAvg=`echo "scale=2; ${FrameSizeI}/${FrameNumI}"    |bc`
+    FrameSizeAvg=`echo  "scale=2; ${FrameSizeI}/${FrameNumI}"    |bc`
     FrameSizeAvgP=`echo "scale=2; ${FrameSizeP}/${FrameNumP}"    |bc`
     FrameSizeAvgB=`echo "scale=2; ${FrameSizeB}/${FrameNumB}"    |bc`
 
@@ -374,43 +392,41 @@ runUpdateFrameStatisticInfo()
     FrameCompressedRatioB=`echo  "scale=2; ${FramePixelSize}/${FrameSizeAvgB}"|bc`
 
     #PSNR statistic
-    FramePSNRAvg=`echo  "scale=2; ${FramePSNRI} + ${FramePSNRP} + ${FramePSNRB} "|bc`
-    FramePSNRAvg=`echo  "scale=2; ${FramePSNRAvg} / ${FrameNumAll}"|bc`
-    FramePSNRI=`echo    "scale=2; ${FramePSNRI}   / ${FrameNumI}"  |bc`
-    FramePSNRP=`echo    "scale=2; ${FramePSNRP}   / ${FrameNumP}"  |bc`
-    FramePSNRB=`echo    "scale=2; ${FramePSNRB}   / ${FrameNumB}"  |bc`
+    FramePSNRAvg=`echo "scale=2; ${FramePSNRI} + ${FramePSNRP} + ${FramePSNRB} "|bc`
+    FramePSNRAvg=`echo "scale=2; ${FramePSNRAvg} / ${FrameNumAll} /100" |bc`
+    FramePSNRI=`echo   "scale=2; ${FramePSNRI}   / ${FrameNumI}   /100" |bc`
+    FramePSNRP=`echo   "scale=2; ${FramePSNRP}   / ${FrameNumP}   /100" |bc`
+    FramePSNRB=`echo   "scale=2; ${FramePSNRB}   / ${FrameNumB}   /100" |bc`
 
     #frame QP statistic
     FrameQPAvg=`echo  "scale=2; ${FrameQPI} + ${FrameQPP} + ${FrameQPB} "|bc`
-    FrameQPAvg=`echo  "scale=2; ${FrameQPAvg} / ${FrameNumAll} "|bc`
-    FrameQPI=`echo    "scale=2; ${FrameQPI} / ${FrameNumI} "|bc`
-    FrameQPP=`echo    "scale=2; ${FrameQPP} / ${FrameNumP} "|bc`
-    FrameQPB=`echo    "scale=2; ${FrameQPB} / ${FrameNumB} "|bc`
-
+    FrameQPAvg=`echo  "scale=2; ${FrameQPAvg} / ${FrameNumAll} / 100 "|bc`
+    FrameQPI=`echo    "scale=2; ${FrameQPI}   / ${FrameNumI}   / 100" |bc`
+    FrameQPP=`echo    "scale=2; ${FrameQPP}   / ${FrameNumP}   / 100" |bc`
+    FrameQPB=`echo    "scale=2; ${FrameQPB}   / ${FrameNumB}   / 100" |bc`
 }
-
 
 runParseSequenceStaticInfo()
 {
     if [ ! -e ${StreamStaticFile} ]
     then
-return 0
         echo "  ****************************************************"
         echo "    ${StreamStaticFile} does not exist      "
         echo "    so skip to parse  stream info for ${mp4}"
         echo "  ****************************************************"
+        let "SkipFlag = 1"
         return 0
     fi
 
     while read line
     do
-        [[ "${line}" =~ "^profile" ]]     && Profile=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
-        [[ "${line}" =~ "^level" ]]       && Profile=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
-        [[ "${line}" =~ "^frame rate" ]]  && FrameRate=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
-        [[ "${line}" =~ "^coding mode" ]] && EnctrMode=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
-        [[ "${line}" =~ "^resolution" ]]  && Resolution=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
-        [[ "${line}" =~ "^duration" ]]    && Duration=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
-        [[ "${line}" =~ "^epsnr" ]]       && PSNR=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
+        [[ "${line}" =~ "profile" ]]     && Profile=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
+        [[ "${line}" =~ "level" ]]       && Level=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
+        [[ "${line}" =~ "frame rate" ]]  && FrameRate=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
+        [[ "${line}" =~ "coding mode" ]] && EnctrMode=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
+        [[ "${line}" =~ "resolution" ]]  && Resolution=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
+        [[ "${line}" =~ "duration" ]]    && Duration=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
+        [[ "${line}" =~ "epsnr" ]]       && PSNR=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
 
         [[ "${line}" =~ "qp min" ]]       && QPMin=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
         [[ "${line}" =~ "qp avg" ]]       && QPAvg=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
@@ -421,10 +437,10 @@ return 0
 
         if [[ "${DataCat}" = "FrameCount" ]]
         then
-            [[ "$line" =~ "count" ]] && FrameNumAll=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
-            [[ "$line" =~ "I" ]]     && FrameNumI=`echo $line   | awk 'BEGIN {FS=";"} {print $2}'`
-            [[ "$line" =~ "P" ]]     && FrameNumP=`echo $line   | awk 'BEGIN {FS=";"} {print $2}'`
-            [[ "$line" =~ "B" ]]     && FrameNumB=`echo $line   | awk 'BEGIN {FS=";"} {print $2}'`
+            [[ "$line" =~ "count" ]] && SFrameNumAll=`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
+            [[ "$line" =~ "I" ]]     && SFrameNumI=`echo $line   | awk 'BEGIN {FS=";"} {print $2}'`
+            [[ "$line" =~ "P" ]]     && SFrameNumP=`echo $line   | awk 'BEGIN {FS=";"} {print $2}'`
+            [[ "$line" =~ "B" ]]     && SFrameNumB=`echo $line   | awk 'BEGIN {FS=";"} {print $2}'`
 
         elif [[ "${DataCat}" = "FrameCount" ]]
         then
@@ -437,32 +453,29 @@ return 0
 
     PicW=`echo ${Resolution} | awk 'BEGIN {FS="x"} {print $1}'`
     PicH=`echo ${Resolution} | awk 'BEGIN {FS="x"} {print $2}'`
-    let "FramePixelSize = $PicW * $PicH"
+    let "FramePixelSize = $PicW * $PicH * 3 / 2"
 
-    SFrameNumRatioI=`echo ${FrameNumI} | awk 'BEGIN {FS="("} {print $2}'`
-    SFrameNumRatioP=`echo ${FrameNumP} | awk 'BEGIN {FS="("} {print $2}'`
-    SFrameNumRatioB=`echo ${FrameNumB} | awk 'BEGIN {FS="("} {print $2}'`
+    SFrameNumRatioI=`echo ${SFrameNumI} | awk 'BEGIN {FS="("} {print $2}'`
+    SFrameNumRatioP=`echo ${SFrameNumP} | awk 'BEGIN {FS="("} {print $2}'`
+    SFrameNumRatioB=`echo ${SFrameNumB} | awk 'BEGIN {FS="("} {print $2}'`
     SFrameNumRatioI=`echo ${SFrameNumRatioI} | awk 'BEGIN {FS="%"} {print $1}'`
     SFrameNumRatioP=`echo ${SFrameNumRatioP} | awk 'BEGIN {FS="%"} {print $1}'`
     SFrameNumRatioB=`echo ${SFrameNumRatioB} | awk 'BEGIN {FS="%"} {print $1}'`
 
-    FrameNumI=`echo ${FrameNumI} | awk 'BEGIN {FS="("} {print $1}'`
-    FrameNumP=`echo ${FrameNumP} | awk 'BEGIN {FS="("} {print $1}'`
-    FrameNumB=`echo ${FrameNumB} | awk 'BEGIN {FS="("} {print $1}'`
+    SFrameNumI=`echo ${SFrameNumI} | awk 'BEGIN {FS="("} {print $1}'`
+    SFrameNumP=`echo ${SFrameNumP} | awk 'BEGIN {FS="("} {print $1}'`
+    SFrameNumB=`echo ${SFrameNumB} | awk 'BEGIN {FS="("} {print $1}'`
 
-    CompressedRatio=`echo $FrameSizeAverage   | awk 'BEGIN {FS="/"} {print $2}'`
-    CompressedRatioI=`echo $FrameSizeAverageI | awk 'BEGIN {FS="/"} {print $2}'`
-    CompressedRatioP=`echo $FrameSizeAverageP | awk 'BEGIN {FS="/"} {print $2}'`
-    CompressedRatioB=`echo $FrameSizeAverageB | awk 'BEGIN {FS="/"} {print $2}'`
+    SCompressedRatio=`echo $FrameSizeAverage   | awk 'BEGIN {FS="/"} {print $2}'`
+    SCompressedRatioI=`echo $FrameSizeAverageI | awk 'BEGIN {FS="/"} {print $2}'`
+    SCompressedRatioP=`echo $FrameSizeAverageP | awk 'BEGIN {FS="/"} {print $2}'`
+    SCompressedRatioB=`echo $FrameSizeAverageB | awk 'BEGIN {FS="/"} {print $2}'`
 
     FrameSizeAverage=`echo $FrameSizeAverage   | awk 'BEGIN {FS="/"} {print $1}'`
     FrameSizeAverageI=`echo $FrameSizeAverageI | awk 'BEGIN {FS="/"} {print $1}'`
     FrameSizeAverageP=`echo $FrameSizeAverageP | awk 'BEGIN {FS="/"} {print $1}'`
     FrameSizeAverageB=`echo $FrameSizeAverageB | awk 'BEGIN {FS="/"} {print $1}'`
-FrameSizeAverage=`echo $FrameSizeAverage   | awk 'BEGIN {FS="/"} {print $1}'`
-FrameSizeAverage=`echo $FrameSizeAverage   | awk 'BEGIN {FS="/"} {print $1}'`
 
-echo "123"
 }
 
 runGenerateFrameStaticInfo()
@@ -482,7 +495,7 @@ runGenerateFrameStaticInfo()
 runGenerateSequenceStaticInfo()
 {
     SequenceStaticInfoBasic="${Profile}, ${Level},${EnctrMode}, ${Resolution},${FrameRate}, ${Duration},${PSNR}"
-    SequenceStaticInfo_Frame="${FrameNumAll}, ${FrameNumI},${FrameNumP}, ${FrameNumB},${SFrameNumRatioI}, ${SFrameNumRatioP},${SFrameNumRatioB}, ${FrameSizeAverage},${FrameSizeAverageI}, ${FrameSizeAverageP},${FrameSizeAverageB}, ${CompressedRatio},${CompressedRatioI}, ${CompressedRatioP},${CompressedRatioB}, ${QPAvg},${QPMax}, ${QPMin}"
+    SequenceStaticInfo_Frame="${SFrameNumAll}, ${SFrameNumI},${SFrameNumP}, ${SFrameNumB},${SFrameNumRatioI}, ${SFrameNumRatioP},${SFrameNumRatioB}, ${FrameSizeAverage},${FrameSizeAverageI}, ${FrameSizeAverageP},${FrameSizeAverageB}, ${SCompressedRatio},${SCompressedRatioI}, ${SCompressedRatioP},${SCompressedRatioB}, ${QPAvg},${QPMax}, ${QPMin}"
 
     SequenceStaticInfo="${SequenceStaticInfoBasic}, ${SequenceStaticInfo_Frame}"
 }
@@ -517,24 +530,72 @@ runParseStaticInfoForAllSequences()
         echo "  stream static file: ${StreamStaticFile}"
         echo "****************************************************"
 
+        let "SkipFlag = 0"
+        runInitForFrame
+        runInitForSequence
+
+
         runParseSequenceStaticInfo
         runParseFrameStaticInfo
 
-        runUpdateFrameStatisticInfo
+        if [ ${SkipFlag} -eq 0 ]
+        then
+            echo "****************************************************"
+            echo "****************************************************"
+            echo " statt to update parse data...."
+            echo "****************************************************"
+            echo "****************************************************"
 
-        runGenerateFrameStaticInfo
-        runGenerateSequenceStaticInfo
-        runOutputStaticInfoForOneSequence
+            runUpdateFrameStatisticInfo
+
+            runGenerateFrameStaticInfo
+            runGenerateSequenceStaticInfo
+
+            runOutputStaticInfoForOneSequence
+
+            aParsedMP4FileList[${ParsedMum}]=${mp4}
+            let "ParsedMum += 1"
+
+        else
+            aSkipMP4FileList[${SkipNum}]=${mp4}
+            let "SkipNum += 1"
+        fi
     done
+}
+
+runOutputSummary()
+{
+    echo "****************************************************"
+    echo "****************************************************"
+    echo "   Summary of current parse status"
+    echo "****************************************************"
+    echo "****************************************************"
+
+    echo "   ParsedMum of mp4 file is: ${ParsedMum}"
+    for((i=0; i<${ParsedMum}; i++))
+    do
+        echo "    $i: ${aParsedMP4FileList[$i]}"
+    done
+    echo "****************************************************"
+    echo "****************************************************"
+
+    echo "   SkipNum of mp4 file is: ${SkipNum}"
+    for((i=0; i<${SkipNum}; i++))
+    do
+        echo "    $i: ${aSkipMP4FileList[$i]}"
+    done
+    echo "****************************************************"
+    echo "****************************************************"
 }
 
 runMain()
 {
-
     runInit
     runCheck
 
     runParseStaticInfoForAllSequences
+
+    runOutputSummary
 }
 
 #**********************************************************
