@@ -361,15 +361,15 @@ runUpdateFrameStatisticInfo()
     DurationInMilionS=`echo ${Duration} | awk 'BEGIN {FS=":"} {print $4}'`
     DurationInMilionS=`echo "scale=2; ${DurationInMilionS}/1000"      |bc`
     DurationInS=`echo "scale=2; ${DurationInS} + ${DurationInMilionS}"|bc`
-    DurationBasedFPS30=`echo "scale=2; ${FrameNumAll}/30"    |bc`'
+    DurationBasedFPS30=`echo "scale=2; ${FrameNumAll}/30"    |bc`
 
-    BitRateAvg=`echo "scale=2; ${FrameSizeAll}/${DurationInS}"    |bc`'
-    BitRateAvgFPS30=`echo "scale=2; ${FrameSizeAll}/${DurationBasedFPS30}"    |bc`'
+    BitRateAvg=`echo "scale=2; ${FrameSizeAll}/${DurationInS}"    |bc`
+    BitRateAvgFPS30=`echo "scale=2; ${FrameSizeAll}/${DurationBasedFPS30}"    |bc`
 
     #frame compress ratio
     #let "FramePixelSize = $PicW * $PicH"
     FrameCompressedRatio=`echo   "scale=2; ${FramePixelSize}/${FrameSizeAvg}" |bc`
-    FrameCompressedRatioI=`echo  "scale=2; ${FramePixelSize}/${FrameSizeAvg}"|bc`
+    FrameCompressedRatioI=`echo  "scale=2; ${FramePixelSize}/${FrameSizeAvg}" |bc`
     FrameCompressedRatioP=`echo  "scale=2; ${FramePixelSize}/${FrameSizeAvgP}"|bc`
     FrameCompressedRatioB=`echo  "scale=2; ${FramePixelSize}/${FrameSizeAvgB}"|bc`
 
@@ -433,7 +433,7 @@ return 0
             [[ "$line" =~ "P" ]]      && FrameSizeAverage=P`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
             [[ "$line" =~ "B" ]]      && FrameSizeAverage=B`echo $line | awk 'BEGIN {FS=";"} {print $2}'`
         fi
-    done
+    done <${StreamStaticFile}
 
     PicW=`echo ${Resolution} | awk 'BEGIN {FS="x"} {print $1}'`
     PicH=`echo ${Resolution} | awk 'BEGIN {FS="x"} {print $2}'`
@@ -459,6 +459,10 @@ return 0
     FrameSizeAverageI=`echo $FrameSizeAverageI | awk 'BEGIN {FS="/"} {print $1}'`
     FrameSizeAverageP=`echo $FrameSizeAverageP | awk 'BEGIN {FS="/"} {print $1}'`
     FrameSizeAverageB=`echo $FrameSizeAverageB | awk 'BEGIN {FS="/"} {print $1}'`
+FrameSizeAverage=`echo $FrameSizeAverage   | awk 'BEGIN {FS="/"} {print $1}'`
+FrameSizeAverage=`echo $FrameSizeAverage   | awk 'BEGIN {FS="/"} {print $1}'`
+
+echo "123"
 }
 
 runGenerateFrameStaticInfo()
