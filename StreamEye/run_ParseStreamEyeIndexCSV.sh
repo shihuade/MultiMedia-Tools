@@ -181,7 +181,7 @@ runInitForStatisticFile()
     echo "${SequenceHeadLine2} ${FrameHeadline2}" >>${DetailStaticFile}
 
     echo "${SequenceHeadLine1}"  >${SequenceStaticFile}
-    echo "${SequenceHeadLine1}" >>${SequenceStaticFile}
+    echo "${SequenceHeadLine2}" >>${SequenceStaticFile}
 
     echo "${FrameHeadline1}"  >${FrameStatiFile}
     echo "${FrameHeadline2}" >>${FrameStatiFile}
