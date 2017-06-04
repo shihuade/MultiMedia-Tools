@@ -14,6 +14,9 @@
       location = "group:reference.txt">
    </FileRef>
    <FileRef
+      location = "group:FFMPEG/StreamEye">
+   </FileRef>
+   <FileRef
       location = "group:FFServer">
    </FileRef>
 </Workspace>
