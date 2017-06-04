@@ -13,10 +13,15 @@ runUsage()
 
 runInitForFrame()
 {
+    #Frame num
     let " FrameNumAll = 0"
     let " FrameNumI   = 0"
     let " FrameNumP   = 0"
     let " FrameNumB   = 0"
+
+    let "FrameNumRatioI = 0"
+    let "FrameNumRatioP = 0"
+    let "FrameNumRatioB = 0"
 
     #frame size statistic
     let " FrameSizeAll = 0"
@@ -28,6 +33,7 @@ runInitForFrame()
     let " FrameSizeRatioP = 0"
     let " FrameSizeRatioB = 0"
 
+    let " FrameSizeAve  = 0"
     let " FrameSizeAveI = 0"
     let " FrameSizeAveP = 0"
     let " FrameSizeAveB = 0"
@@ -40,14 +46,20 @@ runInitForFrame()
     let " FrameSizeMinB = 0"
     let " FrameSizeMinB = 0"
 
+    #compress ratio
+    let "FrameCompressedRatio  = 0"
+    let "FrameCompressedRatioI = 0"
+    let "FrameCompressedRatioP = 0"
+    let "FrameCompressedRatioB = 0"
+
     #bit rate statistic
-    let " FrameRateAver = 0"
-    let " FrameRateIn1S = 0"
-    let " FrameRateIn2S = 0"
-    let " FrameRateIn3S = 0"
-    let " FrameRateIn4S = 0"
-    let " FrameRateIn5S = 0"
-    let " FrameRateIn6S = 0"
+    let " BitRateAve = 0"
+    let " BitRateIn1S = 0"
+    let " BitRateIn2S = 0"
+    let " BitRateIn3S = 0"
+    let " BitRateIn4S = 0"
+    let " BitRateIn5S = 0"
+    let " BitRateIn6S = 0"
 
     #PSNR statistic
     let " FramePSNRI = 0"
@@ -64,6 +76,7 @@ runInitForFrame()
 
 
     #frame QP statistic
+    let " FrameQPAve = 0"
     let " FrameQPI   = 0"
     let " FrameQPP   = 0"
     let " FrameQPB   = 0"
@@ -83,8 +96,8 @@ runInitForFrame()
     FrameHeadline2_BitRate="aver, 1s, 2s, 3s, 4s, 5s, 6s,"
     FrameHeadline1_PSNR="Frame PSNR, , , , , , , , ,"
     FrameHeadline2_PSNR="I, P, B, MaxI, MaxP, MaxB, MinI, MinP, MinB,"
-    FrameHeadline1_QP="Frame QP, , , , , , , , ,"
-    FrameHeadline2_QP="I, P, B, MaxI, MaxP, MaxB, MinI, MinP, MinB"
+    FrameHeadline1_QP="Frame QP, , , , , , , , , ,"
+    FrameHeadline2_QP="Ave, I, P, B, MaxI, MaxP, MaxB, MinI, MinP, MinB"
 
     FrameHeadline1="${FrameHeadline1_Size} ${FrameHeadline1_BitRate} ${FrameHeadline1_PSNR} ${FrameHeadline1_QP}"
     FrameHeadline2="${FrameHeadline2_Size} ${FrameHeadline2_BitRate} ${FrameHeadline2_PSNR} ${FrameHeadline2_QP}"
@@ -187,12 +200,124 @@ runParseSequenceStaticInfo()
 {
     if [ ! -e ${StreamStaticFile} ]
     then
-        echo "****************************************************"
-        echo "  ${StreamStaticFile} does not exist      "
-        echo "  so skip to parse  stream info for ${mp4}"
-        echo "****************************************************"
+        echo "  ****************************************************"
+        echo "    ${StreamStaticFile} does not exist      "
+        echo "    so skip to parse  stream info for ${mp4}"
+        echo "  ****************************************************"
         return 0
     fi
+
+
+while read line
+do
+    FrameType=`echo $line || awk 'BEGIN {FS=";"} ${print $}'`
+    if
+
+done
+
+}
+
+runUpdateFrameInfo_I()
+{
+    if [ ${FrameNumI} -eq 0 ]
+    then
+        let "FrameSizeMaxI = ${FrameSize}"
+        let "FrameSizeMinI = ${FrameSize}"
+
+        FramePSNRMaxI=`echo "scale=2;${FramePSNR}" | bc`
+        FramePSNRMinI=`echo "scale=2;${FramePSNR}" | bc`
+
+        let "FrameQPMaxI   = ${FrameQP}"
+        let "FrameQPMinI   = ${FrameQP}"
+
+    fi
+
+    let " FrameSizeI += ${FrameSize}"
+    let " FrameQPI   += ${FrameQP}"
+    FramePSNRI=`echo "scale=2; ${FramePSNRI} + ${FramePSNR}" | bc`
+
+    [ ${FrameSizeMaxI} -lt ${FrameSize} ] && let " FrameSizeMaxI = ${FrameSize}"
+    [ ${FrameSizeMinI} -gt ${FrameSize} ] && let " FrameSizeMinI = ${FrameSize}"
+
+    [ ${FramePSNRMaxI} -lt ${FramePSNR} ] && FramePSNRMaxI=`echo "scale=2;${FramePSNR}" | bc`
+    [ ${FramePSNRMinI} -gt ${FramePSNR} ] && FramePSNRMinI=`echo "scale=2;${FramePSNR}" | bc`
+
+    [ ${FrameQPMaxI}   -lt ${FrameQP} ]   && let " FrameQPMaxI   = ${FrameQP}"
+    [ ${FrameQPMinI}   -gt ${FrameQP} ]   && let " FrameQPMinI   = ${FrameQP}"
+
+    let " FrameNumI +=1"
+}
+
+runUpdateFrameInfo_P()
+{
+    if [ ${FrameNumP} -eq 0 ]
+    then
+        let "FrameSizeMaxP = ${FrameSize}"
+        let "FrameSizeMinP = ${FrameSize}"
+
+        FramePSNRMaxP=`echo "scale=2;${FramePSNR}" | bc`
+        FramePSNRMinP=`echo "scale=2;${FramePSNR}" | bc`
+
+        let "FrameQPMaxP   = ${FrameQP}"
+        let "FrameQPMinP   = ${FrameQP}"
+
+    fi
+
+    let " FrameSizeP += ${FrameSize}"
+    let " FrameQPP   += ${FrameQP}"
+    FramePSNRB=`echo "scale=2; ${FramePSNRI} + ${FramePSNR}" | bc`
+
+    [ ${FrameSizeMaxP} -lt ${FrameSize} ] && let " FrameSizeMaxP = ${FrameSize}"
+    [ ${FrameSizeMinP} -gt ${FrameSize} ] && let " FrameSizeMinP = ${FrameSize}"
+
+    [ ${FramePSNRMaxP} -lt ${FramePSNR} ] && FramePSNRMaxP=`echo "scale=2;${FramePSNR}" | bc`
+    [ ${FramePSNRMinP} -gt ${FramePSNR} ] && FramePSNRMinP=`echo "scale=2;${FramePSNR}" | bc`
+
+    [ ${FrameQPMaxP}   -lt ${FrameQP} ]   && let " FrameQPMaxP   = ${FrameQP}"
+    [ ${FrameQPMinP}   -gt ${FrameQP} ]   && let " FrameQPMinP   = ${FrameQP}"
+
+    let " FrameNumP +=1"
+}
+
+runUpdateFrameInfo_B()
+{
+    if [ ${FrameNumB} -eq 0 ]
+    then
+        let "FrameSizeMaxB = ${FrameSize}"
+        let "FrameSizeMinB = ${FrameSize}"
+
+        FramePSNRMaxB=`echo "scale=2;${FramePSNR}" | bc`
+        FramePSNRMinB=`echo "scale=2;${FramePSNR}" | bc`
+
+        let "FrameQPMaxB   = ${FrameQP}"
+        let "FrameQPMinB   = ${FrameQP}"
+
+    fi
+
+    let " FrameSizeB += ${FrameSize}"
+    let " FrameQPB   += ${FrameQP}"
+    FramePSNRB=`echo "scale=2; ${FramePSNRI} + ${FramePSNR}" | bc`
+
+    [ ${FrameSizeMaxB} -lt ${FrameSize} ] && let " FrameSizeMaxB = ${FrameSize}"
+    [ ${FrameSizeMinB} -gt ${FrameSize} ] && let " FrameSizeMinB = ${FrameSize}"
+
+    [ ${FramePSNRMaxB} -lt ${FramePSNR} ] && FramePSNRMaxB=`echo "scale=2;${FramePSNR}" | bc`
+    [ ${FramePSNRMinB} -gt ${FramePSNR} ] && FramePSNRMinB=`echo "scale=2;${FramePSNR}" | bc`
+
+    [ ${FrameQPMaxB}   -lt ${FrameQP} ]   && let " FrameQPMaxB   = ${FrameQP}"
+    [ ${FrameQPMinB}   -gt ${FrameQP} ]   && let " FrameQPMinB   = ${FrameQP}"
+
+    let " FrameNumB +=1"
+}
+
+runUpdateBitRate()
+{
+    [[ "${FramePts}" ~= "00:00:01:000" ]] && BitRateIn1S=`echo "scale=2;${FrameSizeAll}/1"|bc`
+    [[ "${FramePts}" ~= "00:00:02:000" ]] && BitRateIn2S=`echo "scale=2;${FrameSizeAll}/2"|bc`
+    [[ "${FramePts}" ~= "00:00:03:000" ]] && BitRateIn3S=`echo "scale=2;${FrameSizeAll}/3"|bc`
+    [[ "${FramePts}" ~= "00:00:04:000" ]] && BitRateIn4S=`echo "scale=2;${FrameSizeAll}/4"|bc`
+    [[ "${FramePts}" ~= "00:00:05:000" ]] && BitRateIn5S=`echo "scale=2;${FrameSizeAll}/5"|bc`
+    [[ "${FramePts}" ~= "00:00:06:000" ]] && BitRateIn6S=`echo "scale=2;${FrameSizeAll}/6"|bc`
 }
 
 runParseFrameStaticInfo()
@@ -200,12 +325,82 @@ runParseFrameStaticInfo()
 
     if [ ! -e ${FrameIndexFile} ]
     then
-        echo "****************************************************"
-        echo "  ${FrameIndexFile} does not exist             "
-        echo "  so skip to parse frame static info for ${mp4}"
-        echo "****************************************************"
+        echo "  ****************************************************"
+        echo "      ${FrameIndexFile} does not exist             "
+        echo "      so skip to parse frame static info for ${mp4}"
+        echo "  ****************************************************"
         return 0
     fi
+
+    while read line
+    do
+        #parse frame level statistic info
+        FrameType=`echo $line || awk 'BEGIN {FS=";"} ${print $5}'`
+        FrameSize=`echo $line || awk 'BEGIN {FS=";"} ${print $7}'`
+        FrameQP=`echo $line || awk 'BEGIN {FS=";"} ${print $8}'`
+        FramePSNR=`echo $line || awk 'BEGIN {FS=";"} ${print $13}'`
+
+        #frame play time stamp
+        FramePts=`echo $line || awk 'BEGIN {FS=";"} ${print $6}'`
+        runUpdateBitRate
+
+        #update statistic info based on frame type
+        [[ "${FrameType}" ~= "I" ]] && runUpdateFrameInfo_I
+        [[ "${FrameType}" ~= "P" ]] && runUpdateFrameInfo_P
+        [[ "${FrameType}" ~= "B" ]] && runUpdateFrameInfo_B
+
+        let " FrameNumAll  = ${FrameNumI}  + ${FrameNumP}  + ${FrameNumB}"
+        let " FrameSizeAll = ${FrameSizeI} + ${FrameSizeP} + ${FrameSizeB}"
+    done <${FrameIndexFile}
+}
+
+runUpdateFrameStatisticInfo()
+{
+
+FrameNumRatioI=`echo "scale=2;${FrameNumI}/${FrameNumAll}"|bc`
+FrameNumRatioP=`echo "scale=2;${FrameNumP}/${FrameNumAll}"|bc`
+FrameNumRatioB=`echo "scale=2;${FrameNumB}/${FrameNumAll}"|bc`
+
+FrameSizeRatioI=`echo "scale=2;${FrameSizeI}/${FrameSizeAll}"|bc`
+FrameSizeRatioP=`echo "scale=2;${FrameSizeP}/${FrameSizeAll}"|bc`
+FrameSizeRatioB=`echo "scale=2;${FrameSizeB}/${FrameSizeAll}"|bc`
+
+FrameSizeAve=`echo  "scale=2;${FrameSizeAll}/${FrameNumAll}"|bc`
+FrameSizeAveI=`echo "scale=2;${FrameSizeI}/${FrameNumI}"|bc`
+FrameSizeAveP=`echo "scale=2;${FrameSizeP}/${FrameNumP}"|bc`
+FrameSizeAveB=`echo "scale=2;${FrameSizeB}/${FrameNumB}"|bc`
+
+#frame compress ratio
+let "PicW = 540"
+let "PicH = 960"
+
+FrameSizeAveB=`echo "scale=2;${FrameSizeB}/${FrameNumB}"|bc`
+
+let "FrameCompressedRatio  = 0"
+let "FrameCompressedRatioI = 0"
+let "FrameCompressedRatioP = 0"
+let "FrameCompressedRatioB = 0"
+
+
+#Bit  rate
+
+BitRateAve=`echo "scale=2;${FrameSizeB}/${FrameNumB}"|bc`
+
+
+
+let " BitRateAve = 0"
+
+
+#PSNR statistic
+let " FramePSNRI = 0"
+let " FramePSNRP = 0"
+let " FramePSNRB = 0"
+
+#frame QP statistic
+FrameQPAve
+let " FrameQPI   = 0"
+let " FrameQPP   = 0"
+let " FrameQPB   = 0"
 
 
 }
@@ -226,6 +421,16 @@ runParseStaticInfoForAllSequences()
         runParseSequenceStaticInfo
         runParseFrameStaticInfo
     done
+
+}
+
+
+runOutputSummary()
+{
+echo "****************************************************"
+echo "****************************************************"
+
+
 
 }
 
