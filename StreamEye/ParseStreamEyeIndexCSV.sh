@@ -1,4 +1,4 @@
-#!/bash/bin
+#!/bin/bash
 
 
 runUsage()
@@ -28,9 +28,9 @@ runInitForFrame()
     let " FrameSizeRatioP = 0"
     let " FrameSizeRatioB = 0"
 
-    let"  FrameSizeAveI = 0"
-    let"  FrameSizeAveP = 0"
-    let"  FrameSizeAveB = 0"
+    let " FrameSizeAveI = 0"
+    let " FrameSizeAveP = 0"
+    let " FrameSizeAveB = 0"
 
     let " FrameSizeMaxI = 0"
     let " FrameSizeMaxP = 0"
@@ -175,7 +175,8 @@ runInit()
 
 runCheck()
 {
-    if [ ! -d ${MP4FilesDir}  ]
+    echo "MP4FilesDir is ${MP4FilesDir}"
+    if [ ! -d ${MP4FilesDir} ]
     then
         echo "MP4FilesDir does not exist, please double check!"
         exit 1
@@ -239,7 +240,14 @@ runMain()
 
 #**********************************************************
 #**********************************************************
+if [ $# -lt 1 ]
+then
+    runUsage
+    exit 1
+fi
+
 MP4FilesDir=$1
+
 
 runMain
 
