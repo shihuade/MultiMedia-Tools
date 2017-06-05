@@ -12,6 +12,8 @@ runUsage()
     echo "          example:                                        "
     echo "             douyin parse all douyin's *douyin*.mp4 files "
     echo "             muse   parse all muse's   *muse*.mp4 files   "
+    echo "             'douyin  muse'                               "
+    echo "                   parse all douyin's/muse's  mp4 files   "
     echo ""
     echo "         \${Option}:  one \$mp4 parse given mp4 file      "
     echo "**********************************************************"
@@ -207,6 +209,7 @@ runInitForStatisticFile()
 
     #option parametes
     FilePattern=""
+    declare -a aPatternList
 }
 
 runInit()
@@ -244,11 +247,16 @@ runCheck()
             [ -z "${InputMP4File}" ] && echo "no mp4 file parameters" && exit 1
             [ ! -e "${MP4FilesDir}/${InputMP4File}" ] && echo "mp4 file  does not exist!" && exit 1
         else
-            FilePattern="${Option}"
-            Command="ls -l ${MP4FilesDir}/*${FilePattern}*.mp4"
-            echo "check command is ${Command}"
-            ${Command}
-            [ ! $? -eq 0 ] && echo "no mp4 files match pattern *{$FilePattern}*.mp4"
+            aPatternList=(${Option})
+            for vpattern in ${aPatternList[@]}
+            do
+                FilePattern="${vpattern}"
+
+                Command="ls -l ${MP4FilesDir}/*${FilePattern}*.mp4"
+                echo "check command is ${Command}"
+                ${Command}
+                [ ! $? -eq 0 ] && echo "no mp4 files match pattern *{$FilePattern}*.mp4" && exit 1
+            done
         fi
     fi
 }
@@ -627,11 +635,15 @@ runParseOneMP4File()
 
 runParseStaticInfoForAllSequences()
 {
-    for file in ${MP4FilesDir}/*${FilePattern}*.mp4
+    for vpattern in ${aPatternList[@]}
     do
-        echo "file is ${file}"
-        mp4="${file}"
-        runParseOneMP4File
+        FilePattern=${vpattern}
+        for file in ${MP4FilesDir}/*${FilePattern}*.mp4
+        do
+            echo "file is ${file}"
+            mp4="${file}"
+            runParseOneMP4File
+        done
     done
 }
 
@@ -691,8 +703,5 @@ Option=$2
 InputMP4File=$3
 
 runMain
-
-
-
 
 
