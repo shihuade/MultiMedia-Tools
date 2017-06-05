@@ -267,7 +267,7 @@ runUpdateFrameInfo_P()
 
     let " FrameSizeP += ${FrameSize}"
     let " FrameQPP   += ${FrameQP}"
-    FramePSNRB=`echo "scale=2; ${FramePSNRI} + ${FramePSNR}" | bc`
+    FramePSNRP=`echo "scale=2; ${FramePSNRP} + ${FramePSNR}" | bc`
 
     [ ${FrameSizeMaxP} -lt ${FrameSize} ] && let " FrameSizeMaxP = ${FrameSize}"
     [ ${FrameSizeMinP} -gt ${FrameSize} ] && let " FrameSizeMinP = ${FrameSize}"
@@ -297,7 +297,7 @@ runUpdateFrameInfo_B()
 
     let " FrameSizeB += ${FrameSize}"
     let " FrameQPB   += ${FrameQP}"
-    FramePSNRB=`echo "scale=2; ${FramePSNRI} + ${FramePSNR}" | bc`
+    FramePSNRB=`echo "scale=2; ${FramePSNRB} + ${FramePSNR}" | bc`
 
     [ ${FrameSizeMaxB} -lt ${FrameSize} ] && let " FrameSizeMaxB = ${FrameSize}"
     [ ${FrameSizeMinB} -gt ${FrameSize} ] && let " FrameSizeMinB = ${FrameSize}"
