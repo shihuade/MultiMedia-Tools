@@ -237,7 +237,7 @@ runUpdateFrameInfo_I()
 
     let " FrameSizeI += ${FrameSize}"
     let " FrameQPI   += ${FrameQP}"
-    FramePSNRI=`echo "scale=0; ${FramePSNRI} + ${FramePSNR}" | bc`
+    FramePSNRI=`echo "scale=2; ${FramePSNRI} + ${FramePSNR}" | bc`
 
     [ ${FrameSizeMaxI} -lt ${FrameSize} ] && let " FrameSizeMaxI = ${FrameSize}"
     [ ${FrameSizeMinI} -gt ${FrameSize} ] && let " FrameSizeMinI = ${FrameSize}"
@@ -267,7 +267,7 @@ runUpdateFrameInfo_P()
 
     let " FrameSizeP += ${FrameSize}"
     let " FrameQPP   += ${FrameQP}"
-    FramePSNRB=`echo "scale=0; ${FramePSNRI} + ${FramePSNR}" | bc`
+    FramePSNRB=`echo "scale=2; ${FramePSNRI} + ${FramePSNR}" | bc`
 
     [ ${FrameSizeMaxP} -lt ${FrameSize} ] && let " FrameSizeMaxP = ${FrameSize}"
     [ ${FrameSizeMinP} -gt ${FrameSize} ] && let " FrameSizeMinP = ${FrameSize}"
@@ -297,7 +297,7 @@ runUpdateFrameInfo_B()
 
     let " FrameSizeB += ${FrameSize}"
     let " FrameQPB   += ${FrameQP}"
-    FramePSNRB=`echo "scale=0; ${FramePSNRI} + ${FramePSNR}" | bc`
+    FramePSNRB=`echo "scale=2; ${FramePSNRI} + ${FramePSNR}" | bc`
 
     [ ${FrameSizeMaxB} -lt ${FrameSize} ] && let " FrameSizeMaxB = ${FrameSize}"
     [ ${FrameSizeMinB} -gt ${FrameSize} ] && let " FrameSizeMinB = ${FrameSize}"
@@ -396,12 +396,17 @@ runUpdateFrameStatisticInfo()
     FrameCompressedRatioP=`echo  "scale=2; ${FramePixelSize}/${FrameSizeAvgP}"|bc`
     FrameCompressedRatioB=`echo  "scale=2; ${FramePixelSize}/${FrameSizeAvgB}"|bc`
 
+echo "FramePSNRI is ${FramePSNRI}"
+echo "FramePSNRP is ${FramePSNRP}"
+echo "FramePSNRB is ${FramePSNRB}"
+
     #PSNR statistic
     FramePSNRAvg=`echo "scale=2; ${FramePSNRI} + ${FramePSNRP} + ${FramePSNRB} "|bc`
     FramePSNRAvg=`echo "scale=2; ${FramePSNRAvg} / ${FrameNumAll} /100" |bc`
     FramePSNRI=`echo   "scale=2; ${FramePSNRI}   / ${FrameNumI}   /100" |bc`
     FramePSNRP=`echo   "scale=2; ${FramePSNRP}   / ${FrameNumP}   /100" |bc`
     FramePSNRB=`echo   "scale=2; ${FramePSNRB}   / ${FrameNumB}   /100" |bc`
+
 
     FramePSNRMaxI=`echo   "scale=2; ${FramePSNRMaxI} / 100" |bc`
     FramePSNRMaxP=`echo   "scale=2; ${FramePSNRMaxP} / 100" |bc`
@@ -564,7 +569,7 @@ runParseStaticInfoForAllSequences()
         then
             echo "****************************************************"
             echo "****************************************************"
-            echo " statt to update parse data...."
+            echo " start to update data...."
             echo "****************************************************"
             echo "****************************************************"
 
