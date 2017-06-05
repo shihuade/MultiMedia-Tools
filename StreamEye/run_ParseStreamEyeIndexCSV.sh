@@ -417,6 +417,14 @@ echo "*****************************************"
     FrameQPI=`echo    "scale=2; ${FrameQPI}   / ${FrameNumI}   / 100" |bc`
     FrameQPP=`echo    "scale=2; ${FrameQPP}   / ${FrameNumP}   / 100" |bc`
     FrameQPB=`echo    "scale=2; ${FrameQPB}   / ${FrameNumB}   / 100" |bc`
+
+    FrameQPMaxI=`echo    "scale=2; ${FrameQPMaxI} / 100" |bc`
+    FrameQPMaxP=`echo    "scale=2; ${FrameQPMaxP} / 100" |bc`
+    FrameQPMaxB=`echo    "scale=2; ${FrameQPMaxB} / 100" |bc`
+
+    FrameQPMinI=`echo    "scale=2; ${FrameQPMinI} / 100" |bc`
+    FrameQPMinP=`echo    "scale=2; ${FrameQPMinP} / 100" |bc`
+    FrameQPMinB=`echo    "scale=2; ${FrameQPMinB} / 100" |bc`g
 }
 
 runParseSequenceStaticInfo()
