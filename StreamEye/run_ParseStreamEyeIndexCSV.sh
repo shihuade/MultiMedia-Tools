@@ -403,13 +403,13 @@ runUpdateFrameStatisticInfo()
     FramePSNRP=`echo   "scale=2; ${FramePSNRP}   / ${FrameNumP}   /100" |bc`
     FramePSNRB=`echo   "scale=2; ${FramePSNRB}   / ${FrameNumB}   /100" |bc`
 
-echo "*****************************************"
-echo "FramePSNRAvg  is $FramePSNRAvg"
-echo "FramePSNRAvgI is $FramePSNRAvgI"
-echo "FramePSNRAvgP is $FramePSNRAvgP"
-echo "FramePSNRAvgB is $FramePSNRAvgB"
-echo "*****************************************"
+    FramePSNRMaxI=`echo   "scale=2; ${FramePSNRMaxI} / 100" |bc`
+    FramePSNRMaxP=`echo   "scale=2; ${FramePSNRMaxP} / 100" |bc`
+    FramePSNRMaxB=`echo   "scale=2; ${FramePSNRMaxB} / 100" |bc`
 
+    FramePSNRMinI=`echo   "scale=2; ${FramePSNRMinI} / 100" |bc`
+    FramePSNRMinP=`echo   "scale=2; ${FramePSNRMinP} / 100" |bc`
+    FramePSNRMinB=`echo   "scale=2; ${FramePSNRMinB} / 100" |bc`
 
     #frame QP statistic
     FrameQPAvg=`echo  "scale=2; ${FrameQPI} + ${FrameQPP} + ${FrameQPB} "|bc`
@@ -424,7 +424,7 @@ echo "*****************************************"
 
     FrameQPMinI=`echo    "scale=2; ${FrameQPMinI} / 100" |bc`
     FrameQPMinP=`echo    "scale=2; ${FrameQPMinP} / 100" |bc`
-    FrameQPMinB=`echo    "scale=2; ${FrameQPMinB} / 100" |bc`g
+    FrameQPMinB=`echo    "scale=2; ${FrameQPMinB} / 100" |bc`
 }
 
 runParseSequenceStaticInfo()
