@@ -240,13 +240,15 @@ runCheck()
 
     if [ ! -z "${Option}" ]
     then
-        if [[ "${Option}" =~ "one" ]]
+        if [[ "${Option}" = "one" ]]
         then
             [ -z "${InputMP4File}" ] && echo "no mp4 file parameters" && exit 1
             [ ! -e "${MP4FilesDir}/${InputMP4File}" ] && echo "mp4 file  does not exist!" && exit 1
         else
             FilePattern="${Option}"
-            ls -l ${MP4FilesDir}/*${FilePattern}*.mp4
+            Command="ls -l ${MP4FilesDir}/*${FilePattern}*.mp4"
+            echo "check command is ${Command}"
+            ${Command}
             [ ! $? -eq 0 ] && echo "no mp4 files match pattern *{$FilePattern}*.mp4"
         fi
     fi
@@ -574,6 +576,13 @@ runOutputStaticInfoForOneSequence()
 
 runParseOneMP4File()
 {
+    if [ ! -e ${mp4} ]
+    then
+        echo "${mp4} file does not exist, please double check!"
+        return 0
+    fi
+
+
     FrameIndexFile=${mp4}_index.csv
     StreamStaticFile=${mp4}_stream.csv
     FileSize=`ls -l $mp4 | awk '{print $5}'`
@@ -619,8 +628,9 @@ runParseOneMP4File()
 
 runParseStaticInfoForAllSequences()
 {
-    for file in ${MP4FilesDir}/*${InputMP4File}*.mp4
+    for file in ${MP4FilesDir}/*${FilePattern}*.mp4
     do
+        echo "file is ${file}"
         mp4="${file}"
         runParseOneMP4File
     done
@@ -658,7 +668,7 @@ runMain()
     runInit
     runCheck
 
-    if [[ "${Option}" =~ "one" ]]
+    if [[ "${Option}" = "one" ]]
     then
         mp4=${InputMP4File}
         runParseOneMP4File
