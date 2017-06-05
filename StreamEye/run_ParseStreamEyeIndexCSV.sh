@@ -3,12 +3,19 @@
 
 runUsage()
 {
-    echo "***********************************************"
-    echo "***********************************************"
-    echo "  Usage: "
-    echo "     $0  \${MP4FilesDir} \${Option}"
-    echo "***********************************************"
-    echo "***********************************************"
+    echo "**********************************************************"
+    echo "**********************************************************"
+    echo "  Usage:                                                  "
+    echo "     $0  \${MP4FilesDir} \${Option}                       "
+    echo "         \${Option}:  all parse all mp4 files             "
+    echo "         \${Option}:  pattern=\${Option}                  "
+    echo "          example:                                        "
+    echo "             douyin parse all douyin's *douyin*.mp4 files "
+    echo "             muse   parse all muse's   *muse*.mp4 files   "
+    echo ""
+    echo "         \${Option}:  one \$mp4 parse given mp4 file      "
+    echo "**********************************************************"
+    echo "**********************************************************"
 }
 
 runInitForFrame()
@@ -197,6 +204,10 @@ runInitForStatisticFile()
 
     let "ParsedMum = 0"
     let "SkipNum = 0"
+
+    #option parametes
+    FilePattern=""
+    InputMP4File=""
 }
 
 runInit()
@@ -212,11 +223,32 @@ runInit()
 
 runCheck()
 {
-    echo "MP4FilesDir is ${MP4FilesDir}"
+    echo "**************************************************"
+    echo "**************************************************"
+    echo " checking input parameters..."
+    echo " MP4FilesDir is ${MP4FilesDir}"
+    echo " Option is ${Option}"
+    echo " InputMP4File is ${InputMP4File}"
+    echo "**************************************************"
+    echo "**************************************************"
+
     if [ ! -d ${MP4FilesDir} ]
     then
         echo "MP4FilesDir does not exist, please double check!"
         exit 1
+    fi
+
+    if [ ! -z "${Option}" ]
+    then
+        if [[ "${Option}" =~ "one" ]]
+        then
+            [ -z "${InputMP4File}" ] && echo "no mp4 file parameters" && exit 1
+            [ ! -e "${MP4FilesDir}/${InputMP4File}" ] && echo "mp4 file  does not exist!" && exit 1
+        else
+            FilePattern="${Option}"
+            ls -l ${MP4FilesDir}/*${FilePattern}*.mp4
+            [ ! $? -eq 0 ] && echo "no mp4 files match pattern *{$FilePattern}*.mp4"
+        fi
     fi
 }
 
@@ -540,54 +572,60 @@ runOutputStaticInfoForOneSequence()
     echo "${MP4FileName}, ${FileSize}, ${FrameStaticInfo}" >>${FrameStatiFile}
 }
 
+runParseOneMP4File()
+{
+    FrameIndexFile=${mp4}_index.csv
+    StreamStaticFile=${mp4}_stream.csv
+    FileSize=`ls -l $mp4 | awk '{print $5}'`
+    FileSize=`echo  "scale=2; ${FileSize} / 1024 / 1024 "|bc`
+
+    echo "****************************************************"
+    echo "  parsing mp4 file:   ${mp4}"
+    echo "  frame index file:   ${FrameIndexFile}"
+    echo "  stream static file: ${StreamStaticFile}"
+    echo "  FileSize(MByte):    ${FileSize}"
+    echo "****************************************************"
+
+    let "SkipFlag = 0"
+    runInitForFrame
+    runInitForSequence
+
+    runParseSequenceStaticInfo
+    runParseFrameStaticInfo
+
+    if [ ${SkipFlag} -eq 0 ]
+    then
+        echo "****************************************************"
+        echo "****************************************************"
+        echo " start to update data...."
+        echo "****************************************************"
+        echo "****************************************************"
+
+        runUpdateFrameStatisticInfo
+
+        runGenerateFrameStaticInfo
+        runGenerateSequenceStaticInfo
+
+        runOutputStaticInfoForOneSequence
+
+        aParsedMP4FileList[${ParsedMum}]=${mp4}
+        let "ParsedMum += 1"
+    else
+        aSkipMP4FileList[${SkipNum}]=${mp4}
+        let "SkipNum += 1"
+    fi
+}
+
+
 runParseStaticInfoForAllSequences()
 {
-    for mp4 in ${MP4FilesDir}/*.mp4
+    for file in ${MP4FilesDir}/*${InputMP4File}*.mp4
     do
-        FrameIndexFile=${mp4}_index.csv
-        StreamStaticFile=${mp4}_stream.csv
-        FileSize=`ls -l $mp4 | awk '{print $5}'`
-        FileSize=`echo  "scale=2; ${FileSize} / 1024 / 1024 "|bc`
-
-        echo "****************************************************"
-        echo "  parsing mp4 file:   ${mp4}"
-        echo "  frame index file:   ${FrameIndexFile}"
-        echo "  stream static file: ${StreamStaticFile}"
-        echo "  FileSize(MByte):    ${FileSize}"
-        echo "****************************************************"
-
-        let "SkipFlag = 0"
-        runInitForFrame
-        runInitForSequence
-
-
-        runParseSequenceStaticInfo
-        runParseFrameStaticInfo
-
-        if [ ${SkipFlag} -eq 0 ]
-        then
-            echo "****************************************************"
-            echo "****************************************************"
-            echo " start to update data...."
-            echo "****************************************************"
-            echo "****************************************************"
-
-            runUpdateFrameStatisticInfo
-
-            runGenerateFrameStaticInfo
-            runGenerateSequenceStaticInfo
-
-            runOutputStaticInfoForOneSequence
-
-            aParsedMP4FileList[${ParsedMum}]=${mp4}
-            let "ParsedMum += 1"
-
-        else
-            aSkipMP4FileList[${SkipNum}]=${mp4}
-            let "SkipNum += 1"
-        fi
+        mp4="${file}"
+        runParseOneMP4File
     done
 }
+
 
 runOutputSummary()
 {
@@ -614,12 +652,19 @@ runOutputSummary()
     echo "****************************************************"
 }
 
+
 runMain()
 {
     runInit
     runCheck
 
-    runParseStaticInfoForAllSequences
+    if [[ "${Option}" =~ "one" ]]
+    then
+        mp4=${InputMP4File}
+        runParseOneMP4File
+    else
+        runParseStaticInfoForAllSequences
+    fi
 
     runOutputSummary
 }
@@ -633,7 +678,8 @@ then
 fi
 
 MP4FilesDir=$1
-
+Option=$2
+InputMP4File=$3
 
 runMain
 
