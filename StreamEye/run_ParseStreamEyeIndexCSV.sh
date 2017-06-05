@@ -159,7 +159,7 @@ runInitHeadLineSequence()
 {
     #headline for output statistic table
     SequenceHeadLine1_Basic="Basic info, , , , , , ,"
-    SequenceHeadLine2_Basic="prof, level, EncM, Resol, FrRate, Dura,PSNR,"
+    SequenceHeadLine2_Basic="profile, level, EncM, Resol, FrRate, Dura,PSNR,"
     SequenceHeadLine1_Frame="FrameNum,,,,  FrameRatio(%),,,FrameSize,,,,CompressedRatio(%),,,, QP, , ,"
     SequenceHeadLine2_Frame="All, I, P, B, I,  P,  B,  Avg, I, P, B,  Avg,  I,  P,  B,  Avg, Max, Min,"
 
@@ -183,14 +183,14 @@ runInitForStatisticFile()
     StreamStaticFile=""
 
     #init output table with headline
-    echo "MP4, ${SequenceHeadLine1} ${FrameHeadline1}"  >${DetailStaticFile}
-    echo "MP4, ${SequenceHeadLine2} ${FrameHeadline2}" >>${DetailStaticFile}
+    echo "MP4, , ${SequenceHeadLine1} ${FrameHeadline1}"  >${DetailStaticFile}
+    echo "MP4, Filesize(MB), ${SequenceHeadLine2} ${FrameHeadline2}" >>${DetailStaticFile}
 
-    echo "MP4, ${SequenceHeadLine1}"  >${SequenceStaticFile}
-    echo "MP4, ${SequenceHeadLine2}" >>${SequenceStaticFile}
+    echo "MP4, , ${SequenceHeadLine1}"  >${SequenceStaticFile}
+    echo "MP4, Filesize(MB), ${SequenceHeadLine2}" >>${SequenceStaticFile}
 
-    echo "MP4, ${FrameHeadline1}"  >${FrameStatiFile}
-    echo "MP4, ${FrameHeadline2}" >>${FrameStatiFile}
+    echo "MP4, , ${FrameHeadline1}"  >${FrameStatiFile}
+    echo "MP4, Filesize(MB), ${FrameHeadline2}" >>${FrameStatiFile}
 
     declare -a aParsedMP4FileList
     declare -a aSkipMP4FileList
@@ -396,10 +396,6 @@ runUpdateFrameStatisticInfo()
     FrameCompressedRatioP=`echo  "scale=2; ${FramePixelSize}/${FrameSizeAvgP}"|bc`
     FrameCompressedRatioB=`echo  "scale=2; ${FramePixelSize}/${FrameSizeAvgB}"|bc`
 
-echo "FramePSNRI is ${FramePSNRI}"
-echo "FramePSNRP is ${FramePSNRP}"
-echo "FramePSNRB is ${FramePSNRB}"
-
     #PSNR statistic
     FramePSNRAvg=`echo "scale=2; ${FramePSNRI} + ${FramePSNRP} + ${FramePSNRB} "|bc`
     FramePSNRAvg=`echo "scale=2; ${FramePSNRAvg} / ${FrameNumAll} /100" |bc`
@@ -539,9 +535,9 @@ runOutputStaticInfoForOneSequence()
     echo "****************************************************"
 
 
-    echo "${MP4FileName}, ${SequenceStaticInfo}, ${FrameStaticInfo}" >>${DetailStaticFile}
-    echo "${MP4FileName}, ${SequenceStaticInfo}" >>${SequenceStaticFile}
-    echo "${MP4FileName}, ${FrameStaticInfo}" >>${FrameStatiFile}
+    echo "${MP4FileName}, ${FileSize}, ${SequenceStaticInfo}, ${FrameStaticInfo}" >>${DetailStaticFile}
+    echo "${MP4FileName}, ${FileSize}, ${SequenceStaticInfo}" >>${SequenceStaticFile}
+    echo "${MP4FileName}, ${FileSize}, ${FrameStaticInfo}" >>${FrameStatiFile}
 }
 
 runParseStaticInfoForAllSequences()
@@ -550,11 +546,14 @@ runParseStaticInfoForAllSequences()
     do
         FrameIndexFile=${mp4}_index.csv
         StreamStaticFile=${mp4}_stream.csv
+        FileSize=`ls -l $mp4 | awk '{print $5}'`
+        FileSize=`echo  "scale=2; ${FileSize} / 1024 / 1024 "|bc`
 
         echo "****************************************************"
         echo "  parsing mp4 file:   ${mp4}"
         echo "  frame index file:   ${FrameIndexFile}"
         echo "  stream static file: ${StreamStaticFile}"
+        echo "  FileSize(MByte):    ${FileSize}"
         echo "****************************************************"
 
         let "SkipFlag = 0"
