@@ -207,7 +207,6 @@ runInitForStatisticFile()
 
     #option parametes
     FilePattern=""
-    InputMP4File=""
 }
 
 runInit()
@@ -670,7 +669,7 @@ runMain()
 
     if [[ "${Option}" = "one" ]]
     then
-        mp4=${InputMP4File}
+        mp4=${MP4FilesDir}/${InputMP4File}
         runParseOneMP4File
     else
         runParseStaticInfoForAllSequences
