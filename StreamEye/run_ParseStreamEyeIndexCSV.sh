@@ -365,14 +365,14 @@ runParseFrameStaticInfo()
 runUpdateFrameStatisticInfo()
 {
     #frame num
-    FrameNumRatioI=`echo "scale=2; ${FrameNumI}/${FrameNumAll} * 100"|bc`
-    FrameNumRatioP=`echo "scale=2; ${FrameNumP}/${FrameNumAll} * 100"|bc`
-    FrameNumRatioB=`echo "scale=2; ${FrameNumB}/${FrameNumAll} * 100"|bc`
+    FrameNumRatioI=`echo "scale=2; 100 * ${FrameNumI}/${FrameNumAll}"|bc`
+    FrameNumRatioP=`echo "scale=2; 100 * ${FrameNumP}/${FrameNumAll}"|bc`
+    FrameNumRatioB=`echo "scale=2; 100 * ${FrameNumB}/${FrameNumAll}"|bc`
 
     #frame size
-    FrameSizeRatioI=`echo "scale=2; ${FrameSizeI}/${FrameSizeAll} * 100"|bc`
-    FrameSizeRatioP=`echo "scale=2; ${FrameSizeP}/${FrameSizeAll} * 100"|bc`
-    FrameSizeRatioB=`echo "scale=2; ${FrameSizeB}/${FrameSizeAll} * 100"|bc`
+    FrameSizeRatioI=`echo "scale=2; 100 * ${FrameSizeI}/${FrameSizeAll}"|bc`
+    FrameSizeRatioP=`echo "scale=2; 100 * ${FrameSizeP}/${FrameSizeAll}"|bc`
+    FrameSizeRatioB=`echo "scale=2; 100 * ${FrameSizeB}/${FrameSizeAll}"|bc`
 
     FrameSizeAvg=`echo  "scale=2; ${FrameSizeAll}/${FrameNumAll}"|bc`
     FrameSizeAvgI=`echo "scale=2; ${FrameSizeI}/${FrameNumI}"    |bc`
