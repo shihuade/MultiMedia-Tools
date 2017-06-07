@@ -51,8 +51,8 @@ runInitForFrame()
     let " FrameSizeMaxP = 0"
     let " FrameSizeMaxB = 0"
 
-    let " FrameSizeMinB = 0"
-    let " FrameSizeMinB = 0"
+    let " FrameSizeMinI = 0"
+    let " FrameSizeMinP = 0"
     let " FrameSizeMinB = 0"
 
     #compress ratio
