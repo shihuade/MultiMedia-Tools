@@ -235,11 +235,11 @@ runParseAndUpdateData_FrameSize()
     vFrameSizeAvg=`echo "$line" | awk 'BEGIN {FS=","} {print $42}'`
     FrameSizeAvg=`echo  "scale=2; ${FrameSizeAvg} + ${vFrameSizeAvg}" | bc`
 
-    vFrameSizeAvgI=`echo "$line" | awk 'BEGIN {FS=","} {print $42}'`
+    vFrameSizeAvgI=`echo "$line" | awk 'BEGIN {FS=","} {print $43}'`
     FrameSizeAvgI=`echo  "scale=2; ${FrameSizeAvgI} + ${vFrameSizeAvgI}" | bc`
 
     vFrameSizeAvgP=`echo "$line" | awk 'BEGIN {FS=","} {print $44}'`
-    FrameSizeAvgP=`echo  "scale=2; ${FrameSizeAvgP} + ${FrameSizeAvgP}" | bc`
+    FrameSizeAvgP=`echo  "scale=2; ${FrameSizeAvgP} + ${vFrameSizeAvgP}" | bc`
 
     vFrameSizeAvgB=`echo "$line" | awk 'BEGIN {FS=","} {print $45}'`
     FrameSizeAvgB=`echo  "scale=2; ${FrameSizeAvgB} + ${vFrameSizeAvgB}" | bc`
@@ -294,7 +294,7 @@ runParseAndUpdateData_Bitrate()
     vBitRateIn1S=`echo "$line" | awk 'BEGIN {FS=","} {print $58}'`
     BitRateIn1S=`echo  "scale=2; ${BitRateIn1S} + ${vBitRateIn1S}" | bc`
 
-    BitRateIn2S=`echo "$line" | awk 'BEGIN {FS=","} {print $59}'`
+    vBitRateIn2S=`echo "$line" | awk 'BEGIN {FS=","} {print $59}'`
     BitRateIn2S=`echo  "scale=2; ${BitRateIn2S} + ${vBitRateIn2S}" | bc`
 
     vBitRateIn3S=`echo "$line" | awk 'BEGIN {FS=","} {print $60}'`
@@ -308,7 +308,6 @@ runParseAndUpdateData_Bitrate()
 
     vBitRateIn6S=`echo "$line" | awk 'BEGIN {FS=","} {print $63}'`
     BitRateIn6S=`echo  "scale=2; ${BitRateIn6S} + ${vBitRateIn6S}" | bc`
-
 }
 
 runParseAndUpdateData_PSNR()
@@ -363,23 +362,23 @@ runParseAndUpdateData_QP()
     FrameQPB=`echo  "scale=2; ${FrameQPB} + ${vFrameQPB}" | bc`
 
     #max frame QP
-    vFrameQPMaxI=`echo "$line" | awk 'BEGIN {FS=","} {print $9}'`
+    vFrameQPMaxI=`echo "$line" | awk 'BEGIN {FS=","} {print $78}'`
     FrameQPMaxI=`echo  "scale=2; ${FrameQPMaxI} + ${vFrameQPMaxI}" | bc`
 
-    vFrameQPMaxP=`echo "$line" | awk 'BEGIN {FS=","} {print $9}'`
+    vFrameQPMaxP=`echo "$line" | awk 'BEGIN {FS=","} {print $79}'`
     FrameQPMaxP=`echo  "scale=2; ${FrameQPMaxP} + ${vFrameQPMaxP}" | bc`
 
-    vFrameQPMaxB=`echo "$line" | awk 'BEGIN {FS=","} {print $9}'`
+    vFrameQPMaxB=`echo "$line" | awk 'BEGIN {FS=","} {print $80}'`
     FrameQPMaxB=`echo  "scale=2; ${FrameQPMaxB} + ${vFrameQPMaxB}" | bc`
 
     #min frame QP
-    vFrameQPMinI=`echo "$line" | awk 'BEGIN {FS=","} {print $9}'`
+    vFrameQPMinI=`echo "$line" | awk 'BEGIN {FS=","} {print $81}'`
     FrameQPMinI=`echo  "scale=2; ${FrameQPMinI} + ${vFrameQPMinI}" | bc`
 
-    vFrameQPMinP=`echo "$line" | awk 'BEGIN {FS=","} {print $9}'`
+    vFrameQPMinP=`echo "$line" | awk 'BEGIN {FS=","} {print $82}'`
     FrameQPMinP=`echo  "scale=2; ${FrameQPMinP} + ${vFrameQPMinP}" | bc`
 
-    vFrameQPMinB=`echo "$line" | awk 'BEGIN {FS=","} {print $9}'`
+    vFrameQPMinB=`echo "$line" | awk 'BEGIN {FS=","} {print $83}'`
     FrameQPMinB=`echo  "scale=2; ${FrameQPMinB} + ${vFrameQPMinB}" | bc`
 
 }
@@ -426,7 +425,6 @@ runCalculateAverage()
     FrameSizeMinP=`echo  "scale=2; ${FrameSizeMinP} / ${DataNum}" | bc`
     FrameSizeMinB=`echo  "scale=2; ${FrameSizeMinB} / ${DataNum}" | bc`
 
-
     #compress ratio
     FrameCompressedRatio=`echo  "scale=2; ${FrameCompressedRatio} / ${DataNum}" | bc`
     FrameCompressedRatioI=`echo  "scale=2; ${FrameCompressedRatioI} / ${DataNum}" | bc`
@@ -443,7 +441,6 @@ runCalculateAverage()
     BitRateIn4S=`echo  "scale=2; ${BitRateIn4S} / ${DataNum}" | bc`
     BitRateIn5S=`echo  "scale=2; ${BitRateIn5S} / ${DataNum}" | bc`
     BitRateIn6S=`echo  "scale=2; ${BitRateIn6S} / ${DataNum}" | bc`
-
 
     #PSNR statistic
     FramePSNRAvg=`echo  "scale=2; ${FramePSNRAvg} / ${DataNum}" | bc`
@@ -472,20 +469,22 @@ runCalculateAverage()
     FrameQPMinI=`echo  "scale=2; ${FrameQPMinI} / ${DataNum}" | bc`
     FrameQPMinP=`echo  "scale=2; ${FrameQPMinP} / ${DataNum}" | bc`
     FrameQPMinB=`echo  "scale=2; ${FrameQPMinB} / ${DataNum}" | bc`
-
 }
 
 runParseAndUpdateData()
 {
-
     runParseAndUpdateData_Basic
+
     runParseAndUpdateData_FrameNum
 
     runParseAndUpdateData_FrameSize
+
     runParseAndUpdateData_CompressRatio
 
     runParseAndUpdateData_Bitrate
+
     runParseAndUpdateData_PSNR
+
     runParseAndUpdateData_QP
 }
 
@@ -516,7 +515,7 @@ runOutput()
     echo -e " BitRateIn4S, $BitRateIn4S \n BitRateIn5S, $BitRateIn5S \n BitRateIn6S, $BitRateIn6S"
 
     #PSNR statistic
-    echo -e " FramePSNRAvg, $FramePSNRAvg \n FramePSNRI, $FramePSNRI \n FramePSNRP, $FramePSNRIP \n FramePSNRB, $FramePSNRB"
+    echo -e " FramePSNRAvg, $FramePSNRAvg \n FramePSNRI, $FramePSNRI \n FramePSNRP, $FramePSNRP \n FramePSNRB, $FramePSNRB"
     echo -e " FramePSNRMaxI, $FramePSNRMaxI \n FramePSNRMaxP, $FramePSNRMaxP \n FramePSNRMaxB, $FramePSNRMaxB"
     echo -e " FramePSNRMinI, $FramePSNRMinI \n FramePSNRMinP, $FramePSNRMinP \n FramePSNRMinB, $FramePSNRMinB"
 
@@ -526,7 +525,7 @@ runOutput()
     echo -e " FrameQPMinI, $FrameQPMinI \n FrameQPMinP, $FrameQPMinP \n FrameQPMinB, $FrameQPMinB"
 }
 
-runCalculateAvgForVar()
+runSumofVar()
 {
     while read line
     do
@@ -534,8 +533,8 @@ runCalculateAvgForVar()
         do
             FilePattern=${vpattern}
 
-            Let  "MatchFlag = 0"
-            [[ "$line" =~ "${FilePattern}" ]] && Let  "MatchFlag = 1"
+            let  "MatchFlag = 0"
+            [[ "$line" =~ "${FilePattern}" ]] && let  "MatchFlag = 1"
             [ ${MatchFlag} -eq 0 ] && continue
 
             runParseAndUpdateData
@@ -556,13 +555,13 @@ runCheck()
     echo "**************************************************"
     echo "**************************************************"
 
-    if [ ! -d ${StaticCSVFile} ]
+    if [ ! -e ${StaticCSVFile} ]
     then
         echo "StaticCSVFile does not exist, please double check!"
         exit 1
     fi
 
-    if [ ! -z "${Option}" ]
+    if [ ! -z "${DataPatterns}" ]
     then
         aPatternList=(${DataPatterns})
     fi
@@ -573,7 +572,9 @@ runMain()
     runInit
     runCheck
 
-    runCalculateAvgForVar
+    runSumofVar
+
+    runCalculateAverage
 
     runOutput >>${AverageFile}
     cat ${AverageFile}
