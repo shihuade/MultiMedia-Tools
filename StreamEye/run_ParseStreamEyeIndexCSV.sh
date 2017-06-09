@@ -259,6 +259,8 @@ runCheck()
             done
         fi
     fi
+echo "num of aPatternList is ${#aPatternList[@]}"
+echo "aPatternList is        ${aPatternList[@]}"
 }
 
 runUpdateFrameInfo_I()
@@ -638,14 +640,21 @@ runParseStaticInfoForAllSequences()
     for vpattern in ${aPatternList[@]}
     do
         FilePattern=${vpattern}
-        for file in ${MP4FilesDir}/*${FilePattern}*.mp4
-        do
-            echo "file is ${file}"
-            mp4="${file}"
-            runParseOneMP4File
-        done
+        runParseStaticInfoForAllSequencesWithSinglePattern
     done
 }
+
+
+runParseStaticInfoForAllSequencesWithSinglePattern()
+{
+    for file in ${MP4FilesDir}/*${FilePattern}*.mp4
+    do
+        echo "file is ${file}"
+        mp4="${file}"
+        runParseOneMP4File
+    done
+}
+
 
 
 runOutputSummary()
@@ -684,7 +693,13 @@ runMain()
         mp4=${MP4FilesDir}/${InputMP4File}
         runParseOneMP4File
     else
-        runParseStaticInfoForAllSequences
+        if [ ${#aPatternList[@]}  -eq 0 ]
+        then
+            runParseStaticInfoForAllSequencesWithSinglePattern
+        else
+            FilePattern=""
+            runParseStaticInfoForAllSequences
+        fi
     fi
 
     runOutputSummary
