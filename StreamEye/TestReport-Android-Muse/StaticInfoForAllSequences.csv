@@ -1,0 +1,14 @@
+MP4, , Basic info, , , , , , , FrameNum,,,,  FrameRatio(%),,,FrameSize,,,,CompressedRatio(%),,,, QP, , ,
+MP4, Filesize(MB), profile, level, EncM, Resol, FrRate, Dura,PSNR, All, I, P, B, I,  P,  B,  Avg, I, P, B,  Avg,  I,  P,  B,  Avg, Max, Min,
+Android-MX6-GalaxyJ7-APPS-01-MX6-Muse.mp4, 4.94, Baseline, 4.0,CAVLC, 368 x 640,24, 00:00:19:125,36.94, 459, 7 ,452 , ,1.52, 98.47,, 10827 ,44 748 , 10 302 ,,  32, 7,  34,, 26.38,33, 0
+Android-MX6-GalaxyJ7-APPS-02-Galaxy-Muse.mp4, 2.84, Baseline, 4.0,CAVLC, 368 x 640,24, 00:00:10:375,38.27, 249, 4 ,245 , ,1.60, 98.39,, 10999 ,44 198 , 10 457 ,,  32, 7,  33,, 25.20,32, 20
+Android-MX6-GalaxyJ7-APPS-04-Galaxy-Muse.mp4, 3.52, Baseline, 4.0,CAVLC, 368 x 640,24, 00:00:13:125,33.05, 315, 5 ,310 , ,1.58, 98.41,, 11045 ,43 433 , 10 523 ,,  31, 8,  33,, 29.74,33, 20
+Android-MX6-GalaxyJ7-APPS-05-Galaxy-Muse.mp4, 2.02, Baseline, 4.0,CAVLC, 368 x 640,24, 00:00:12:916,42.15, 310, 5 ,305 , ,1.61, 98.38,, 6147 ,25 225 , 5 835 ,,  57, 14,  60,, 21.94,25, 19
+Android-MX6-GalaxyJ7-APPS-06-MX6-Muse.mp4, 1.99, Baseline, 4.0,CAVLC, 368 x 640,24, 00:00:09:250,40.25, 222, 4 ,218 , ,1.80, 98.19,, 8782 ,32 182 , 8 353 ,,  40, 10,  42,, 23.08,26, 20
+Android-MX6-GalaxyJ7-APPS-07-Galaxy-Muse.mp4, 3.81, Baseline, 4.0,CAVLC, 368 x 640,24, 00:00:15:833,40.53, 380, 6 ,374 , ,1.57, 98.42,, 9899 ,36 393 , 9 474 ,,  35, 9,  37,, 22.72,27, 20
+Android-MX6-GalaxyJ7-APPS-08-MX6-Muse.mp4, 6.16, Baseline, 4.0,CAVLC, 368 x 640,24, 00:00:14:458,29.46, 347, 5 ,342 , ,1.44, 98.55,, 18261 ,51 008 , 17 782 ,,  19, 6,  19,, 32.51,35, 0
+Android-MX6-GalaxyJ7-APPS-09-Galaxy-Muse.mp4, 3.78, Baseline, 4.0,CAVLC, 368 x 640,24, 00:00:13:625,33.19, 327, 5 ,322 , ,1.52, 98.47,, 11465 ,38 319 , 11 048 ,,  30, 9,  31,, 29.56,33, 20
+Android-MX6-GalaxyJ7-Muse-Self-01-Galaxy.mp4, 2.71, Baseline, 4.0,CAVLC, 368 x 640,24, 00:00:14:208,41.53, 341, 5 ,336 , ,1.46, 98.53,, 7677 ,37 547 , 7 233 ,,  46, 9,  48,, 22.56,27, 19
+Android-MX6-GalaxyJ7-Muse-Self-01-MX6.mp4, 3.41, Baseline, 4.0,CAVLC, 368 x 640,24, 00:00:13:958,39.78, 335, 5 ,330 , ,1.49, 98.50,, 10056 ,45 836 , 9 514 ,,  35, 7,  37,, 23.53,27, 20
+Android-MX6-GalaxyJ7-Muse-Self-02-Galaxy.mp4, 3.26, Baseline, 4.0,CAVLC, 368 x 640,24, 00:00:16:000,41.32, 384, 6 ,378 , ,1.56, 98.43,, 8242 ,36 282 , 7 796 ,,  42, 9,  45,, 22.88,26, 20
+Android-MX6-GalaxyJ7-Muse-Self-02-MX6.mp4, 3.87, Baseline, 4.0,CAVLC, 368 x 640,24, 00:00:15:750,39.57, 378, 6 ,372 , ,1.58, 98.41,, 10130 ,42 617 , 9 606 ,,  34, 8,  36,, 23.93,32, 20
