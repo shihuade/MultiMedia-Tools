@@ -17,6 +17,9 @@
       location = "group:reference.txt">
    </FileRef>
    <FileRef
+      location = "group:MP4Info">
+   </FileRef>
+   <FileRef
       location = "group:FFServer">
    </FileRef>
 </Workspace>
