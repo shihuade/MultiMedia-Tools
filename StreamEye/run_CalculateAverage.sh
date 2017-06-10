@@ -231,53 +231,54 @@ runParseAndUpdateData_FrameSize()
     vFrameSizeRatioB=`echo "$line" | awk 'BEGIN {FS=","} {print $41}'`
     FrameSizeRatioB=`echo  "scale=2; ${FrameSizeRatioB} + ${vFrameSizeRatioB}" | bc`
 
+
     #frame size
-    vFrameSizeAvg=`echo "$line" | awk 'BEGIN {FS=","} {print $42}'`
+    vFrameSizeAvg=`echo "$line" | awk 'BEGIN {FS=","} {print $46}'`
     FrameSizeAvg=`echo  "scale=2; ${FrameSizeAvg} + ${vFrameSizeAvg}" | bc`
 
-    vFrameSizeAvgI=`echo "$line" | awk 'BEGIN {FS=","} {print $43}'`
+    vFrameSizeAvgI=`echo "$line" | awk 'BEGIN {FS=","} {print $47}'`
     FrameSizeAvgI=`echo  "scale=2; ${FrameSizeAvgI} + ${vFrameSizeAvgI}" | bc`
 
-    vFrameSizeAvgP=`echo "$line" | awk 'BEGIN {FS=","} {print $44}'`
+    vFrameSizeAvgP=`echo "$line" | awk 'BEGIN {FS=","} {print $48}'`
     FrameSizeAvgP=`echo  "scale=2; ${FrameSizeAvgP} + ${vFrameSizeAvgP}" | bc`
 
-    vFrameSizeAvgB=`echo "$line" | awk 'BEGIN {FS=","} {print $45}'`
+    vFrameSizeAvgB=`echo "$line" | awk 'BEGIN {FS=","} {print $49}'`
     FrameSizeAvgB=`echo  "scale=2; ${FrameSizeAvgB} + ${vFrameSizeAvgB}" | bc`
 
     #max frame size
-    vFrameSizeMaxI=`echo "$line" | awk 'BEGIN {FS=","} {print $46}'`
+    vFrameSizeMaxI=`echo "$line" | awk 'BEGIN {FS=","} {print $50}'`
     FrameSizeMaxI=`echo  "scale=2; ${FrameSizeMaxI} + ${vFrameSizeMaxI}" | bc`
 
-    vFrameSizeMaxP=`echo "$line" | awk 'BEGIN {FS=","} {print $47}'`
+    vFrameSizeMaxP=`echo "$line" | awk 'BEGIN {FS=","} {print $51}'`
     FrameSizeMaxP=`echo  "scale=2; ${FrameSizeMaxP} + ${vFrameSizeMaxP}" | bc`
 
-    vFrameSizeMaxB=`echo "$line" | awk 'BEGIN {FS=","} {print $48}'`
+    vFrameSizeMaxB=`echo "$line" | awk 'BEGIN {FS=","} {print $52}'`
     FrameSizeMaxB=`echo  "scale=2; ${FrameSizeMaxB} + ${vFrameSizeMaxB}" | bc`
 
     #min frame size
-    vFrameSizeMinI=`echo "$line" | awk 'BEGIN {FS=","} {print $49}'`
+    vFrameSizeMinI=`echo "$line" | awk 'BEGIN {FS=","} {print $53}'`
     FrameSizeMinI=`echo  "scale=2; ${FrameSizeMinI} + ${vFrameSizeMinI}" | bc`
 
-    vFrameSizeMinP=`echo "$line" | awk 'BEGIN {FS=","} {print $50}'`
+    vFrameSizeMinP=`echo "$line" | awk 'BEGIN {FS=","} {print $52}'`
     FrameSizeMinP=`echo  "scale=2; ${FrameSizeMinP} + ${vFrameSizeMinP}" | bc`
 
-    vFrameSizeMinB=`echo "$line" | awk 'BEGIN {FS=","} {print $51}'`
+    vFrameSizeMinB=`echo "$line" | awk 'BEGIN {FS=","} {print $55}'`
     FrameSizeMinB=`echo  "scale=2; ${FrameSizeMinB} + ${vFrameSizeMinB}" | bc`
 }
 
 runParseAndUpdateData_CompressRatio()
 {
     #compress ratio
-    vFrameCompressedRatio=`echo "$line" | awk 'BEGIN {FS=","} {print $52}'`
+    vFrameCompressedRatio=`echo "$line" | awk 'BEGIN {FS=","} {print $42}'`
     FrameCompressedRatio=`echo  "scale=2; ${FrameCompressedRatio} + ${vFrameCompressedRatio}" | bc`
 
-    vFrameCompressedRatioI=`echo "$line" | awk 'BEGIN {FS=","} {print $53}'`
+    vFrameCompressedRatioI=`echo "$line" | awk 'BEGIN {FS=","} {print $43}'`
     FrameCompressedRatioI=`echo  "scale=2; ${FrameCompressedRatioI} + ${vFrameCompressedRatioI}" | bc`
 
-    vFrameCompressedRatioP=`echo "$line" | awk 'BEGIN {FS=","} {print $54}'`
+    vFrameCompressedRatioP=`echo "$line" | awk 'BEGIN {FS=","} {print $44}'`
     FrameCompressedRatioP=`echo  "scale=2; ${FrameCompressedRatioP} + ${vFrameCompressedRatioP}" | bc`
 
-    vFrameCompressedRatioB=`echo "$line" | awk 'BEGIN {FS=","} {print $55}'`
+    vFrameCompressedRatioB=`echo "$line" | awk 'BEGIN {FS=","} {print $45}'`
     FrameCompressedRatioB=`echo  "scale=2; ${FrameCompressedRatioB} + ${vFrameCompressedRatioB}" | bc`
 
 }
@@ -498,13 +499,13 @@ runOutput()
     echo -e " FrameSizeAll, $FrameSizeAll \n FrameSizeI, $FrameSizeI \n FrameSizeP, $FrameSizeP \n FrameSizeB, $FrameSizeB"
     echo -e " FrameSizeRatioI, $FrameSizeRatioI \n FrameSizeRatioP, $FrameSizeRatioP \n FrameSizeRatioB, $FrameSizeRatioB"
 
+    #compress ratio
+    echo -e " FrameCompressedRatio, $FrameCompressedRatio \n FrameCompressedRatioI, $FrameCompressedRatioI \n FrameCompressedRatioP, $FrameCompressedRatioP \n FrameCompressedRatioB, $FrameCompressedRatioB"
+
     #frame size
     echo -e " FrameSizeAvg, $FrameSizeAvg \n FrameSizeAvgI, $FrameSizeAvgI \n FrameSizeAvgP, $FrameSizeAvgP \n FrameSizeAvgB, $FrameSizeAvgB"
     echo -e " FrameSizeMaxI, $FrameSizeMaxI \n FrameSizeMaxP, $FrameSizeMaxP \n FrameSizeMaxB, $FrameSizeMaxB"
     echo -e " FrameSizeMinI, $FrameSizeMinI \n FrameSizeMinP, $FrameSizeMinP \n FrameSizeMinB, $FrameSizeMinB"
-
-    #compress ratio
-    echo -e " FrameCompressedRatio, $FrameCompressedRatio \n FrameCompressedRatioI, $FrameCompressedRatioI \n FrameCompressedRatioP, $FrameCompressedRatioP \n FrameCompressedRatioB, $FrameCompressedRatioB"
 
     #bit rate statistic
     echo -e " BitRateAvg, $BitRateAvg \n BitRateAvgFPS30, $BitRateAvgFPS30"
