@@ -476,15 +476,12 @@ runParseAndUpdateData()
     runParseAndUpdateData_Basic
 
     runParseAndUpdateData_FrameNum
-
     runParseAndUpdateData_FrameSize
 
     runParseAndUpdateData_CompressRatio
-
     runParseAndUpdateData_Bitrate
 
     runParseAndUpdateData_PSNR
-
     runParseAndUpdateData_QP
 }
 
@@ -525,7 +522,22 @@ runOutput()
     echo -e " FrameQPMinI, $FrameQPMinI \n FrameQPMinP, $FrameQPMinP \n FrameQPMinB, $FrameQPMinB"
 }
 
-runSumofVar()
+runSumofVarForAllData()
+{
+    while read line
+    do
+
+        let  "MatchFlag = 0"
+        [[ "$line" =~ ".mp4" ]] && let  "MatchFlag = 1"
+
+        [ ${MatchFlag} -eq 0 ] && continue
+
+        runParseAndUpdateData
+        let "DataNum += 1"
+    done <${StaticCSVFile}
+}
+
+runSumofVarForAllPatterns()
 {
     while read line
     do
@@ -535,14 +547,13 @@ runSumofVar()
 
             let  "MatchFlag = 0"
             [[ "$line" =~ "${FilePattern}" ]] && let  "MatchFlag = 1"
+
             [ ${MatchFlag} -eq 0 ] && continue
 
             runParseAndUpdateData
             let "DataNum += 1"
-
         done
-    done <${StaticCSVFile}
-
+    done  <${StaticCSVFile}
 }
 
 runCheck()
@@ -572,12 +583,27 @@ runMain()
     runInit
     runCheck
 
-    runSumofVar
+    if [ ! -z "${DataPatterns}" ]
+    then
+        runSumofVarForAllPatterns
+    else
+        runSumofVarForAllData
+    fi
 
-    runCalculateAverage
+    if [ ${DataNum} -gt 0 ]
+    then
+        runCalculateAverage
+    fi
 
     runOutput >>${AverageFile}
     cat ${AverageFile}
+
+    if [ ${DataNum} -eq 0 ]
+    then
+        echo "**************************************************"
+        echo "  no data match pattern: ${DataPatterns}          "
+        echo "**************************************************"
+    fi
 }
 
 #**********************************************************
@@ -585,7 +611,7 @@ runMain()
 if [ $# -lt 1 ]
 then
     runUsage
-exit 1
+    exit 1
 fi
 
 StaticCSVFile=$1
