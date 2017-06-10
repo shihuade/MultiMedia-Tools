@@ -47,8 +47,8 @@ runFilter()
 
     while read line
     do
-        [ ${LineNum} -eq 0 ] && echo "$line" >${OutputFile}
-        [ ${LineNum} -gt 0 ] && [ ${LineNum} -lt ${HeadderNum} ] && echo "$line" >>${OutputFile}
+        [ ${LineNum} -eq 0 ] && echo "$line" >${OutputFile} && let "LineNum ++" && continue
+        [ ${LineNum} -lt ${HeadderNum} ] && echo "$line" >>${OutputFile} && let "LineNum ++" && continue
 
         [[ "${line}" =~ "${FilterPattern}" ]] && echo "$line" >>${OutputFile}
 
@@ -64,12 +64,55 @@ runFilter()
     fi
 }
 
+runCombineTwoCSVs()
+{
+    InputSCVFile01=${InputCSVFile}
+    InputSCVFile02=${OptionVal}
+    OutputFile="StaticCombine2CSVfiles.csv"
+
+    Data01=""
+    Data02=""
+    DataName=""
+    let "HeaderNum = 2"
+    let "LineNum01 = 0"
+
+    while read line01
+    do
+        [ ${LineNum01} -eq 0 ] && echo "$line01,$InputSCVFile02" >${OutputFile} && let "LineNum01 ++" && continue
+        if [ ${LineNum01} -lt ${HeadderNum} ]
+        then
+            echo "$line, $InputSCVFile02" >>${OutputFile} && let "LineNum01 ++" && continue
+        fi
+
+        DataName=`echo $line01 | awk 'BEGIN {FS=","} {print $1}'`
+        Data01=`echo $line01   | awk 'BEGIN {FS=","} {print $2}'`
+
+        let "LineNum02 = 0"
+        while read line02
+        do
+            if [ ${LineNum02} -eq ${LineNum01} ]
+            then
+                Data02=`echo $line02 | awk 'BEGIN {FS=","} {print $2}'`
+                break
+            fi
+
+            let "LineNum02 ++"
+
+        done <${InputSCVFile02}
+        let "LineNum01 ++"
+
+        echo "$DataName, $Data01, $Data02" >>${OutputFile}
+    done <${InputSCVFile01}
+}
+
+
 runMain()
 {
 
 runInit
 runCheck
-runFilter
+#runFilter
+runCombineTwoCSVs
 
 }
 
