@@ -449,7 +449,7 @@ runCalculateAverage()
     FramePSNRB=`echo  "scale=2; ${FramePSNRB} / ${DataNum}" | bc`
 
     FramePSNRMaxI=`echo  "scale=2; ${FramePSNRMaxI} / ${DataNum}" | bc`
-    FramePSNRMaxP=`echo  "scale=2; ${FramePSNRMaxB} / ${DataNum}" | bc`
+    FramePSNRMaxP=`echo  "scale=2; ${FramePSNRMaxP} / ${DataNum}" | bc`
     FramePSNRMaxB=`echo  "scale=2; ${FramePSNRMaxB} / ${DataNum}" | bc`
 
     FramePSNRMinI=`echo  "scale=2; ${FramePSNRMinI} / ${DataNum}" | bc`
