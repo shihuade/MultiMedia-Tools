@@ -33,6 +33,7 @@ runInit()
     EncParamAvgTableMuse="${Prefix}_Muse.csv"
 
     DouYinMuseComparison="StaticCombine2CSVfiles.csv"
+    FinalComparison="EncoderParametersAverage_DouyinMuse.csv"
 }
 
 runParseStreamEyeCSV()
@@ -54,7 +55,7 @@ runGenerateDouyinAndMuseCSVFile()
         exit 1
     fi
 
-    ./run_FileEditorForCSV.sh ${DetailStaticFile} "Filter" "${StaticDetailMuse}"
+    ./run_FileEditorForCSV.sh ${DetailStaticFile} "Filter" "${PatternMuse}"
     if [ ! $? -eq 0 ]
     then
         echo "failed!--runGenerateDouyinAndMuseCSVFile Filter Muse"
@@ -86,6 +87,8 @@ runGenerateDouyinAndMuseCSVFile()
         echo "failed!--runGenerateDouyinAndMuseCSVFile Combine for Douyin and Muse"
         exit 1
     fi
+
+    mv $DouYinMuseComparison ${FinalComparison}
 }
 
 runGenerateForAll()
@@ -134,7 +137,7 @@ runOutputForDouyinAndMuse()
     echo "********************************************"
     echo "       Douyin: $EncParamAvgTableDouyin      "
     echo "       Muse:   $EncParamAvgTableMuse        "
-    echo "       All:    $DouYinMuseComparison        "
+    echo "       All:    $FinalComparison             "
     echo "********************************************"
     echo "********************************************"
 }
@@ -157,9 +160,9 @@ runCheck()
     if [[ "${Flag}" =~ "false" ]]
     then
         echo "**********************************************"
-        echo " option should be: All or MuseDouyin         "
+        echo " option should be: All or  MuseDouyin         "
+        echo " now set to default value: MuseDouyin         "
         echo "**********************************************"
-        exit 1
     fi
 }
 
@@ -179,12 +182,16 @@ runMain()
         runParseStreamEyeCSV
         runGenerateDouyinAndMuseCSVFile
         runOutputForDouyinAndMuse
+    else
+        runParseStreamEyeCSV
+        runGenerateDouyinAndMuseCSVFile
+        runOutputForDouyinAndMuse
     fi
 }
 
 #**********************************************************
 #**********************************************************
-if [ $# -lt 2 ]
+if [ $# -lt 1 ]
 then
     runUsage
     exit 1
