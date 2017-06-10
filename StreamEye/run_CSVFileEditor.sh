@@ -35,9 +35,9 @@ runFilter()
 {
     let "HeadderNum = 2"
     let "LineNum =0"
-    FilterPattern="OptionVal"
-    CSVFileName=`echo $InputCSVFile | awk 'BEGIN {FS=","} {print $1}'`
-    OutputFile="${OutputFile}_${FilterPattern}.csv"
+    FilterPattern="$OptionVal"
+    CSVFileName=`echo $InputCSVFile | awk 'BEGIN {FS="."} {print $1}'`
+    OutputFile="${CSVFileName}_${FilterPattern}.csv"
 
     echo "**********************************************"
     echo "  InputCSVFile  is: ${InputCSVFile}"
@@ -47,13 +47,13 @@ runFilter()
 
     while read line
     do
-        [ ${LineNum} -eq 0 } ] && echo "$line" >${OutputFile}
-        [ ${LineNum} -lt ${HeadderNum} ] && echo "$line" >>${OutputFile}
+        [ ${LineNum} -eq 0 ] && echo "$line" >${OutputFile}
+        [ ${LineNum} -gt 0 ] && [ ${LineNum} -lt ${HeadderNum} ] && echo "$line" >>${OutputFile}
 
         [[ "${line}" =~ "${FilterPattern}" ]] && echo "$line" >>${OutputFile}
 
         let "LineNum ++"
-    done
+    done <${InputCSVFile}
 
     if [  ${LineNum} -le ${HeadderNum} ]
     then
