@@ -33,7 +33,7 @@ runCheck()
 
 runFilter()
 {
-    let "HeadderNum = 2"
+    let "HeaderNum = 2"
     let "LineNum =0"
     FilterPattern="$OptionVal"
     CSVFileName=`echo $InputCSVFile | awk 'BEGIN {FS="."} {print $1}'`
@@ -48,14 +48,14 @@ runFilter()
     while read line
     do
         [ ${LineNum} -eq 0 ] && echo "$line" >${OutputFile} && let "LineNum ++" && continue
-        [ ${LineNum} -lt ${HeadderNum} ] && echo "$line" >>${OutputFile} && let "LineNum ++" && continue
+        [ ${LineNum} -lt ${HeaderNum} ] && echo "$line" >>${OutputFile} && let "LineNum ++" && continue
 
         [[ "${line}" =~ "${FilterPattern}" ]] && echo "$line" >>${OutputFile}
 
         let "LineNum ++"
     done <${InputCSVFile}
 
-    if [  ${LineNum} -le ${HeadderNum} ]
+    if [  ${LineNum} -le ${HeaderNum} ]
     then
         echo "**********************************************"
         echo " no data matched ${FilterPattern}"
@@ -73,35 +73,40 @@ runCombineTwoCSVs()
     Data01=""
     Data02=""
     DataName=""
-    let "HeaderNum = 2"
+    let "HeaderNum = 1"
     let "LineNum01 = 0"
+    let "LineNum02 = 0"
 
     while read line01
     do
-        [ ${LineNum01} -eq 0 ] && echo "$line01,$InputSCVFile02" >${OutputFile} && let "LineNum01 ++" && continue
-        if [ ${LineNum01} -lt ${HeadderNum} ]
+        if [ ${LineNum01} -eq 0 ]
         then
-            echo "$line, $InputSCVFile02" >>${OutputFile} && let "LineNum01 ++" && continue
+            echo "$line01,$InputSCVFile02" >${OutputFile}
+        elif [ ${LineNum01} -lt ${HeaderNum} ]
+        then
+            echo "$line, $InputSCVFile02" >>${OutputFile}
+            let "LineNum01 ++"
+        else
+            DataName=`echo $line01 | awk 'BEGIN {FS=","} {print $1}'`
+            Data01=`echo $line01   | awk 'BEGIN {FS=","} {print $2}'`
+
+            let "LineNum02 = 0"
+            while read line02
+            do
+                if [ ${LineNum02} -eq ${LineNum01} ]
+                then
+                    Data02=`echo $line02 | awk 'BEGIN {FS=","} {print $2}'`
+                    break
+                fi
+
+                let "LineNum02 ++"
+
+            done <${InputSCVFile02}
         fi
 
-        DataName=`echo $line01 | awk 'BEGIN {FS=","} {print $1}'`
-        Data01=`echo $line01   | awk 'BEGIN {FS=","} {print $2}'`
-
-        let "LineNum02 = 0"
-        while read line02
-        do
-            if [ ${LineNum02} -eq ${LineNum01} ]
-            then
-                Data02=`echo $line02 | awk 'BEGIN {FS=","} {print $2}'`
-                break
-            fi
-
-            let "LineNum02 ++"
-
-        done <${InputSCVFile02}
+        echo "$DataName, $Data01, $Data02" >>${OutputFile}
         let "LineNum01 ++"
 
-        echo "$DataName, $Data01, $Data02" >>${OutputFile}
     done <${InputSCVFile01}
 }
 
