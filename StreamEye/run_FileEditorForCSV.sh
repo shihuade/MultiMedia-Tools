@@ -3,18 +3,20 @@
 
 runUsage()
 {
-echo "**********************************************"
-echo "**********************************************"
-
-
+    echo "**********************************************"
+    echo " $0  \$InpuptCSVFile \$Option \$OptionVal"
+    echo "     example:"
+    echo "     $0  Douyin.csv Combine Muse.csv     "
+    echo "         combine douyin and muse"
+    echo "     $0  DouyinMuse.csv Filter Muse      "
+    echo "         Filter muse data only           "
+    echo "**********************************************"
 }
 
 
 runInit()
 {
-
     OutputFile=""
-
 
 }
 
@@ -27,7 +29,29 @@ runCheck()
         exit 1
     fi
 
+    Flag="true"
+    [[ "$Option" =~ "Filter" ]] || [[ "$Option" =~ "Combine" ]] || Flag="false"
+    if [[ "${Flag}" =~ "false" ]]
+    then
+        echo "**********************************************"
+        echo " option should be: Filter or Combine"
+        echo "**********************************************"
+        exit 1
+    fi
 
+    if [[ "$Option" =~ "Combine" ]]
+    then
+        InputSCVFile02=${OptionVal}
+        if [ ! -e ${InputSCVFile02} ]
+        then
+            echo "**********************************************"
+            echo " combine two csv option:"
+            echo "InputSCVFile02 ${InputSCVFile02} does not exist!"
+            echo "**********************************************"
+
+            exit 1
+        fi
+    fi
 }
 
 
@@ -114,10 +138,16 @@ runCombineTwoCSVs()
 runMain()
 {
 
-runInit
-runCheck
-#runFilter
-runCombineTwoCSVs
+    runInit
+    runCheck
+
+    if [[ "$Option" =~ "Filter" ]]
+    then
+        runFilter
+    elif [[ "$Option" =~ "Combine" ]]
+    then
+        runCombineTwoCSVs
+    fi
 
 }
 
