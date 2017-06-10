@@ -108,8 +108,12 @@ runInitHeadLineFrame()
     FrameHeadline1_Num="FrmNum,,,,FrmNumRatio(%),,,"
     FrameHeadline2_Num="All,I,P,B, I, P, B,"
 
-    FrameHeadline1_Size="FrmSize(Byte),,,, FrmSizeRatio(%),,,AvgSize(Byte),,,,MaxSize(Byte),,,MinSize(Byte),,,"
-    FrameHeadline2_Size="All, I, P, B, I, P, B, Avg, I, P, B, I, P, B, I, P, B,"
+    FrameHeadline1_AllSize="FrmSize(Byte),,,, FrmSizeRatio(%),,,"
+    FrameHeadline2_AllSize="All, I, P, B, I, P, B,"
+
+    FrameHeadline1_Size="AvgSize(Byte),,,,MaxSize(Byte),,,MinSize(Byte),,,"
+    FrameHeadline2_Size="Avg, I, P, B, I, P, B, I, P, B,"
+
     FrameHeadline1_CR="Compressed Ratio, , , ,"
     FrameHeadline2_CR="Avg, I, P, B ,"
 
@@ -120,8 +124,8 @@ runInitHeadLineFrame()
     FrameHeadline1_QP="Frame QP, , , , , , , , , ,"
     FrameHeadline2_QP="Avg, I, P, B, MaxI, MaxP, MaxB, MinI, MinP, MinB"
 
-    FrameHeadline1="${FrameHeadline1_Num} ${FrameHeadline1_Size} ${FrameHeadline1_CR} ${FrameHeadline1_BitRate} ${FrameHeadline1_PSNR} ${FrameHeadline1_QP}"
-    FrameHeadline2="${FrameHeadline2_Num} ${FrameHeadline2_Size} ${FrameHeadline2_CR} ${FrameHeadline2_BitRate} ${FrameHeadline2_PSNR} ${FrameHeadline2_QP}"
+    FrameHeadline1="${FrameHeadline1_Num} ${FrameHeadline1_AllSize}  ${FrameHeadline1_CR} ${FrameHeadline1_Size}${FrameHeadline1_BitRate} ${FrameHeadline1_PSNR} ${FrameHeadline1_QP}"
+    FrameHeadline2="${FrameHeadline2_Num} ${FrameHeadline2_AllSize}  ${FrameHeadline2_CR} ${FrameHeadline2_Size} ${FrameHeadline2_BitRate} ${FrameHeadline2_PSNR} ${FrameHeadline2_QP}"
 }
 
 runInitForSequence()
@@ -442,7 +446,8 @@ runUpdateFrameStatisticInfo()
     FrameCompressedRatio=`echo   "scale=2; ${FramePixelSize}/${FrameSizeAvg}" |bc`
     FrameCompressedRatioI=`echo  "scale=2; ${FramePixelSize}/${FrameSizeAvgI}" |bc`
     FrameCompressedRatioP=`echo  "scale=2; ${FramePixelSize}/${FrameSizeAvgP}"|bc`
-    [ ${FrameSizeAvgB} -gt 0 ] && FrameCompressedRatioB=`echo "scale=2; ${FramePixelSize}/${FrameSizeAvgB}"|bc`
+    AvgBInt=`echo $FrameSizeAvgB | awk 'BEGIN {FS="."} {print $1}'`
+    [ ${AvgBInt} -gt 0 ] && FrameCompressedRatioB=`echo "scale=2; ${FramePixelSize}/${FrameSizeAvgB}"|bc`
 
     #PSNR statistic
     FramePSNRAvg=`echo "scale=2; ${FramePSNRI} + ${FramePSNRP} + ${FramePSNRB} "|bc`
@@ -561,7 +566,7 @@ runGenerateFrameStaticInfo()
     FrameStaticInfoPSNR="${FramePSNRAvg}, ${FramePSNRI}, ${FramePSNRP}, ${FramePSNRB}, ${FramePSNRMaxI}, ${FramePSNRMaxP}, ${FramePSNRMaxB}, ${FramePSNRMinI}, ${FramePSNRMinP}, ${FramePSNRMinB}"
     FrameStaticInfoQP="${FrameQPAvg}, ${FrameQPI}, ${FrameQPP}, ${FrameQPB}, ${FrameQPMaxI}, ${FrameQPMaxP}, ${FrameQPMaxB}, ${FrameQPMinI}, ${FrameQPMinP}, ${FrameQPMinB}"
 
-    FrameStaticInfo="${FrameStaticInfoNum}, ${FrameStaticInfoSize01},${FrameStaticInfoSize02}, ${FrameStaticInfoCompreR},${FrameStaticInfoBitRate}, ${FrameStaticInfoPSNR},${FrameStaticInfoQP}"
+    FrameStaticInfo="${FrameStaticInfoNum}, ${FrameStaticInfoSize01}, ${FrameStaticInfoCompreR}, ${FrameStaticInfoSize02},${FrameStaticInfoBitRate}, ${FrameStaticInfoPSNR},${FrameStaticInfoQP}"
 }
 
 runGenerateSequenceStaticInfo()
