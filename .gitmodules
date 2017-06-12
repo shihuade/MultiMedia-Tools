@@ -1,0 +1,12 @@
+[submodule "submodule/H264BSAnalyzer"]
+	path = submodule/H264BSAnalyzer
+	url = https://github.com/shihuade/H264BSAnalyzer.git
+[submodule "submodule/digital_video_introduction"]
+	path = submodule/digital_video_introduction
+	url = https://github.com/shihuade/digital_video_introduction.git
+[submodule "submodule/hevcesbrowser"]
+	path = submodule/hevcesbrowser
+	url = https://github.com/shihuade/hevcesbrowser.git
+[submodule "submodule/JM18EncoderLogExtractor"]
+	path = submodule/JM18EncoderLogExtractor
+	url = https://github.com/shihuade/JM18EncoderLogExtractor.git
