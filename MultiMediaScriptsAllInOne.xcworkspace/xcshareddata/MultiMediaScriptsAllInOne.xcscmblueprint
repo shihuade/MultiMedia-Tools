@@ -1,0 +1,51 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "6EF91AB871CC70152EFCC6FB831078A0F8835722",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "5BD53A9005CDCEED226C4B0139FAB42E0467237F" : 9223372036854775807,
+    "E2508587D6C3925DDCA6B8CEDD25694838E39DFA" : 9223372036854775807,
+    "5387812083E27352AD4162CABD8494F101ED8AAF" : 9223372036854775807,
+    "6EF91AB871CC70152EFCC6FB831078A0F8835722" : 9223372036854775807,
+    "F39DB0B16D13806F054062783DD8ECB58306CC70" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "C55F27B8-B3C3-427B-A53C-83D8E6311EB9",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "5BD53A9005CDCEED226C4B0139FAB42E0467237F" : "MultiMedia-Tools\/submodule\/JM18EncoderLogExtractor\/",
+    "E2508587D6C3925DDCA6B8CEDD25694838E39DFA" : "MultiMedia-Tools\/submodule\/hevcesbrowser\/",
+    "5387812083E27352AD4162CABD8494F101ED8AAF" : "MultiMedia-Tools\/submodule\/digital_video_introduction\/",
+    "6EF91AB871CC70152EFCC6FB831078A0F8835722" : "MultiMedia-Tools\/",
+    "F39DB0B16D13806F054062783DD8ECB58306CC70" : "MultiMedia-Tools\/submodule\/H264BSAnalyzer\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "MultiMediaScriptsAllInOne",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "MultiMediaScriptsAllInOne.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/shihuade\/digital_video_introduction.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "5387812083E27352AD4162CABD8494F101ED8AAF"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/shihuade\/JM18EncoderLogExtractor.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "5BD53A9005CDCEED226C4B0139FAB42E0467237F"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/shihuade\/MultiMedia-Tools.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "6EF91AB871CC70152EFCC6FB831078A0F8835722"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/shihuade\/hevcesbrowser.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E2508587D6C3925DDCA6B8CEDD25694838E39DFA"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/shihuade\/H264BSAnalyzer.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "F39DB0B16D13806F054062783DD8ECB58306CC70"
+    }
+  ]
+}

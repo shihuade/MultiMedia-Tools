@@ -5,7 +5,13 @@
       location = "group:StreamEye">
    </FileRef>
    <FileRef
+      location = "group:submodule">
+   </FileRef>
+   <FileRef
       location = "group:x264">
+   </FileRef>
+   <FileRef
+      location = "group:JM">
    </FileRef>
    <FileRef
       location = "group:FFMPEG">
