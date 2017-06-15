@@ -46,10 +46,29 @@ runParseMP4Info()
     done
 }
 
+
+runMoovFastStart()
+{
+    for file in ${MP4Dir}/*.mp4
+    do
+        Command="ffmpeg -i $file -c copy -movflags faststart ${file}_moov.mp4"
+        echo "*******************************************************"
+        echo "   moov faststart operation"
+        echo "       ${file}"
+        echo "   ${Command}"
+        echo "*******************************************************"
+        ${Command}
+        echo "*******************************************************"
+    done
+}
+
+
 runMain()
 {
     runInit
     runCheck
+
+    runMoovFastStart
     runParseMP4Info
 }
 
