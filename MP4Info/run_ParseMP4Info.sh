@@ -5,13 +5,13 @@
 
 runUsage()
 {
-    echo "*****************************************"
+    echo -e "\033[31m ***************************************** \033[0m"
     echo " Usage:"
     echo "    $0  \$InputMp4File  \$OutputFile"
     echo "    $0  \$InputMp4Dir   \$OutputFile"
     echo " example:"
     echo "    $0   test.mp4 test.mp4.csv"
-    echo "*****************************************"
+    echo -e "\033[31m ***************************************** \033[0m"
 }
 
 runInitMP4Info()
@@ -51,9 +51,9 @@ runInitMP4Info()
 runInitOutputInfo()
 {
     #0
-    HeadLineBasic="File, size(MBs),VSize(MB),ASize(MBs),VRatio(%),ARatio(%),VDuration,ADuration"
+    HeadLineBasic="File, size(MBs),VSize(MB),ASize(MBs),VRatio(%),ARatio(%),VDuration(ms),ADuration(ms)"
     #8
-    HeadLineAudio="SampeC, BR(kbps)"
+    HeadLineAudio="AudioSampeC, AudioBR(kbps)"
     #10
     HeadLineVideo="Profile, Level, PicW, PicH,FPS,FrmNum,BR(kbps),CR"
 
@@ -72,7 +72,7 @@ runParseVideoInfo()
     VideoHeight=`cat ${VideoTrackInfo}      | grep "Height"        | awk 'BEGIN {FS=" "} {print $2}'`
 
     Profile=`cat ${VideoTrackInfo} | grep "AVC Profile:" | awk 'BEGIN {FS="("} {print $2}' | awk 'BEGIN {FS=")"} {print $1}'`
-    Level=`cat ${VideoTrackInfo} | grep "AVC Level:"   | awk 'BEGIN {FS=" "} {print $2}'`
+    Level=`cat ${VideoTrackInfo} | grep "AVC Level:"   | awk 'BEGIN {FS=" "} {print $3}'`
 }
 
 runParseAudioInfo()
@@ -94,10 +94,6 @@ runCalculateVideoInfo()
 
     VideoCompreRate=`echo  "scale=2; ${VideoRawSize} / ${VideoSize}" | bc`
     VideoRatio=`echo  "scale=2; ${VideoSize} / ${MP4Size} * 100" | bc`
-
-echo "VideoRawSize is --$VideoRawSize--"
-echo "VideoSize is --$VideoSize--"
-
 }
 
 runCalculateAudioInfo()
@@ -108,8 +104,8 @@ runCalculateAudioInfo()
 
 runCVSOutputInfoForOneFile()
 {
-    MP4Basic="$MP4File, $MP4Size, $VideoSize, $AudioSize, $VideoRatio, $AudioRatio, $VideoDuration, $AudioDuration"
-    AudioData="$AudioSampleCount, $AudioDuration"
+    MP4Basic="$Mp4FileName, $MP4Size, $VideoSize, $AudioSize, $VideoRatio, $AudioRatio, $VideoDuration, $AudioDuration"
+    AudioData="$AudioSampleCount, $AudioBitRate"
     VideoData="$Profile, $Level, $VideoWidth, $VideoHeight, $VideoFPS, $VideoSampleCount, $VideoBitRate, $VideoCompreRate"
 
    MP4Data="${MP4Basic}, ${AudioData}, ${VideoData}"
@@ -117,40 +113,36 @@ runCVSOutputInfoForOneFile()
 
 runOutputParseInfo()
 {
-    echo "**************************************************"
+    echo -e "\033[32m ***************************************** \033[0m"
     echo "  file is:             $MP4File"
     echo "  MP4Size(MBs):        $MP4Size"
-    echo "**************************************************"
+    echo -e "\033[33m ***************************************** \033[0m"
     echo "  Video info                                      "
     echo "     Profile: $Profile  Level: $Level             "
     echo "     $VideoWidth x ${VideoHeight}  FPS: $VideoFPS "
     echo "     VideoSize(MBs): $VideoSize    $VideoRatio%   "
-    echo "**************************************************"
+    echo -e "\033[33m ***************************************** \033[0m"
     echo "  VideoBitRate(kbps):  $VideoBitRate"
     echo "  VideoCompreRate:     $VideoCompreRate"
     echo "  VideoSampleCount:    $VideoSampleCount"
     echo "  VideoDuration(ms):   $VideoDuration"
-    echo "**************************************************"
+    echo -e "\033[34m ***************************************** \033[0m"
     echo "  Audio info                                      "
     echo "     AudioSize(MBs): $AudioSize    $AudioRatio%   "
-    echo "**************************************************"
+    echo -e "\033[34m ***************************************** \033[0m"
     echo "  AudioBitRate(kbps):   $AudioBitRate"
     echo "  AudioSampleCount:     $AudioSampleCount"
     echo "  AudioDuration(ms):    $AudioDuration"
-    echo "**************************************************"
+    echo -e "\033[32m ***************************************** \033[0m"
 }
 
 runParseOneMp4File()
 {
-    echo "**************************************************"
-    echo " Parsing mp4 file ..."
-    echo "     MP4File is:  ${MP4File}"
-    echo "**************************************************"
-
     runInitMP4Info
 
     #bytes
     MP4Size=`ls -l ${MP4File} | awk '{print $5}'`
+    Mp4FileName=`basename $MP4File`
 
     mp4info ${MP4File} >${MP4Info}
 
@@ -167,7 +159,7 @@ runParseOneMp4File()
 
 runParseAllMP4Files()
 {
-    if [ -e ${Input} ]
+    if [ -f ${Input} ]
     then
         MP4File=${Input}
         runParseOneMp4File
@@ -178,10 +170,11 @@ runParseAllMP4Files()
     fi
 
     runInitOutputInfo
-    echo "HeadLine">${OutputFile}
+    echo "$HeadLine">${OutputFile}
 
     for MP4File in ${Input}/*.mp4
     do
+       echo "MP4File is $MP4File"
         runParseOneMp4File
         echo ${MP4Data} >>${OutputFile}
 
