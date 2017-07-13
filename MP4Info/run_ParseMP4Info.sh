@@ -177,10 +177,7 @@ runParseAllMP4Files()
        echo "MP4File is $MP4File"
         runParseOneMp4File
         echo ${MP4Data} >>${OutputFile}
-
     done
-
-
 }
 
 runCheck()
@@ -194,7 +191,7 @@ runCheck()
         exit 1
     fi
 
-    [ -z ${OutputFile} ] && OutputFile="MP4Info.csv"
+    [ -z ${OutputFile} ] && OutputFile="MP4InfoVideoAudio.csv"
 }
 
 runMain()
