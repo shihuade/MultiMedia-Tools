@@ -17,10 +17,7 @@
       location = "group:FFMPEG">
    </FileRef>
    <FileRef
-      location = "group:run_GetMP4Info.sh">
-   </FileRef>
-   <FileRef
-      location = "group:reference.txt">
+      location = "group:Wireshark">
    </FileRef>
    <FileRef
       location = "group:MP4Info">

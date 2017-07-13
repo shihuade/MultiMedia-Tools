@@ -1,3 +1,13 @@
 
 
 
+ grep -rin1 '.mp4' dump.pcap
+
+less dump.pcap
+
+strings dump.pcap > dump.string
+
+ tcpdump -i en0 -w - ip host 221.228.217.237 and tcp port 80 > /tmp/dump.pcap
+
+
+

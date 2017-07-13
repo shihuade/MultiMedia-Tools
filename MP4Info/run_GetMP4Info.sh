@@ -39,8 +39,8 @@ runParseMP4Info()
         echo "   mp4 info parser for file: "
         echo "       ${file}"
         echo "*******************************************************"
-        mp4info ${file} >>${LogFile}
-        MP4Parser ${file} -T >>${LogFile}
+        mp4info ${file}
+        MP4Parser ${file} -T
         echo "*******************************************************"
 
     done
@@ -51,7 +51,7 @@ runMoovFastStart()
 {
     for file in ${MP4Dir}/*.mp4
     do
-        Command="ffmpeg -i $file -c copy -movflags faststart ${file}_moov.mp4"
+        Command="ffmpeg -i $file -c copy -movflags faststart ${file}_moov.mp4 -y"
         echo "*******************************************************"
         echo "   moov faststart operation"
         echo "       ${file}"
@@ -62,14 +62,13 @@ runMoovFastStart()
     done
 }
 
-
 runMain()
 {
     runInit
     runCheck
 
-    runMoovFastStart
-    runParseMP4Info
+#runMoovFastStart
+    runParseMP4Info >>${LogFile}
 }
 
 if [ $# -lt 1 ]
