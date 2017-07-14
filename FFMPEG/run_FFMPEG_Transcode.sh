@@ -30,7 +30,7 @@ runInit()
     AllMP4InfoParserConsole="Report_AllMP4InfoDetail.txt"
     TranscodeSummaryInfo="Report_TranscodeSummary.csv"
 
-    HeadLine="MP4File, OriginSize(MBs), TranscodedSize(MBs), Delta(%)"
+    HeadLine="MP4File, OriginSize(MBs), TranscodedSize(MBs), Delta(%), Time(s), SHA1-Org, SHA1-Trans"
 
     echo "${HeadLine}">${TranscodeSummaryInfo}
 }
@@ -48,9 +48,17 @@ runUpdateTranscodeStatic()
     TranscodeMP4Size=`echo  "scale=2; ${TranscodeMP4Size} /1024 / 1024"   | bc`
 
     DeltaSize=`echo  "scale=2; ${OriginMP4Size} - ${TranscodeMP4Size}"    | bc`
-    CompressRatio=`echo  "scale=2; ${DeltaSize} / ${OriginMP4Size} * 100" | bc`
+    DeltaRatio=`echo  "scale=2; ${DeltaSize} / ${OriginMP4Size} * 100" | bc`
 
-    TranscodeStatic="${MP4FileName}, ${OriginMP4Size}, ${TranscodeMP4Size}, ${CompressRatio}"
+
+    TranscodeTime=`echo  "scale=2; ${EndTime} - ${StartTime}" | bc`
+
+    SHA1Org=`openssl sha1 $Mp4File       | awk '{print $2}'`
+    SHA1Trans=`openssl sha1 $OutputFile  | awk '{print $2}'`
+
+    TranscodeStatic="${MP4FileName}, ${OriginMP4Size}, ${TranscodeMP4Size}, ${DeltaRatio}"
+    TranscodeStatic="${TranscodeStatic}, ${TranscodeTime}, ${SHA1Org}, ${SHA1Trans}"
+
 
     echo "${TranscodeStatic}" >>${TranscodeSummaryInfo}
 }
@@ -71,16 +79,21 @@ runTranscode()
         [ -z "${OriginFlag}" ] || continue
 
         OutputFile="${Mp4File}_${TranscodePattern}_${Pattern}.mp4"
-        TransCommand="ffmpeg -i $Mp4File -c:a copy -c:v libx264 -profile:v high -level 3.1"
-        TransCommand="$TransCommand -crf 24 ${x264Params} -y $OutputFile"
+#TransCommand="ffmpeg -i $Mp4File -c:a copy -c:v libx264 -profile:v high -level 3.1"
+#TransCommand="$TransCommand -crf 24 ${x264Params} -y $OutputFile"
 
+TransCommand="ffmpeg -i $Mp4File -c copy -y $OutputFile"
+
+        #ffmpeg -i 1827259258.mp4 -c:a copy -c:v libx264 -profile:v high -level 3.1 -crf 24 -vf curves=lighter -pix_fmt yuv420p -y 1827259258.mp4_ligther_crf24.mp4
         echo -e "\033[32m ***************************************** \033[0m"
         echo "  Mp4File is $Mp4File"
         echo "  TransCommand is : $TransCommand"
         echo "  addition enc param is: ${x264Params}"
         echo -e "\033[32m ***************************************** \033[0m"
 
+        StartTime=`date +%s`
         ${TransCommand}
+        EndTime=`date +%s`
 
         runUpdateTranscodeStatic
     done
