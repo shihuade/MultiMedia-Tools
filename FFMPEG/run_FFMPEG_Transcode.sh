@@ -73,16 +73,25 @@ runGetAllMP4StaticInfo()
 
 runTranscode()
 {
+
+    CommandDenoise="atadenoise=0a=0.1:0b=5.0:1a=0.1:1b=5.0:2a=0.1:2b=5.0"
+    CommandBright="colorlevels=rimax=0.902:gimax=0.902:bimax=0.902  -pix_fmt yuv420p"
+    CommandSharpen="unsharp=lx=9:ly=9:la=0.5:cx=9:cy=9:ca=0.5"
+    CommandBR="-crf 21"
+
     for Mp4File in ${InputDir}/*.mp4
     do
         OriginFlag=`echo "$Mp4File" | grep ${TranscodePattern}`
         [ -z "${OriginFlag}" ] || continue
 
-        OutputFile="${Mp4File}_${TranscodePattern}_${Pattern}.mp4"
-#TransCommand="ffmpeg -i $Mp4File -c:a copy -c:v libx264 -profile:v high -level 3.1"
-#TransCommand="$TransCommand -crf 24 ${x264Params} -y $OutputFile"
+        OutputFile="${Mp4File}_${TranscodePattern}_${Pattern}_crf21.mp4"
+        TransCommand="ffmpeg -i $Mp4File -c:a copy -c:v libx264 -profile:v high -level 3.1"
+        TransCommand="$TransCommand -vf ${CommandDenoise} -vf ${CommandBright}" #-vf ${CommandSharpen}"
+        TransCommand="$TransCommand ${CommandBR} ${x264Params} -movflags faststart -y $OutputFile"
 
-TransCommand="ffmpeg -i $Mp4File -c copy -y $OutputFile"
+        #ffmpeg -i Input.mp4 -c:a copy -c:v libx264 -profile:v high -level 3.1 -vf atadenoise=0a=0.1:0b=5.0:1a=0.1:1b=5.0:2a=0.1:2b=5.0 -vf colorlevels=rimax=0.902:gimax=0.902:bimax=0.902  -pix_fmt yuv420p -crf 21  -movflags faststart -y output.mp4
+
+        #TransCommand="ffmpeg -i $Mp4File -c copy -y $OutputFile"
 
         #ffmpeg -i 1827259258.mp4 -c:a copy -c:v libx264 -profile:v high -level 3.1 -crf 24 -vf curves=lighter -pix_fmt yuv420p -y 1827259258.mp4_ligther_crf24.mp4
         echo -e "\033[32m ***************************************** \033[0m"

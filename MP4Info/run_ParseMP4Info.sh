@@ -1,6 +1,7 @@
 #!/bin/bash
 #***************************************************************
-#  parse mp4 files' video/audion info based mp4info tool
+# brief:
+#    parse mp4 files' video/audion info based mp4info tool
 #***************************************************************
 
 runUsage()
