@@ -1,4 +1,10 @@
 #!/bin/bash
+#*********************************************************************
+#  brief:
+#       for x264 enc params deep learning
+#       both single and combination enc parametes
+#
+#*********************************************************************
 
 runUsage()
 {
@@ -72,14 +78,14 @@ runx264EncInitCRF()
     #***********************************************************
 }
 
-runx264EncInitCRF()
+runx264EncInitProfile()
 {
     EncParamName="Profile"
     EncParamArg="--profile "
     FPS="30"
 
     decalare -a aEncParam
-    aEncParam=(22 23 24 25)
+    aEncParam=(baseline main high high10 high422 high444)
     #***********************************************************
     #init
     runInit
@@ -152,7 +158,8 @@ runMain()
     runCheck
 
     #x264 enc param test
-    runx264EncInitCRF
+#runx264EncInitCRF
+runx264EncInitProfile
     runx264EncParam
 
     #get all mp4 info for which based encoded bitstream
