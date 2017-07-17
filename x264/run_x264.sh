@@ -56,7 +56,6 @@ runUpdatex264EncStatic()
     SHA1Trans=`openssl sha1 $OutputBitStream  | awk '{print $2}'`
 
     #BitRate, PSNRY, PSNRU,  PSNRV, FPS
-echo "123"
     x264EncPerfInfo=`${x264EncParserScript} ${x264EncLog}`
 
 
@@ -83,10 +82,25 @@ runx264EncInitCRF()
 runx264EncInitProfile()
 {
     EncParamName="Profile"
+    EncParamPlus=""
     EncParamArg="--profile "
     FPS="30"
 
     aEncParam=( baseline main high high10 high422 high444 )
+    #***********************************************************
+    #init
+    runInit
+    #***********************************************************
+}
+
+runx264EncInitLevel()
+{
+    EncParamName="Level"
+    EncParamPlus="--profile high"
+    EncParamArg="--level "
+    FPS="30"
+
+    aEncParam=(20 30 40  50 52 )
     #***********************************************************
     #init
     runInit
@@ -100,7 +114,8 @@ runx264EncParam()
         OutputBitStream="${InputYUV}_${EncParamName}_${EncParam}.264"
         OutputMp4="${InputYUV}_${EncParamName}_${EncParam}.264.mp4"
         x264EncLog="${InputYUV}_${EncParamName}_${EncParam}_enc.txt"
-        EncCommand="x264 --psnr ${EncParamArg} ${EncParam}  -o ${OutputBitStream} ${InputYUV}"
+        EncCommand="x264 --psnr ${EncParamPlus}"
+        EncCommand="${EncCommand} ${EncParamArg} ${EncParam}  -o ${OutputBitStream} ${InputYUV}"
         MP4Command="ffmpeg -framerate ${FPS} -i ${OutputBitStream} -c copy -y ${OutputMp4}"
 
         echo -e "\033[32m ***************************************** \033[0m"
@@ -161,7 +176,8 @@ runMain()
 
     #x264 enc param test
 #runx264EncInitCRF
-runx264EncInitProfile
+#runx264EncInitProfile
+runx264EncInitLevel
 
     runx264EncParam
 
