@@ -117,7 +117,7 @@ runx264EncParam()
         EndTime=`date +%s`
 
         #generate mp4 file based on bitstream
-        MP4Command
+        ${MP4Command}
 
         #update x264 enc performance data
         runUpdatex264EncStatic
@@ -145,7 +145,7 @@ runPrompt()
 
 runCheck()
 {
-    if [ -f ${InputYUV} ]
+    if [ ! -f ${InputYUV} ]
     then
         echo "Input dir doest not exist, please double check"
         runUsage
