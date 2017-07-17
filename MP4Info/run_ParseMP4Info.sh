@@ -86,8 +86,8 @@ runParseAudioInfo()
 
 runCalculateVideoInfo()
 {
-    #MBbyts
-    MP4Size=`echo  "scale=2; ${MP4Size} / 1024 /1024" | bc`
+    #MBbytes
+    MP4Size=`echo  "scale=2; ${MP4Size} /1024 /1024" | bc`
     FrameSize=`echo  "scale=2; ${VideoWidth} * ${VideoHeight} * 1.5" | bc`
 
     VideoRawSize=`echo  "scale=2; ${VideoSampleCount} * ${FrameSize} / 1024 /1024 " | bc`
@@ -99,8 +99,11 @@ runCalculateVideoInfo()
 
 runCalculateAudioInfo()
 {
+if [ ! -z "${AudioBitRate}" ]
+then
     AudioSize=`echo  "scale=2; ${AudioBitRate} * ${AudioDuration} /1000 / 1024 / 8" | bc`
     AudioRatio=`echo  "scale=2; ${AudioSize} / ${MP4Size} * 100" | bc`
+fi
 }
 
 runCVSOutputInfoForOneFile()

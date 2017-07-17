@@ -21,7 +21,7 @@ runInit()
 {
     Pattern="x264_PreProcess"
     MP4ParserScript="../MP4Info/run_ParseMP4Info.sh"
-    x264EncParserScript"./run_PareseX264EncLog.sh"
+    x264EncParserScript="./run_PareseX264EncLog.sh"
     x264EncLog=""
     x264EncPerfInfo=""
 
@@ -56,12 +56,14 @@ runUpdatex264EncStatic()
     SHA1Trans=`openssl sha1 $OutputBitStream  | awk '{print $2}'`
 
     #BitRate, PSNRY, PSNRU,  PSNRV, FPS
+echo "123"
     x264EncPerfInfo=`${x264EncParserScript} ${x264EncLog}`
 
-    x264EncStatic="${PreProcParam}, ${YUVSize}, ${BitstreamSize}, ${CompressRate}"
+
+    x264EncStatic="${EncParamName}_${EncParam}, ${YUVSize}, ${BitstreamSize}, ${CompressRate}"
     x264EncStatic="${x264EncStatic}, ${x264EncPerfInfo}, ${EncodeTime}, ${SHA1Org}, ${SHA1Trans}"
 
-    echo "${x264EncStatic}" >>${PreProcReporr}
+    echo "${x264EncStatic}" >>${x264EncReport}
 }
 
 runx264EncInitCRF()
@@ -84,8 +86,7 @@ runx264EncInitProfile()
     EncParamArg="--profile "
     FPS="30"
 
-    decalare -a aEncParam
-    aEncParam=(baseline main high high10 high422 high444)
+    aEncParam=( baseline main high high10 high422 high444 )
     #***********************************************************
     #init
     runInit
@@ -99,7 +100,7 @@ runx264EncParam()
         OutputBitStream="${InputYUV}_${EncParamName}_${EncParam}.264"
         OutputMp4="${InputYUV}_${EncParamName}_${EncParam}.264.mp4"
         x264EncLog="${InputYUV}_${EncParamName}_${EncParam}_enc.txt"
-        EncCommand="x264  ${EncParamArg} ${EncParam}  -i ${OutputBitStream} ${InputYUV}"
+        EncCommand="x264 --psnr ${EncParamArg} ${EncParam}  -o ${OutputBitStream} ${InputYUV}"
         MP4Command="ffmpeg -framerate ${FPS} -i ${OutputBitStream} -c copy -y ${OutputMp4}"
 
         echo -e "\033[32m ***************************************** \033[0m"
@@ -113,7 +114,8 @@ runx264EncParam()
 
         #start
         StartTime=`date +%s`
-        ${EncCommand} >${x264EncLog}
+        echo "${EncCommand}" >${x264EncLog}
+        ${EncCommand}      2>>${x264EncLog}
         EndTime=`date +%s`
 
         #generate mp4 file based on bitstream
@@ -160,10 +162,11 @@ runMain()
     #x264 enc param test
 #runx264EncInitCRF
 runx264EncInitProfile
+
     runx264EncParam
 
     #get all mp4 info for which based encoded bitstream
-    runGetAllMP4StaticInfo >${AllMP4InfoParserConsole}
+    runGetAllMP4StaticInfo  >${AllMP4InfoParserConsole}
 
     runPrompt
 }
