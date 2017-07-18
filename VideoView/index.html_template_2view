@@ -1,0 +1,157 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>VideoComparison</title>
+<style type="text/css">
+    table,td,th{
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+    }
+    th{
+        width: 20%;
+    }
+    video {
+        width: 100%;
+    }
+    a {
+        text-decoration: none;
+        background: #337AB7;
+        color: white;
+        font: 20px;
+        padding: 10px;
+        margin: 5px;
+    }
+    .summary {
+        background: #F0ECD8;
+        padding: 10px;
+    }
+</style>
+<script type="text/javascript">
+    
+    var files=["OriginFileName"];
+    
+    var prefix = "./";
+    var suffix = ["suffix01","suffix02"];
+    var videoTypes = ["Param_01", "Param_02"];
+
+    var typeCount = Math.min(suffix.length, videoTypes.length);
+    var index = -1;
+
+    function change(delta){
+        index += delta;
+        setIndex(index);
+    }
+
+    function setIndex(newIndex){
+
+        if(newIndex < 0){
+            newIndex = files.length - 1;
+        } else {
+            newIndex = newIndex%files.length;
+        }
+        index = newIndex;
+
+        var file = files[newIndex];
+        for (var i=0; i<typeCount; i++) {
+            var videoUrl = prefix + "/" + file + suffix[i];
+            document.getElementById("v" + i).src = videoUrl;
+            var id="i" + i;
+            getSize(videoUrl, id, function(infoId, size){
+                document.getElementById(infoId).innerText = Math.round(size/1024) + "KB";
+                console.log("infoId="+infoId + "; size=" + size);
+            });            
+        }
+        window.location.href = "#" + newIndex;
+        document.getElementById("summary").innerText = (1+newIndex) + "/" + files.length;
+        document.getElementById("viewer").href = "http://www.musical.ly/v/" + file + ".html";
+    }
+
+    function play(){
+        for(var i=suffix.length-1; i>=0; i--){
+            document.getElementById("v" + i).play();
+        }
+    }
+
+    function pause(){
+        for(var i=suffix.length-1; i>=0; i--){
+            document.getElementById("v" + i).pause();
+        }
+    }
+
+    function getSize(url, infoId, cb) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('HEAD', url, true);
+        xhr.onreadystatechange = function() 
+        {
+            if (xhr.readyState == 4) 
+            {
+                if (xhr.status == 200) 
+                {
+                    size = xhr.getResponseHeader('Content-Length');
+                    cb(infoId, size);
+                }
+            }
+        };
+        try{
+            xhr.send(null);
+        } catch(e){
+
+        }
+    }
+
+</script>
+</head>
+
+<body>
+<div style="width:100%;margin-left: auto;margin-right: auto; text-align: center;">
+    <table style="width: 100%">
+        <tr id="typeHead"></tr>
+        <tr id="sizeHead"></tr>
+        <tr id="videoRow"></tr>
+    </table>
+</div>
+
+<div style="margin-top:30px;text-align: center;">
+    <a href="javascript:;" onclick="change(-1)">&lt;&lt; previous</a>
+    <span id="summary" class="summary"></span>
+    <a href="javascript:;" onclick="change(1)">next &gt;&gt;</a>
+    <a href="javascript:;" onclick="play(-1)">play</a>
+    <a href="javascript:;" onclick="pause(-1)">pause</a>
+    <a id="viewer" target="_blank">view</a>
+</div>
+</body>
+
+<script type="text/javascript">
+    var typeHtml = "";
+    var sizeHtml = "";
+    var videoHtml = "";
+    for(var i=0; i<typeCount; i++) {
+        typeHtml += "<th>" + videoTypes[i] +"</th>";
+        sizeHtml += '<th id="i"' + i + '></th>';
+        videoHtml += '<td><video id="v' + i + '" controls="true" preload="true" muted="true"></video></td>';
+    }
+    document.getElementById("typeHead").innerHTML = typeHtml;
+    document.getElementById("sizeHead").innerHTML = sizeHtml;
+    document.getElementById("videoRow").innerHTML = videoHtml;
+
+    var set = false;
+    var url = window.location.href;
+    if(url.indexOf("#") >= 0){
+        var hash = url.substring(url.indexOf("#")+1);
+        if(!isNaN(hash)){
+            setIndex(hash);
+            set = true;
+        }
+    }
+    if(!set){
+        setIndex(0);
+    }
+
+    if(videoTypes.length != suffix.length){
+        alert("video types county != suffix count");
+    }
+    
+</script>
+</html>
+</script>
+</html>
