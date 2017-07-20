@@ -17,14 +17,24 @@ runUsage()
 
 runInit()
 {
+    #check OS
+    #*************
+    OSType=`uname`
+    if [[ "$OSType" =~ "Darwin" ]]; then
+        OSType="Mac"
+    else
+        OSType="Linux"
+    fi
+
     SEISourceFile="encoder/encoder.c"
     SEIFunction="x264_sei_version_write"
     x264Bin="${x264Dir}/x264"
     x264Lib="${x264Dir}/libx264.a"
+    x264DyLib="${x264Dir}/libx264.*.dylib"
 
     #for x264 build setting
     Config="configure"
-    PresetForBuild=""
+    PresetForBuild="--enable-shared --enable-static"
 
     #veridate setting
     InputYUV="../../../YUV/BasketballDrill_832x480_50.yuv"
@@ -65,14 +75,11 @@ runDisableEncParamSEI()
 
     for linenum in ${aLineNum[@]}
     do
-SedCommand="sed -i \".bak\" \"${linenum}d\" ${SEISourceFile}"
-echo "command is: ${SedCommand}"
+        SedCommand="sed -i \".bak\" \"${linenum}d\" ${SEISourceFile}"
+        sed -i ".bak" "${linenum}d" ${SEISourceFile}
 
-sed -i ".bak" "${linenum}d" ${SEISourceFile}
-
-SedCommand="sed -i \".bak\" \"${linenum}d\" ${SEISourceFile}"
-echo "command is: ${SedCommand}"
-sed -i ".bak" "${linenum}d" ${SEISourceFile}
+        SedCommand="sed -i \".bak\" \"${linenum}d\" ${SEISourceFile}"
+        sed -i ".bak" "${linenum}d" ${SEISourceFile}
     done
 
     #remove .bak files
@@ -111,8 +118,26 @@ runBuildx264WithoutEncParamSEI()
 
     make
     cd -
+}
 
-    [ -e ${x264Bin} ] || [ -e ${x264Lib} ] || Flag="Failed"
+runCheckLib()
+{
+
+    #get dylib for mac
+    if [ "$OSType" = "Mac" ]; then
+        x264DyLib=`find ${x264Dir} -name *.dylib`
+        x264DyLib=`echo ${x264DyLib} | grep "x264" `
+    else
+        x264DyLib=`find ${x264Dir} -name *.so`
+        x264DyLib=`echo ${x264DyLib} | grep "*x264*" `
+    fi
+
+echo "OSType is $OSType"
+echo "x264DyLib is $x264DyLib"
+
+    [ -z "${x264DyLib}" ] && echo -e "\033[31m x264 share lib not found! \033[0m" && exit 1
+
+    [ -e ${x264Bin} ] || [ -e ${x264Lib} ] || [ -e "${x264DyLib}" ] ||  Flag="Failed"
     [ "$Flag" = "Failed" ] && echo -e "\033[31m x264 bin or lib not found! \033[0m" && exit 1
 
     echo -e "\033[32m ***************************************** \033[0m"
@@ -155,10 +180,12 @@ runMain()
 
     runInit
 
-    runDisableEncParamSEI
-    runCheckDisableStatus
+# runDisableEncParamSEI
+#   runCheckDisableStatus
 
-    runBuildx264WithoutEncParamSEI
+#    runBuildx264WithoutEncParamSEI
+
+    runCheckLib
     runValidate
 
     runPrompt
