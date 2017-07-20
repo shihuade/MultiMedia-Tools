@@ -63,7 +63,6 @@ runGetAllMP4StaticInfo()
     ${Command}
 }
 
-
 runDenoise()
 {
     #reference: http://ffmpeg.org/ffmpeg-all.html#noise
@@ -266,6 +265,87 @@ runBright02()
     runGetAllMP4StaticInfo >${AllMP4InfoParserConsole}
 }
 
+
+runPreAndTranscode()
+{
+
+    #inital
+    #******************************************************
+    declare -a aCommad
+#aCommad=(-1 0 1)
+#CommandParam="-deblock"
+#PreProName="Deblock"
+
+#aCommad=(0 1 2)
+#CommandParam="-trellis "
+#PreProName="Trellis"
+# best: Trellis=2
+
+#aCommad=(2 3 4 5)
+#CommandParam="-bf "
+#PreProName="BFrames"
+#best 3~4
+
+#aCommad=(3 4 5)
+#CommandParam="-refs "
+#PreProName="RefFrms"
+# douyin ==5
+
+#aCommad=(7 8 9)
+#CommandParam="-subq "
+#PreProName="subme"
+#  best: 7  or 9
+
+#aCommad=(-1 -3 -4 )
+#CommandParam="-chromaoffset "
+#PreProName="chromaoffset"
+
+
+#OptCommand="-deblock 1 -trellis 2 -bf 4 -refs 5 -subq 9"
+Label="subme_crf_24"
+aCommad=(7 )
+CommandParam="-subq "
+CommandBR="-crf 24"
+
+
+    CommandDenoise="atadenoise=0a=0.1:0b=5.0:1a=0.1:1b=5.0:2a=0.1:2b=5.0"
+    CommandBright="colorlevels=rimax=0.902:gimax=0.902:bimax=0.902  -pix_fmt yuv420p"
+
+    runInit
+    # specal for transcode
+    HeadLine="ChrmQPOffset, OriginSize(MBs), PreprocSize(MBs), Delta(%), Time(s), SHA1-Org, SHA1-Trans"
+    echo "${HeadLine}">${PreProcReporr}
+    #*************************************************************************************
+    let "index =0"
+    for cmd in ${aCommad[@]}
+    do
+#OptCommand="-deblock 1 -trellis 2 -bf 4 -refs 5 ${CommandParam} ${cmd}"
+        TranscodeCMD="-c:a copy -c:v libx264 -profile:v high -level 3.1"
+TranscodeCMD="${TranscodeCMD} ${OptCommand} ${CommandBR}"#  -vf ${CommandDenoise}"
+
+        PreProcParam="${cmd}"
+        OutputFile="${Mp4File}_FFMPEG_${PreProName}_${cmd}_${Label}.mp4"
+        Command="ffmpeg -i ${Mp4File} ${TranscodeCMD}"
+        Command="${Command}  -movflags faststart -y ${OutputFile}"
+
+        echo -e "\033[32m ***************************************** \033[0m"
+        echo "  PreProcParam is ${PreProcParam}"
+        echo "  OutputFile   is ${OutputFile}"
+        echo "  Command      is ${Command}"
+        echo -e "\033[32m ***************************************** \033[0m"
+
+        StartTime=`date +%s`
+        ${Command}
+        EndTime=`date +%s`
+
+        runUpdateTranscodeStatic
+
+        let "index ++"
+    done
+
+    runGetAllMP4StaticInfo >${AllMP4InfoParserConsole}
+}
+
 runCheck()
 {
     let "Flag = 1"
@@ -286,7 +366,8 @@ runMain()
 #runSharpen
 #runDenoise
 #runBright01
-runBright02
+#runBright02
+runPreAndTranscode
 }
 
 #*****************************************************

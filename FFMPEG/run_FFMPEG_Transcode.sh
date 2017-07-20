@@ -26,9 +26,9 @@ runInit()
     TranscodePattern="ffmpeg_trans"
 
     MP4ParserScript="../MP4Info/run_ParseMP4Info.sh"
-    AllMP4Info="Report_AllMP4Info.csv"
-    AllMP4InfoParserConsole="Report_AllMP4InfoDetail.txt"
-    TranscodeSummaryInfo="Report_TranscodeSummary.csv"
+    AllMP4Info="Report_AllMP4Info_${Label}.csv"
+    AllMP4InfoParserConsole="Report_AllMP4InfoDetail_${Label}.txt"
+    TranscodeSummaryInfo="Report_TranscodeSummary_${Label}.csv"
 
     HeadLine="MP4File, OriginSize(MBs), TranscodedSize(MBs), Delta(%), Time(s), SHA1-Org, SHA1-Trans"
 
@@ -74,19 +74,31 @@ runGetAllMP4StaticInfo()
 runTranscode()
 {
 
+    CRFParam=$1
+    Label="Opt_crf_${CRFParam}"
+    CommandBR="-crf ${CRFParam}"
+OptCommand="-deblock 1 -trellis 2 -bf 4 -refs 5 -subq 9"
+#OptCommand="-deblock 1 -trellis 2 -bf 4 -refs 5 -subq 9"
+
     CommandDenoise="atadenoise=0a=0.1:0b=5.0:1a=0.1:1b=5.0:2a=0.1:2b=5.0"
     CommandBright="colorlevels=rimax=0.902:gimax=0.902:bimax=0.902  -pix_fmt yuv420p"
     CommandSharpen="unsharp=lx=9:ly=9:la=0.5:cx=9:cy=9:ca=0.5"
-    CommandBR="-crf 21"
+
+#**********************************
+runInit
+#**********************************
+
 
     for Mp4File in ${InputDir}/*.mp4
     do
         OriginFlag=`echo "$Mp4File" | grep ${TranscodePattern}`
         [ -z "${OriginFlag}" ] || continue
 
-        OutputFile="${Mp4File}_${TranscodePattern}_${Pattern}_crf21.mp4"
+        OutputFile="${Mp4File}_${TranscodePattern}_${Pattern}_${Label}.mp4"
         TransCommand="ffmpeg -i $Mp4File -c:a copy -c:v libx264 -profile:v high -level 3.1"
-        TransCommand="$TransCommand -vf ${CommandDenoise} -vf ${CommandBright}" #-vf ${CommandSharpen}"
+TransCommand="$TransCommand ${OptCommand}"
+
+TransCommand="$TransCommand " # -vf ${CommandDenoise}"
         TransCommand="$TransCommand ${CommandBR} ${x264Params} -movflags faststart -y $OutputFile"
 
         #ffmpeg -i Input.mp4 -c:a copy -c:v libx264 -profile:v high -level 3.1 -vf atadenoise=0a=0.1:0b=5.0:1a=0.1:1b=5.0:2a=0.1:2b=5.0 -vf colorlevels=rimax=0.902:gimax=0.902:bimax=0.902  -pix_fmt yuv420p -crf 21  -movflags faststart -y output.mp4
@@ -132,14 +144,27 @@ runCheck()
 
 }
 
+
+runAllCRF()
+{
+    declare -a aCRF
+    aCRF=(22 23 24 25 27 28 29 )
+
+    for crf in ${aCRF[@]}
+    do
+        runTranscode $crf
+        runGetAllMP4StaticInfo >${AllMP4InfoParserConsole}
+    done
+}
+
+
 runMain()
 {
     runCheck
 
-    runInit
 
-    runTranscode
-    runGetAllMP4StaticInfo >${AllMP4InfoParserConsole}
+#runTranscode
+runAllCRF
     runPrompt
 
 }
