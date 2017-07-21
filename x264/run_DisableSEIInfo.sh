@@ -132,9 +132,6 @@ runCheckLib()
         x264DyLib=`echo ${x264DyLib} | grep "*x264*" `
     fi
 
-echo "OSType is $OSType"
-echo "x264DyLib is $x264DyLib"
-
     [ -z "${x264DyLib}" ] && echo -e "\033[31m x264 share lib not found! \033[0m" && exit 1
 
     [ -e ${x264Bin} ] || [ -e ${x264Lib} ] || [ -e "${x264DyLib}" ] ||  Flag="Failed"
@@ -172,6 +169,10 @@ runPrompt()
     echo -e "\033[32m ***************************************** \033[0m"
     echo -e "\033[33m  validate file: ${OutputBitStream}        \033[0m"
     echo -e "\033[32m ***************************************** \033[0m"
+    echo -e "\033[33m  To update system x264 version            \033[0m"
+    echo -e "\033[33m  please using below command:              \033[0m"
+    echo -e "\033[33m    sudo make install                      \033[0m"
+    echo -e "\033[32m ***************************************** \033[0m"
 }
 
 runMain()
@@ -180,10 +181,10 @@ runMain()
 
     runInit
 
-# runDisableEncParamSEI
-#   runCheckDisableStatus
+    runDisableEncParamSEI
+    runCheckDisableStatus
 
-#    runBuildx264WithoutEncParamSEI
+    runBuildx264WithoutEncParamSEI
 
     runCheckLib
     runValidate
