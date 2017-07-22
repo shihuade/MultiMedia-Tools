@@ -70,8 +70,8 @@ runMain()
 
 if [ $# -lt 1 ]
 then
-runUsage
-exit 1
+    runUsage
+    exit 1
 fi
 
 
