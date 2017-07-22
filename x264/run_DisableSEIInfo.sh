@@ -10,8 +10,10 @@ runUsage()
 {
     echo -e "\033[31m ***************************************** \033[0m"
     echo "     Usage:                                                  "
-    echo "          $0  \$x264dir                                      "
-    echo "                                                             "
+    echo "          $0  \$x264dir  \$Option                            "
+    echo "     Option:  --NoSEI disable SEI nal                        "
+    echo "              --SEI   enable SEI nal                         "
+    echo "              default is NoSEI                               "
     echo -e "\033[31m ***************************************** \033[0m"
 }
 
@@ -39,6 +41,13 @@ runInit()
     #veridate setting
     InputYUV="../../../YUV/BasketballDrill_832x480_50.yuv"
     OutputBitStream="x264NoSEIInfoTest.264"
+
+    #SEI option
+    if [ "$Option" = "SEI" ]; then
+        Option="SEI"
+    else
+        Option="NoSEI"
+    fi
 }
 
 runCheck()
@@ -114,7 +123,7 @@ runBuildx264WithoutEncParamSEI()
 
     #config for build
     ./${Config} ${PresetForBuild}
-    [ $? -ne 0 ] && echo -e "\033[31m preset for build failed! \033[0m" && exit 1
+    [ $? -ne 0 ] && echo -e "\033[31m preset for build failed! \033[0m" &&  cd - && exit 1
 
     make
     cd -
@@ -181,7 +190,7 @@ runMain()
 
     runInit
 
-    runDisableEncParamSEI
+    [ "$Option" = "NoSEI" ] && runDisableEncParamSEI
     runCheckDisableStatus
 
     runBuildx264WithoutEncParamSEI
@@ -202,6 +211,7 @@ fi
 
 
 x264Dir=$1
+Option=$2
 runMain
 
 #*************************************************************
