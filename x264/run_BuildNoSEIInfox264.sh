@@ -82,13 +82,11 @@ runDisableEncParamSEI()
     LineNum=`cat ${SEISourceFile} | egrep -n "${SEIFunction}" | awk 'BEGIN {FS=":"} {print $1}'`
     aLineNum=(${LineNum})
 
-    for linenum in ${aLineNum[@]}
+    for((i=0; i<${#aLineNum[@]}; i++))
     do
-        SedCommand="sed -i \".bak\" \"${linenum}d\" ${SEISourceFile}"
-        sed -i ".bak" "${linenum}d" ${SEISourceFile}
-
-        SedCommand="sed -i \".bak\" \"${linenum}d\" ${SEISourceFile}"
-        sed -i ".bak" "${linenum}d" ${SEISourceFile}
+        let "DeleteLineIdx = ${aLineNum[$i]} - i*2"
+        sed -i ".bak" "${DeleteLineIdx}d" ${SEISourceFile}
+        sed -i ".bak" "${DeleteLineIdx}d" ${SEISourceFile}
     done
 
     #remove .bak files
@@ -157,7 +155,7 @@ runValidate()
     cp ${x264Bin} ./
     cp ${x264Lib} ./
 
-
+    [ ! -e "${InputYUV}" ] && echo "input YUV not exist, skip validate!" && exit 0
     ./x264 -o ${OutputBitStream}  ${InputYUV}
     [ $? -ne 0 ] && echo -e "\033[31m x264 encoding failed! \033[0m" && exit 1
 

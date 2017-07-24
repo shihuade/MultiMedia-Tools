@@ -1,7 +1,15 @@
 #!/bin/bash
 #***************************************************************
 # brief:
-#       get ffmpeg x264 lib's path
+#       build ffmpeg with special x264 version
+#       like no SEI version info
+#
+#       for mac case, ffmpeg load libx264.dylib
+#       so if you want to transcode with x264 which without
+#       enc parametes SEI info, please replace x264 dylib
+#       under which ffmpeg load from like /use/local/lib
+#
+#       load x264 lib path is set by ./configure $BuildPreset
 #***************************************************************
 
 runUsage()
@@ -101,12 +109,6 @@ runCheckx264Lib()
         let "Flag = 1"
     fi
 
-    if [ "$SystemLibSHA1" != "$x264LibSHA1"  ]; then
-        echo  -e "\033[31m $x264Lib between x264 and system are not the same one, need to update \033[0m"
-        echo "    $SystemLibSHA1--$x264LibSHA1"
-        let "Flag = 1"
-    fi
-
     #check x264 head files
     SystemIncludePath=`echo "$FFMPEGx264LibPath" | awk 'BEGIN {FS="lib"} {print $1}'`
     SystemIncludePath="${SystemIncludePath}include"
@@ -126,6 +128,8 @@ runCheckx264Lib()
         echo -e "\033[31m ***************************************************************\033[0m"
         echo -e "\033[31m    x264 lib or dylib or head file are not the same with system \033[0m"
         echo -e "\033[31m    please update your system's x264 lib/dylib/head file        \033[0m"
+        echo -e "\033[31m ***************************************************************\033[0m"
+        echo -e "\033[31m    x264BuildOption:  ${x264BuildOption[@]}                 \033[0m"
         echo -e "\033[31m    ax264HeadFileList:  ${ax264HeadFileList[@]}                 \033[0m"
         echo -e "\033[31m    x264Dylib:          ${x264Dylib}                            \033[0m"
         echo -e "\033[31m    x264Lib:            ${x264Lib}                              \033[0m"
@@ -222,7 +226,7 @@ runMain()
         runBuildFFMPEG
     else
         runGetFFMPEGx264LibPath
-        #runBuildx264Special
+        runBuildx264Special
         runGenerateSHA1ForLib
         runCheckx264Lib
     fi
