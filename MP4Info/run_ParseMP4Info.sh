@@ -99,11 +99,11 @@ runCalculateVideoInfo()
 
 runCalculateAudioInfo()
 {
-if [ ! -z "${AudioBitRate}" ]
-then
-    AudioSize=`echo  "scale=2; ${AudioBitRate} * ${AudioDuration} /1000 / 1024 / 8" | bc`
-    AudioRatio=`echo  "scale=2; ${AudioSize} / ${MP4Size} * 100" | bc`
-fi
+    if [ ! -z "${AudioBitRate}" ]
+    then
+        AudioSize=`echo  "scale=2; ${AudioBitRate} * ${AudioDuration} /1000 / 1024 / 8" | bc`
+        AudioRatio=`echo  "scale=2; ${AudioSize} / ${MP4Size} * 100" | bc`
+    fi
 }
 
 runCVSOutputInfoForOneFile()
