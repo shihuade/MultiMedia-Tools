@@ -110,12 +110,26 @@ runx264EncInitLevel()
 
 runx264EncMe()
 {
-    EncParamName="ME"
-    EncParamPlus="--profile high --level 31"
+    EncParamName="ME_NR600"
+    EncParamPlus="--profile high --level 31 --nr 600"
     EncParamArg="--me"
     FPS="30"
 
     aEncParam=(dia hex umh  esa tesa )
+    #***********************************************************
+    #init
+    runInit
+    #***********************************************************
+}
+
+runx264EncIFrame()
+{
+    EncParamName="I_NR_SceneCut"
+    EncParamPlus="--profile high --level 31 --nr 600"
+    EncParamArg="--scenecut"
+    FPS="30"
+
+    aEncParam=(10 20 30 40 50 60 70)
     #***********************************************************
     #init
     runInit
@@ -129,7 +143,7 @@ runx264EncParam()
         OutputBitStream="${InputYUV}_${EncParamName}_${EncParam}.264"
         OutputMp4="${InputYUV}_${EncParamName}_${EncParam}.264.mp4"
         x264EncLog="${InputYUV}_${EncParamName}_${EncParam}_enc.txt"
-        EncCommand="x264 --psnr ${EncParamPlus}"
+        EncCommand="x264 --psnr --fps ${FPS} ${EncParamPlus}"
         EncCommand="${EncCommand} ${EncParamArg} ${EncParam}  -o ${OutputBitStream} ${InputYUV}"
         MP4Command="ffmpeg -framerate ${FPS} -i ${OutputBitStream} -c copy -y ${OutputMp4}"
 
@@ -189,11 +203,12 @@ runMain()
 {
     runCheck
 
-    #x264 enc param test
+#x264 enc param test
 #runx264EncInitCRF
 #runx264EncInitProfile
 #runx264EncInitLevel
-runx264EncMe
+#runx264EncMe
+runx264EncIFrame
 
     runx264EncParam
 
