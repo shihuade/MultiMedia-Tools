@@ -25,10 +25,11 @@ runInit()
     x264EncLog=""
     x264EncPerfInfo=""
 
-    AllMP4Info="Report_AllMP4Info_${EncParamName}.csv"
-    AllMP4InfoParserConsole="Report_AllMP4InfoDetail_${EncParamName}.txt"
+    YUVDir=`dirname ${InputYUV}`
+    AllMP4Info="${YUVDir}/Report_AllMP4Info_${EncParamName}.csv"
+    AllMP4InfoParserConsole="${YUVDir}/Report_AllMP4InfoDetail_${EncParamName}.txt"
 
-    x264EncReport="Report_X264Enc_Summary_${EncParamName}.csv"
+    x264EncReport="${YUVDir}/Report_X264Enc_Summary_${EncParamName}.csv"
 
     HeadLine="EncParam, YUVSize(KBs), BitStreamSize(kBs), CR"
     HeadLine="${HeadLine},BitRate, PSNRY, PSNRU,  PSNRV, FPS, Time(s), SHA1-Org, SHA1-Trans"
@@ -107,6 +108,20 @@ runx264EncInitLevel()
     #***********************************************************
 }
 
+runx264EncMe()
+{
+    EncParamName="ME"
+    EncParamPlus="--profile high --level 31"
+    EncParamArg="--me"
+    FPS="30"
+
+    aEncParam=(dia hex umh  esa tesa )
+    #***********************************************************
+    #init
+    runInit
+    #***********************************************************
+}
+
 runx264EncParam()
 {
     for EncParam in ${aEncParam[@]}
@@ -177,7 +192,8 @@ runMain()
     #x264 enc param test
 #runx264EncInitCRF
 #runx264EncInitProfile
-runx264EncInitLevel
+#runx264EncInitLevel
+runx264EncMe
 
     runx264EncParam
 
