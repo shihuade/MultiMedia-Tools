@@ -83,7 +83,7 @@ runMP4ToYUV()
     MP4To264CMD="ffmpeg -i ${MP4File} -vbsf h264_mp4toannexb -vcodec copy  -f h264 -y ${StreamFile}"
     DecodeCMD="JMDecoder -p InputFile=\"${StreamFile}\" -p OutputFile=\"${YUVFile}\""
 
-    [ -e ${YUVFile} ] && echo "YUV file exist, no need to transcode!" && exit 0
+    [ -e ${YUVFile} ] && echo "YUV file exist, no need to transcode!" && return 0
     echo -e "\033[32m ************************************************ \033[0m"
     echo -e "\033[33m MP4File     is ${MP4File}                        \033[0m"
     echo -e "\033[33m StreamFile  is ${StreamFile}                     \033[0m"
@@ -130,8 +130,8 @@ runAllMP4ToYUV()
 runPrompt()
 {
     echo -e "\033[33m ********************************************* \033[0m"
-    echo -e "\033[33m   MP4 files to YUV process completed!            \033[0m"
-    echo -e "\033[33m   Total num is ${MP4Num}                         \033[0m"
+    echo -e "\033[33m   MP4 files to YUV process completed!         \033[0m"
+    echo -e "\033[33m   Total num is ${MP4Num}                      \033[0m"
     echo -e "\033[33m ********************************************* \033[0m"
 }
 

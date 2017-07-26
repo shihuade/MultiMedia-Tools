@@ -176,7 +176,7 @@ runParseAllMP4Files()
     runInitOutputInfo
     echo "$HeadLine">${OutputFile}
 
-    for MP4File in ${Input}/*.mp4
+    for MP4File in ${Input}/*${Pattern}*.mp4
     do
        echo "MP4File is $MP4File"
         runParseOneMp4File
@@ -213,6 +213,7 @@ fi
 
 Input=$1
 OutputFile=$2
+Pattern=$3
 
 runMain
 #*****************************************************
