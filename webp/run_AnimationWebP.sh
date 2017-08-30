@@ -2,7 +2,7 @@
 #********************************************************************************
 # generate animation webp from mp4 file
 #
-# resolution: ffmpeg + cwebp + webpmux
+# solution: ffmpeg + cwebp + webpmux
 #             ffmpeg:  extract jpg files for mp4 file
 #             cwebp:   transcode jpg file to webp format
 #             webpmux: transcode webp files to animation webp
