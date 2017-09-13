@@ -9,6 +9,10 @@ Usage: webpmux -get GET_OPTIONS INPUT -o OUTPUT
        webpmux [-h|-help]
        webpmux -version
 
+Example:
+    https://developers.google.com/speed/webp/docs/webpmux
+    http://manpages.ubuntu.com/manpages/trusty/man1/webpmux.1.html
+
 GET_OPTIONS:
  Extract relevant data:
    icc       get ICC profile
