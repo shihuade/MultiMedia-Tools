@@ -1,0 +1,3 @@
+/Users/huade/project/video/MultiMedia-Tools/opencv/CMakeFiles/rebuild_cache.dir
+/Users/huade/project/video/MultiMedia-Tools/opencv/CMakeFiles/edit_cache.dir
+/Users/huade/project/video/MultiMedia-Tools/opencv/CMakeFiles/DisplayImage.dir
