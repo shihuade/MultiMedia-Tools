@@ -94,7 +94,6 @@ runExtract264FromMP4()
     echo "*******************************************************"
 }
 
-
 runAnayse(){
 
   VideoDouYin="ios_android_douyin.mp4"

@@ -367,6 +367,7 @@ runMain()
 #runDenoise
 #runBright01
 #runBright02
+
 runPreAndTranscode
 }
 

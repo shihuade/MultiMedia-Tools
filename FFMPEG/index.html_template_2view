@@ -11,7 +11,7 @@
         width: 20%;
     }
     video {
-        width: 60%;
+        width: 50%;
     }
     #videoRow td:first-child video{
         float: right;

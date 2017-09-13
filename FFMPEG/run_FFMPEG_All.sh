@@ -86,8 +86,15 @@ ffmpeg -i 3.mp4 -vn -y -acodec copy 3.m4a
 #mix audio and video to mp4 file
 ffmpeg -i video2.avi -i audio.mp3 -vcodec copy -acodec copy output.avi
 
-#moov size 
-ff
+#*****************************************************************************
+#  picture/image extract, cover extract
+#*****************************************************************************
+
+ffmpeg -i Input.mp4 -r:1 -q:v -f image2 OutputImage_%d.jpeg
+#   -r:1  1 picture per one second
+#   -q:v  output picture quality
+
+#*****************************************************************************
 
 
 
