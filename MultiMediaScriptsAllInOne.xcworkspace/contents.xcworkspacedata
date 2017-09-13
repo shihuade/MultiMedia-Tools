@@ -28,4 +28,13 @@
    <FileRef
       location = "group:FFServer">
    </FileRef>
+   <FileRef
+      location = "group:opencv">
+   </FileRef>
+   <FileRef
+      location = "group:Image">
+   </FileRef>
+   <FileRef
+      location = "group:webp">
+   </FileRef>
 </Workspace>
