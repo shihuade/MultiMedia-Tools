@@ -83,7 +83,7 @@ runOutputWebpLog()
 
 runGenerateAnimationWebP()
 {
-    let "PicNum        = 8"
+    let "PicNum        = 20"
     let "OutPicW       = 540"
     let "OutPicH       = 960"
     let "FrameInterval = 1"
@@ -108,6 +108,9 @@ runGenerateAnimationWebP()
 
     runPareseDurationAndResolution
     SkipFlag="False"
+    JPEGQP="0"
+    WebPQP="80"
+    SNS="50"
     for((i=1; i<=${PicNum}; i++))
     do
         #get frame timestamp
@@ -116,16 +119,20 @@ runGenerateAnimationWebP()
         [ "${IntNum}" = "" ] && TimeStamp="0${TimeStamp}"
 
         #output file
-        OutputImage="${MP4File}_idx_${i}.jpg"
-        OutputWebP="${MP4File}_idx_${i}.webp"
+        OutputImage="${MP4File}_idx_${i}_q_${JPEGQP}.jpg"
+        OutputImage_02="${MP4File}_idx_${i}_q_6.jpg"
+        OutputWebP="${MP4File}_idx_${i}_q_${WebPQP}_sns_${SNS}.webp"
 
-        FFMPEGPicCMD="ffmpeg -i ${MP4File} -an -ss ${TimeStamp} -s ${OutPicW}x${OutPicH} -vframes 1 -f ${Format} -y ${OutputImage}"
+        #FFMPEGPicCMD="ffmpeg -i ${MP4File} -an -ss ${TimeStamp} -s ${OutPicW}x${OutPicH} -qscale 8 -vframes 1 -f ${Format} -y ${OutputImage}"
+        FFMPEGPicCMD="ffmpeg -ss ${TimeStamp} -i ${MP4File} -an -qscale ${JPEGQP} -vframes 1 -f ${Format} -y ${OutputImage}"
+        FFMPEGPicCMD_02="ffmpeg -ss ${TimeStamp} -i ${MP4File} -an -qscale 6 -vframes 1 -f ${Format} -y ${OutputImage_02}"
         #WebPCommand="cwebp ${OutputImage} -q 100  -lossless -o ${OutputWebP}"
-        WebPCommand="cwebp ${OutputImage} -q 100 -o ${OutputWebP}"
+        WebPCommand="cwebp ${OutputImage} -q ${WebPQP} -sns ${SNS} -o ${OutputWebP}"
         CleanCMD="${CleanCMD} ${OutputImage} ${OutputWebP}"
 
         #run ffmpeg extract command
         ${FFMPEGPicCMD} 2>>${LogFile}
+        ${FFMPEGPicCMD_02} 2>>${LogFile}
         [ $? -ne 0 ] && echo "failed to extract ${i}th jpge file!" && exit 1
 
         #run webp transcode command
@@ -149,7 +156,7 @@ runGenerateAnimationWebP()
             AnimationParam01="${AnimationParam01} -frame ${OutputWebP} +200"
         fi
 
-        runOutputWebpLog
+#runOutputWebpLog
 
     done
 
@@ -180,7 +187,7 @@ runGenerateAnimationWebP()
     ${WebPAnimationCMD}
     [ $? -ne 0 ] && echo "failed to transcode animation webp file!" && exit 1
     #clean temp files
-    ${CleanCMD}
+#${CleanCMD}
 }
 
 runTranscodeAllMP4Files()
