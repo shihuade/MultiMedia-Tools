@@ -266,7 +266,6 @@ runx264EncSkip()
     #默认打开，P_SKIP MV 快速决策，测试集显示，对编码效率有提升
     aEncParam[0]=" --crf 23 --no-fast-pskip"
     aEncParam[1]=" --crf 23"
-
 }
 
 runx264EncWeight()
@@ -306,6 +305,14 @@ runx264EncDeblocking()
     #aEncParam=(2 3 4 5)
 }
 
+runFFMPEGx264()
+{
+X264Options="-x264opts keyint=123:min-keyint=20 "
+FFMPEGCMD="ffmpeg -i final.mp4 -c:a copy -c:v libx264  -crf 24  ${X264Options} -y final.mp4.ffmpegx264_crf24.mp4"
+
+FFMPEGCMD="ffmpeg -i final.mp4 -c:a copy -c:v libx264  -profile:v high -level 31 -crf 24 -x264opts keyint=123:min-keyint=20  -x264opts nr=600 -y final.mp4.ffmpegx264_crf24_02_nr600.mp4"
+
+}
 
 runInitForTestParams()
 {
