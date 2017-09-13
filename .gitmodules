@@ -10,3 +10,6 @@
 [submodule "submodule/JM18EncoderLogExtractor"]
 	path = submodule/JM18EncoderLogExtractor
 	url = https://github.com/shihuade/JM18EncoderLogExtractor.git
+[submodule "submodule/fft-noise-removal-sh"]
+	path = submodule/fft-noise-removal-sh
+	url = https://github.com/caiosba/fft-noise-removal-sh.git
