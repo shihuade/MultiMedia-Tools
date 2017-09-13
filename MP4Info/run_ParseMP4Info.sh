@@ -52,11 +52,11 @@ runInitMP4Info()
 runInitOutputInfo()
 {
     #0
-    HeadLineBasic="File, size(MBs),VSize(MB),ASize(MBs),VRatio(%),ARatio(%),VDuration(ms),ADuration(ms)"
+    HeadLineBasic="File,CR,size(MBs),VSize(MB),ASize(MBs),VRatio(%),ARatio(%),VDuration(ms),ADuration(ms)"
     #8
     HeadLineAudio="AudioSampeC, AudioBR(kbps)"
     #10
-    HeadLineVideo="Profile, Level, PicW, PicH,FPS,FrmNum,BR(kbps),CR"
+    HeadLineVideo="Profile, Level, PicW, PicH,FPS,FrmNum,BR(kbps)"
 
     HeadLine="${HeadLineBasic}, ${HeadLineAudio}, ${HeadLineVideo}"
 }
@@ -108,9 +108,9 @@ runCalculateAudioInfo()
 
 runCVSOutputInfoForOneFile()
 {
-    MP4Basic="$Mp4FileName, $MP4Size, $VideoSize, $AudioSize, $VideoRatio, $AudioRatio, $VideoDuration, $AudioDuration"
+    MP4Basic="$Mp4FileName, $VideoCompreRate, $MP4Size, $VideoSize, $AudioSize, $VideoRatio, $AudioRatio, $VideoDuration, $AudioDuration"
     AudioData="$AudioSampleCount, $AudioBitRate"
-    VideoData="$Profile, $Level, $VideoWidth, $VideoHeight, $VideoFPS, $VideoSampleCount, $VideoBitRate, $VideoCompreRate"
+    VideoData="$Profile, $Level, $VideoWidth, $VideoHeight, $VideoFPS, $VideoSampleCount, $VideoBitRate"
 
    MP4Data="${MP4Basic}, ${AudioData}, ${VideoData}"
 }
@@ -195,13 +195,23 @@ runCheck()
         exit 1
     fi
 
-    [ -z ${OutputFile} ] && OutputFile="MP4InfoVideoAudio.csv"
+    [ -d ${Input} ] && OutputDir="$Input"
+    [ -f ${Input} ] && OutputDir=`dirname $Input`
+    [ -z ${OutputFile} ] && OutputFile="${OutputDir}/MP4InfoVideoAudio.csv"
+}
+
+runPrompt()
+{
+    echo -e "\033[32m ***************************************** \033[0m"
+    echo    "     OutputFile is:                     $OutputFile       "
+    echo -e "\033[33m ***************************************** \033[0m"
 }
 
 runMain()
 {
     runCheck
     runParseAllMP4Files
+    runPrompt
 }
 
 #*****************************************************
