@@ -15,7 +15,7 @@ runUsage()
 
 runInint()
 {
-    Date=`date +%y%m%d-%H-%S`
+    Date=`date +%y%m%d%H%S`
     CurrentDir=`pwd`
     DefaultOutputDir="${CurrentDir}/OutputMedia"
     URL=""
@@ -125,12 +125,41 @@ runParseMediaFileInfo()
 
     PicW=`echo ${ResolutionInfo} | awk 'BEGIN {FS="[xX]"} {print $1}'`
     PicH=`echo ${ResolutionInfo} | awk 'BEGIN {FS="[xX]"} {print $2}'`
+    let "PicW = ${PicW}"
+    let "PicH = ${PicH}"
 
     [ ${MediaFileSizeInkBInt} -lt 1 ] && return 1
     [ ${PicW} -eq 0 ] || [ ${PicH} -eq 0 ] && return 1
 
     FrameSizeInkB=`echo  "scale=2; ${PicW} * ${PicH} * 12 / 8 / 1024" | bc`
     CompressionRate=`echo  "scale=2; ${FrameSizeInkB} / ${MediaFileSizeInkB}" | bc`
+}
+
+runRenameMediaFile()
+{
+    Prefix_01=""
+    Prefix_02="${PicW}x${PicH}_${FrameSizeInkB}kBs_CR${CompressionRate}"
+
+    Suffix="${MediaFormat}"
+
+    if [ "$MediaFormat" = "jpeg" ]; then
+        Prefix_01=`echo ${MediaFileName}  | awk 'BEGIN {FS=".jpeg"} {print $1}'`
+    elif [ "$MediaFormat" = "png" ]; then
+    Prefix_01=`echo ${MediaFileName}  | awk 'BEGIN {FS=".png"} {print $1}'`
+
+    elif [ "$MediaFormat" = "gif" ]; then
+        Prefix_01=`echo ${MediaFileName}  | awk 'BEGIN {FS=".gif"} {print $1}'`
+    elif [ "$MediaFormat" = "webp" ]; then
+        Prefix_01=`echo ${MediaFileName}  | awk 'BEGIN {FS=".webp"} {print $1}'`
+    else
+        Prefix_01="${MediaFileName}"
+    fi
+
+    MediaFileName="${Prefix_01}_${Prefix_02}.${Suffix}"
+    NewMediaFile="${MediaOutputDir}/${MediaFileName}"
+
+    mv ${MediaFile} ${NewMediaFile}
+    MediaFile=${NewMediaFile}
 }
 
 runUpdateMediaInfo()
@@ -187,6 +216,8 @@ runParseAllMdediaFile()
 
         #parse media file info
         runParseMediaFileInfo
+        runRenameMediaFile
+
         runUpdateMediaInfo
         runOutputMediaInfo
 
