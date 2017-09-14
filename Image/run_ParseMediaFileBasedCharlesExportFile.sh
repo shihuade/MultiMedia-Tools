@@ -84,7 +84,10 @@ runDownloadMediaFile()
     MediaFileSizeInkB=`ls -l ${MediaFile} | awk '{print $5}'`
 
     #skip those size less than 1kB
-    [ ${MediaFileSizeInkB} -lt 1024 ] && return 1
+    if [ ${MediaFileSizeInkB} -lt 1024 ]; then
+        rm -f ${MediaFile}
+        return 1
+    fi
 
     MediaFileSizeInkB=`echo  "scale=2; ${MediaFileSizeInkB} / 1024" | bc`
 }
@@ -204,7 +207,7 @@ runParseAllMdediaFile()
         [ "${PreviousURL}" = "${URL}" ] &&  continue
 
 [ "$MediaType"   != "image" ] && continue
-[ "$MediaFormat" != "gif"  ] && continue
+#[ "$MediaFormat" != "jpeg"  ] && continue
 
         runGenrateUpdateFile
 
