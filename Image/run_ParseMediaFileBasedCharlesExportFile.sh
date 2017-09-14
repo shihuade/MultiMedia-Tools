@@ -110,6 +110,16 @@ runDoubleCheckMediaFile()
             MediaFile="${MediaFile}.jpeg"
         fi
     fi
+
+    if [ "$MediaFormat" = "png" ]; then
+        IsPng=`file ${MediaFile} | grep "PNG image data"`
+
+        if [ "${IsPng}X" = "X" ]; then
+            MediaFormat="jpeg"
+            mv ${MediaFile} ${MediaFile}.jpeg
+            MediaFile="${MediaFile}.jpeg"
+        fi
+    fi
 }
 
 runParseMediaFileInfo()
@@ -133,6 +143,10 @@ runParseMediaFileInfo()
     else
         ResolutionInfo="0x0"
     fi
+
+    #echo "MediaFile is $MediaFile"
+    #file ${MediaFile}
+    #echo "ResolutionInfo is $ResolutionInfo"
 
     PicW=`echo ${ResolutionInfo} | awk 'BEGIN {FS="[xX]"} {print $1}'`
     PicH=`echo ${ResolutionInfo} | awk 'BEGIN {FS="[xX]"} {print $2}'`
@@ -215,6 +229,8 @@ runParseAllMdediaFile()
 
         #[ "$MediaType"   != "image" ] && [ "$MediaType"   != "mp4" ] && continue
         [ "$MediaType"   != "image" ] && continue
+        [ "$MediaFormat" != "png" ] && continue
+
 #[ "$MediaType"   != "mp4" ] && continue
         #[ "$MediaFormat" != "jpeg"  ] && continue
 
