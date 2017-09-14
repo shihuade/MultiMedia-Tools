@@ -80,6 +80,13 @@ runDownloadMediaFile()
         echo "--URL is ${URL}"
         return 1
     fi
+
+    MediaFileSizeInkB=`ls -l ${MediaFile} | awk '{print $5}'`
+
+    #skip those size less than 1kB
+    [ ${MediaFileSizeInkB} -lt 1024 ] && return 1
+
+    MediaFileSizeInkB=`echo  "scale=2; ${MediaFileSizeInkB} / 1024" | bc`
 }
 
 runDoubleCheckMediaFile()
@@ -117,18 +124,11 @@ runParseMediaFileInfo()
         ResolutionInfo="0x0"
     fi
 
-
-
-    MediaFileSizeInkB=`ls -l ${MediaFile} | awk '{print $5}'`
-    MediaFileSizeInkB=`echo  "scale=2; ${MediaFileSizeInkB} / 1024" | bc`
-    MediaFileSizeInkBInt=`echo ${MediaFileSizeInkB} | awk 'BEGIN {FS="."} {print $1}'`
-
     PicW=`echo ${ResolutionInfo} | awk 'BEGIN {FS="[xX]"} {print $1}'`
     PicH=`echo ${ResolutionInfo} | awk 'BEGIN {FS="[xX]"} {print $2}'`
     let "PicW = ${PicW}"
     let "PicH = ${PicH}"
 
-    [ ${MediaFileSizeInkBInt} -lt 1 ] && return 1
     [ ${PicW} -eq 0 ] || [ ${PicH} -eq 0 ] && return 1
 
     FrameSizeInkB=`echo  "scale=2; ${PicW} * ${PicH} * 12 / 8 / 1024" | bc`
@@ -204,7 +204,7 @@ runParseAllMdediaFile()
         [ "${PreviousURL}" = "${URL}" ] &&  continue
 
 [ "$MediaType"   != "image" ] && continue
-[ "$MediaFormat" != "webp"  ] && continue
+[ "$MediaFormat" != "gif"  ] && continue
 
         runGenrateUpdateFile
 
