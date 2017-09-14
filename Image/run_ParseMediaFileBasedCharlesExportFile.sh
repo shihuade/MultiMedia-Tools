@@ -27,8 +27,16 @@ runInint()
     let "FileOutputIndex = 0"
     AllMediaFileList="AllMediaFileList-${Date}.csv"
 
-    HeadLine="Index, FileName, Type, Format, URL"
-    AllMediaHeadLine="Domain, Index, FileName, Type, Format, Outputdir, URL"
+    HeadLine="Index,FileName,Type,Format,PicW,PicH,Size,CR,URL"
+    AllMediaHeadLine="Domain,Index,FileName,Type,Format,PicW,PicH,Size,CR,Outputdir,URL"
+}
+
+runDomainMapping()
+{
+    Maping=("" \
+            "" )
+
+
 }
 
 runParseURLInfo()
@@ -42,20 +50,7 @@ runParseURLInfo()
     MediaFormat=`echo $ContentType | awk 'BEGIN {FS="/"} {print $2}'`
 }
 
-runOutputMediaInfo()
-{
-    echo -e "\033[32m ***************************************** \033[0m"
-    echo -e "\033[32m MediaType      is: ${MediaType}           \033[0m"
-    echo -e "\033[32m MediaFormat    is: ${MediaFormat}         \033[0m"
-    echo -e "\033[32m Domain         is: ${Domain}              \033[0m"
-    echo -e "\033[32m MediaOutputDir is: ${MediaOutputDir}      \033[0m"
-    echo -e "\033[32m MediaFileName  is: ${MediaFileName}       \033[0m"
-    echo -e "\033[32m URL            is: ${URL}                 \033[0m"
-    echo -e "\033[32m File index     is: ${FileOutputIndex}     \033[0m"
-    echo -e "\033[32m ***************************************** \033[0m"
-}
-
-runParseMediaContent()
+runGenrateUpdateFile()
 {
     #output dir
     MediaOutputDir="${OutputDir}/${Domain}/${MediaFormat}"
@@ -73,21 +68,101 @@ runParseMediaContent()
 
     #generate media ouput dir and file name
     MediaFileName="${Domain}-${Date}-${FileOutputIndex}.${MediaFormat}"
+    MediaFile="${MediaOutputDir}/${MediaFileName}"
     MediaListInfo="${MediaOutputDir}/${Domain}-${Date}-${MediaType}.csv"
-    [ -e ${MediaListInfo} ]    || echo ${HeadLine} >${MediaListInfo}
-    [ -e ${AllMediaFileList} ] || echo ${AllMediaHeadLine} >${AllMediaFileList}
-
-    #update media file info
-    MediaInfo="${FileOutputIndex}, ${MediaFileName}, ${MediaType}, ${MediaFormat}, ${URL}"
-    MediaInfoForAll="${Domain}, ${FileOutputIndex}, ${MediaFileName}, ${MediaType}, ${MediaFormat}, ${MediaOutputDir}, ${URL}"
-    echo "${MediaInfo}"       >>${MediaListInfo}
-    echo "${MediaInfoForAll}" >>${AllMediaFileList}
 }
 
 runDownloadMediaFile()
 {
-echo ""
+  wget ${URL} -o wget-download-log.txt -O "${MediaOutputDir}/${MediaFileName}"
+    if [ ! -e ${MediaFile} ]; then
+        echo "${MediaFile} download failed!"
+        echo "--URL is ${URL}"
+        return 1
+    fi
+}
 
+runDoubleCheckMediaFile()
+{
+    if [ "$MediaFormat" = "webp" ]; then
+        IsWebP=`file ${MediaFile} | grep "VP8 encoding"`
+
+        if [ "${IsWebP}X" = "X" ]; then
+            MediaFormat="jpeg"
+            mv ${MediaFile} ${MediaFile}.jpeg
+            MediaFile="${MediaFile}.jpeg"
+        fi
+    fi
+}
+
+runParseMediaFileInfo()
+{
+    let "PicW = 0"
+    let "PicH = 0"
+    let "CompressionRate = 0"
+
+    if [ "$MediaFormat" = "jpeg" ]; then
+        ResolutionInfo=`file ${MediaFile}      | awk 'BEGIN {FS="precision"} {print $NF}'`
+        ResolutionInfo=`echo ${ResolutionInfo} | awk 'BEGIN {FS=","} {print $2}'`
+    elif [ "$MediaFormat" = "png" ]; then
+        ResolutionInfo=`file ${MediaFile} | awk 'BEGIN {FS="PNG image data"} {print $NF}'`
+        ResolutionInfo=`echo ${ResolutionInfo} | awk 'BEGIN {FS=","} {print $2}'`
+    elif [ "$MediaFormat" = "gif" ]; then
+        ResolutionInfo=`file ${MediaFile}      | awk 'BEGIN {FS="GIF image data"} {print $NF}'`
+        ResolutionInfo=`echo ${ResolutionInfo} | awk 'BEGIN {FS=","} {print $3}'`
+    elif [ "$MediaFormat" = "webp" ]; then
+        ResolutionInfo=`file ${MediaFile}      | awk 'BEGIN {FS="VP8 encoding"} {print $NF}'`
+        ResolutionInfo=`echo ${ResolutionInfo} | awk 'BEGIN {FS=","} {print $2}'`
+    else
+        ResolutionInfo="0x0"
+    fi
+
+
+
+    MediaFileSizeInkB=`ls -l ${MediaFile} | awk '{print $5}'`
+    MediaFileSizeInkB=`echo  "scale=2; ${MediaFileSizeInkB} / 1024" | bc`
+    MediaFileSizeInkBInt=`echo ${MediaFileSizeInkB} | awk 'BEGIN {FS="."} {print $1}'`
+
+    PicW=`echo ${ResolutionInfo} | awk 'BEGIN {FS="[xX]"} {print $1}'`
+    PicH=`echo ${ResolutionInfo} | awk 'BEGIN {FS="[xX]"} {print $2}'`
+
+    [ ${MediaFileSizeInkBInt} -lt 1 ] && return 1
+    [ ${PicW} -eq 0 ] || [ ${PicH} -eq 0 ] && return 1
+
+    FrameSizeInkB=`echo  "scale=2; ${PicW} * ${PicH} * 12 / 8 / 1024" | bc`
+    CompressionRate=`echo  "scale=2; ${FrameSizeInkB} / ${MediaFileSizeInkB}" | bc`
+}
+
+runUpdateMediaInfo()
+{
+    [ -e ${MediaListInfo} ]    || echo ${HeadLine} >${MediaListInfo}
+    [ -e ${AllMediaFileList} ] || echo ${AllMediaHeadLine} >${AllMediaFileList}
+
+    #update media file info
+    MediaInfo="${FileOutputIndex},${MediaFileName},${MediaType},${MediaFormat}"
+    MediaInfo="${MediaInfo},${PicW},${PicH},${FrameSizeInkB},${CompressionRate},${URL}"
+
+    MediaInfoForAll="${Domain},${FileOutputIndex},${MediaFileName},${MediaType}"
+    MediaInfoForAll="${MediaInfoForAll},${MediaFormat},${PicW},${PicH},${FrameSizeInkB}"
+    MediaInfoForAll="${MediaInfoForAll},${CompressionRate},${MediaOutputDir},${URL}"
+    echo "${MediaInfo}"       >>${MediaListInfo}
+    echo "${MediaInfoForAll}" >>${AllMediaFileList}
+}
+
+runOutputMediaInfo()
+{
+    echo -e "\033[32m ****************************************** \033[0m"
+    echo -e "\033[32m MediaType       is: ${MediaType}           \033[0m"
+    echo -e "\033[32m MediaFormat     is: ${MediaFormat}         \033[0m"
+    echo -e "\033[32m Domain          is: ${Domain}              \033[0m"
+    echo -e "\033[32m MediaOutputDir  is: ${MediaOutputDir}      \033[0m"
+    echo -e "\033[32m MediaFileName   is: ${MediaFileName}       \033[0m"
+    echo -e "\033[32m URL             is: ${URL}                 \033[0m"
+    echo -e "\033[32m File index      is: ${FileOutputIndex}     \033[0m"
+    echo -e "\033[32m MediaInfo       is: ${PicW} x ${PicH}      \033[0m"
+    echo -e "\033[32m FrameSizeInkB   is: ${FrameSizeInkB}       \033[0m"
+    echo -e "\033[32m CompressionRate is: ${CompressionRate}     \033[0m"
+    echo -e "\033[32m ****************************************** \033[0m"
 }
 
 runParseAllMdediaFile()
@@ -99,10 +174,22 @@ runParseAllMdediaFile()
         runParseURLInfo
         [ "${PreviousURL}" = "${URL}" ] &&  continue
 
-        [ "$MediaType" = "image" ] || [ "$MediaType" = "video" ] || continue
+[ "$MediaType"   != "image" ] && continue
+[ "$MediaFormat" != "webp"  ] && continue
 
-        runParseMediaContent
+        runGenrateUpdateFile
+
+        #download media file
+        runDownloadMediaFile
+        [ $? -ne 0 ] && continue
+
+        runDoubleCheckMediaFile
+
+        #parse media file info
+        runParseMediaFileInfo
+        runUpdateMediaInfo
         runOutputMediaInfo
+
         PreviousURL="$URL"
     done < ${CharlesExportFile}
 }
@@ -119,7 +206,8 @@ runCheck()
         exit 1
     fi
 
-    [ -z "${OutputDir}" ] && OutputDir="${DefaultOutputDir}"
+    [ -z "${OutputDir}" ] && OutputDir="${DefaultOutputDir}" && mkdir -p ${OutputDir}
+    [ ! -d ${OutputDir} ] && echo "output dir not exist, please double check!" && exit 1
     cd ${OutputDir} && OutputDir=`pwd` && cd -
 }
 
