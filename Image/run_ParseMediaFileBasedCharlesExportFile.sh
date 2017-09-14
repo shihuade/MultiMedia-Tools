@@ -48,6 +48,13 @@ runParseURLInfo()
     ContentType=`echo $URLInfo     | awk 'BEGIN {FS=","} {print $6}'`
     MediaType=`echo $ContentType   | awk 'BEGIN {FS="/"} {print $1}'`
     MediaFormat=`echo $ContentType | awk 'BEGIN {FS="/"} {print $2}'`
+
+    #echo -e "\033[32m ****************************************** \033[0m"
+    #echo -e "\033[32m MediaType       is: ${MediaType}           \033[0m"
+    #echo -e "\033[32m MediaFormat     is: ${MediaFormat}         \033[0m"
+    #echo -e "\033[32m Domain          is: ${Domain}              \033[0m"
+    #echo -e "\033[32m URL             is: ${URL}                 \033[0m"
+    #echo -e "\033[32m ****************************************** \033[0m"
 }
 
 runGenrateUpdateFile()
@@ -141,7 +148,7 @@ runParseMediaFileInfo()
 runRenameMediaFile()
 {
     Prefix_01=""
-    Prefix_02="${PicW}x${PicH}_${FrameSizeInkB}kBs_CR${CompressionRate}"
+    Prefix_02="${PicW}x${PicH}_${MediaFileSizeInkB}kBs_CR${CompressionRate}"
 
     Suffix="${MediaFormat}"
 
@@ -172,10 +179,10 @@ runUpdateMediaInfo()
 
     #update media file info
     MediaInfo="${FileOutputIndex},${MediaFileName},${MediaType},${MediaFormat}"
-    MediaInfo="${MediaInfo},${PicW},${PicH},${FrameSizeInkB},${CompressionRate},${URL}"
+    MediaInfo="${MediaInfo},${PicW},${PicH},${MediaFileSizeInkB},${CompressionRate},${URL}"
 
     MediaInfoForAll="${Domain},${FileOutputIndex},${MediaFileName},${MediaType}"
-    MediaInfoForAll="${MediaInfoForAll},${MediaFormat},${PicW},${PicH},${FrameSizeInkB}"
+    MediaInfoForAll="${MediaInfoForAll},${MediaFormat},${PicW},${PicH},${MediaFileSizeInkB}"
     MediaInfoForAll="${MediaInfoForAll},${CompressionRate},${MediaOutputDir},${URL}"
     echo "${MediaInfo}"       >>${MediaListInfo}
     echo "${MediaInfoForAll}" >>${AllMediaFileList}
@@ -206,8 +213,10 @@ runParseAllMdediaFile()
         runParseURLInfo
         [ "${PreviousURL}" = "${URL}" ] &&  continue
 
-[ "$MediaType"   != "image" ] && continue
-#[ "$MediaFormat" != "jpeg"  ] && continue
+        #[ "$MediaType"   != "image" ] && [ "$MediaType"   != "mp4" ] && continue
+        [ "$MediaType"   != "image" ] && continue
+#[ "$MediaType"   != "mp4" ] && continue
+        #[ "$MediaFormat" != "jpeg"  ] && continue
 
         runGenrateUpdateFile
 
@@ -228,8 +237,6 @@ runParseAllMdediaFile()
     done < ${CharlesExportFile}
 }
 
-
-
 runCheck()
 {
 
@@ -240,8 +247,9 @@ runCheck()
         exit 1
     fi
 
-    [ -z "${OutputDir}" ] && OutputDir="${DefaultOutputDir}" && mkdir -p ${OutputDir}
-    [ ! -d ${OutputDir} ] && echo "output dir not exist, please double check!" && exit 1
+    [ -z "${OutputDir}" ] && OutputDir="${DefaultOutputDir}"
+    mkdir -p ${OutputDir}
+
     cd ${OutputDir} && OutputDir=`pwd` && cd -
 }
 
