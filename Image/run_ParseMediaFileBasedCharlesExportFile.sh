@@ -131,6 +131,9 @@ runParseMediaFileInfo()
     if [ "$MediaFormat" = "jpeg" ]; then
         ResolutionInfo=`file ${MediaFile}      | awk 'BEGIN {FS="precision"} {print $NF}'`
         ResolutionInfo=`echo ${ResolutionInfo} | awk 'BEGIN {FS=","} {print $2}'`
+    elif [ "$MediaFormat" = "jpg" ]; then
+        ResolutionInfo=`file ${MediaFile}      | awk 'BEGIN {FS="precision"} {print $NF}'`
+        ResolutionInfo=`echo ${ResolutionInfo} | awk 'BEGIN {FS=","} {print $2}'`
     elif [ "$MediaFormat" = "png" ]; then
         ResolutionInfo=`file ${MediaFile} | awk 'BEGIN {FS="PNG image data"} {print $NF}'`
         ResolutionInfo=`echo ${ResolutionInfo} | awk 'BEGIN {FS=","} {print $2}'`
@@ -229,8 +232,7 @@ runParseAllMdediaFile()
 
         #[ "$MediaType"   != "image" ] && [ "$MediaType"   != "mp4" ] && continue
         [ "$MediaType"   != "image" ] && continue
-        [ "$MediaFormat" != "png" ] && continue
-
+#[ "$MediaFormat" != "png" ] && continue
 #[ "$MediaType"   != "mp4" ] && continue
         #[ "$MediaFormat" != "jpeg"  ] && continue
 
