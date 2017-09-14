@@ -27,8 +27,9 @@ runInint()
     let "FileOutputIndex = 0"
     AllMediaFileList="AllMediaFileList-${Date}.csv"
 
-    HeadLine="Index,FileName,Type,Format,PicW,PicH,Size,CR,URL"
-    AllMediaHeadLine="Domain,Index,FileName,Type,Format,PicW,PicH,Size,CR,Outputdir,URL"
+    HeadLine="Index,FileName,Type,Format,AppLabel,SubLabel,PicW,PicH,Size,CR,URL"
+    AllMediaHeadLine="Domain,Index,FileName,Type,Format,AppLabel,SubLabel,\
+    PicW,PicH,Size,CR,Outputdir,URL"
 }
 
 runDomainMapping()
@@ -36,7 +37,7 @@ runDomainMapping()
     Maping=("" \
             "" )
 
-
+[ ! -e ${MappingFile} ] && echo "no mapping file" && exit 1
 }
 
 runParseURLInfo()
@@ -189,17 +190,85 @@ runRenameMediaFile()
     MediaFile=${NewMediaFile}
 }
 
+runParseLabel()
+{
+    #wa.gtimg.com,	image,	jpeg,	1080,	1920,	Tencent-News,	Add,
+    AppLabel=`echo ${LabelCategory}   | awk 'BEGIN {FS=","} {print $6}'`
+    SubLabel=`echo ${LabelCategory}   | awk 'BEGIN {FS=","} {print $7}'`
+    LabelPicW=`echo ${LabelCategory}  | awk 'BEGIN {FS=","} {print $4}'`
+    LabelPicH=`echo ${LabelCategory}  | awk 'BEGIN {FS=","} {print $5}'`
+}
+
+runGetBestLabel()
+{
+    #************************************
+    #return 0: match, 1: not match
+    #************************************
+    #case1:   720x720 ==>Avatar
+    #  300   300  Small
+    #  1080  1080 Avatar
+    #case2: 480x640 ==>Cover
+    #  100   100  Small
+    #  1080  1080 Avatar
+    #  540   960  Cover
+    #case3: 480x640 ==>Unkown
+    #  100   100  Small
+    #  1080  1080 Avatar
+    #case3: 480x480 ==>Unkown
+    #  540   960  Small
+    #  1280  128  Ad
+    #************************************
+
+    if [ ${PicW} -eq ${PicH} ] && [ ${LabelPicW} -eq ${LabelPicH} ];then
+        [ ${PicW} -le 300 ] && [ ${LabelPicW} -le 300 ] && return 0
+        [ ${PicW} -gt 300 ] && [ ${LabelPicW} -gt 300 ] && return 0
+
+    elif [ ${PicW} -eq ${PicH} ] && [ ${LabelPicW} -ne ${LabelPicH} ];then
+        return 1
+    elif [ ${PicW} -ne ${PicH} ] && [ ${LabelPicW} -eq ${LabelPicH} ];then
+        return 1
+    elif [ ${PicW} -ne ${PicH} ] && [ ${LabelPicW} -ne ${LabelPicH} ];then
+        return 0
+    fi
+}
+
+runGenerateMediaLabel()
+{
+    MatchLabelLog="MatchLabelList.txt"
+    MappingFile="Tencent-News-Mapping.csv"
+
+    cat ${MappingFile} | grep "${Domain}" |grep "${MediaFormat}" >${MatchLabelLog}
+    NumLabel=`wc -l ${MatchLabelLog} | awk '{print $1}'`
+    if [ ${NumLabel} -eq 1 ]; then
+        LabelCategory=`cat ${MatchLabelLog}`
+        runParseLabel
+        return 0
+    fi
+
+    let "Flag = 0"
+    while read line
+    do
+        LabelCategory=${line}
+
+        runParseLabel
+        runGetBestLabel
+        [ $? -eq 0 ] && let "Flag = 1" && break
+    done <${MatchLabelLog}
+
+   [ ${Flag} -eq 0 ] && SubLabel="Unkown"
+}
+
 runUpdateMediaInfo()
 {
     [ -e ${MediaListInfo} ]    || echo ${HeadLine} >${MediaListInfo}
     [ -e ${AllMediaFileList} ] || echo ${AllMediaHeadLine} >${AllMediaFileList}
 
     #update media file info
-    MediaInfo="${FileOutputIndex},${MediaFileName},${MediaType},${MediaFormat}"
+    MediaInfo="${FileOutputIndex},${MediaFileName},${MediaType},${MediaFormat},${AppLabel},${SubLabel}"
     MediaInfo="${MediaInfo},${PicW},${PicH},${MediaFileSizeInkB},${CompressionRate},${URL}"
 
     MediaInfoForAll="${Domain},${FileOutputIndex},${MediaFileName},${MediaType}"
-    MediaInfoForAll="${MediaInfoForAll},${MediaFormat},${PicW},${PicH},${MediaFileSizeInkB}"
+    MediaInfoForAll="${MediaInfoForAll},${MediaFormat},${AppLabel},${SubLabel},${PicW},${PicH},${MediaFileSizeInkB}"
     MediaInfoForAll="${MediaInfoForAll},${CompressionRate},${MediaOutputDir},${URL}"
     echo "${MediaInfo}"       >>${MediaListInfo}
     echo "${MediaInfoForAll}" >>${AllMediaFileList}
@@ -218,6 +287,8 @@ runOutputMediaInfo()
     echo -e "\033[32m MediaInfo       is: ${PicW} x ${PicH}      \033[0m"
     echo -e "\033[32m FrameSizeInkB   is: ${FrameSizeInkB}       \033[0m"
     echo -e "\033[32m CompressionRate is: ${CompressionRate}     \033[0m"
+    echo -e "\033[32m AppLabel        is: ${AppLabel}            \033[0m"
+    echo -e "\033[32m SubLabel        is: ${SubLabel}            \033[0m"
     echo -e "\033[32m ****************************************** \033[0m"
 }
 
@@ -247,6 +318,7 @@ runParseAllMdediaFile()
         #parse media file info
         runParseMediaFileInfo
         runRenameMediaFile
+        runGenerateMediaLabel
 
         runUpdateMediaInfo
         runOutputMediaInfo
