@@ -7,9 +7,9 @@ runUsage()
 {
     echo -e "\033[31m ******************************************* \033[0m"
     echo "   Usage:                                                "
-    echo "      $0  \$CharlesExportFile \${OutputDir}              "
+    echo "      $0  \$CharlesExportFile \${AppName}                "
     echo "      --CharlesExportFile:  csv file export from charles "
-    echo "      --OutputDir: output dir  "
+    echo "      --AppName: like Douyin Kuaishou TuDou MiaoPai      "
     echo -e "\033[31m ******************************************* \033[0m"
 }
 
@@ -17,7 +17,9 @@ runInint()
 {
     Date=`date +%y%m%d%H%S`
     CurrentDir=`pwd`
-    DefaultOutputDir="${CurrentDir}/OutputMedia"
+    DefaultOutputDir="${CurrentDir}/MediaOutput"
+    LabelCfgDir="${CurrentDir}/LabelCfg"
+    LabelCfgList="${LabelCfgDir}/Label-list.txt"
     URL=""
     MediaOutputDir=""
     MediaFileName=""
@@ -25,19 +27,39 @@ runInint()
     MediaType=""
     MediaFormat=""
     let "FileOutputIndex = 0"
-    AllMediaFileList="AllMediaFileList-${Date}.csv"
 
     HeadLine="Index,FileName,Type,Format,AppLabel,SubLabel,PicW,PicH,Size,CR,URL"
     AllMediaHeadLine="Domain,Index,FileName,Type,Format,AppLabel,SubLabel,\
     PicW,PicH,Size,CR,Outputdir,URL"
+
+
+    SubDirName=`basename ${CharlesExportFile} | awk 'BEGIN {FS=".csv"} {print $1}'`
+    OutputDir="${DefaultOutputDir}/${SubDirName}"
+    mkdir -p ${OutputDir}
+    cd ${OutputDir} && OutputDir=`pwd` && cd -
+
+    AllMediaFileList="${OutputDir}/${AppName}-${Date}.csv"
 }
 
-runDomainMapping()
+runGetLabelCfgFile()
 {
-    Maping=("" \
-            "" )
+    LabelFile=`cat ${LabelCfgList} | grep -i ${AppName}`
 
-[ ! -e ${MappingFile} ] && echo "no mapping file" && exit 1
+    if [ "${LabelFile}X" = "X" ]; then
+        echo -e "\033[31m *********************************************** \033[0m"
+        echo -e "\033[31m  No mapping cfg file for ${AppName}             \033[0m"
+        echo -e "\033[31m  Please check and manual update the mapping cfg \033[0m"
+        echo -e "\033[31m  Mapping file format is:                       \033[0m"
+        echo -e "\033[31m         \${AppName}-Mapping.csv                \033[0m"
+        echo -e "\033[31m *********************************************** \033[0m"
+        echo -e "\033[33m current mapping cfg files list are:             \033[0m"
+        cat ${LabelCfgList}
+        echo -e "\033[33m *********************************************** \033[0m"
+
+        exit 1
+    fi
+
+    LabelMappingFile="${LabelCfgDir}/${LabelFile}"
 }
 
 runParseURLInfo()
@@ -235,12 +257,8 @@ runGetBestLabel()
 runGenerateMediaLabel()
 {
     MatchLabelLog="MatchLabelList.txt"
-#MappingFile="Tencent-News-Mapping.csv"
-#MappingFile="Douyin-Mapping.csv"
-#MappingFile="HuoShan-Mapping.csv"
-MappingFile="Kuaishou-Mapping.csv"
 
-    cat ${MappingFile} | grep "${Domain}" |grep "${MediaFormat}" >${MatchLabelLog}
+    cat ${LabelMappingFile} | grep "${Domain}" |grep "${MediaFormat}" >${MatchLabelLog}
     NumLabel=`wc -l ${MatchLabelLog} | awk '{print $1}'`
     if [ ${NumLabel} -eq 1 ]; then
         LabelCategory=`cat ${MatchLabelLog}`
@@ -321,6 +339,10 @@ runParseAllMdediaFile()
         #parse media file info
         runParseMediaFileInfo
         runRenameMediaFile
+
+        #add label
+        #if no label mapping cfg file, please comment out below funtion
+        # and mapping file checking function
         runGenerateMediaLabel
 
         runUpdateMediaInfo
@@ -339,31 +361,28 @@ runCheck()
         runUsage
         exit 1
     fi
-
-    [ -z "${OutputDir}" ] && OutputDir="${DefaultOutputDir}"
-    mkdir -p ${OutputDir}
-
-    cd ${OutputDir} && OutputDir=`pwd` && cd -
 }
 
 runMain()
 {
-    runInint
     runCheck
 
-    runParseAllMdediaFile
+    runInint
+    runGetLabelCfgFile
+
+runParseAllMdediaFile
 }
 
 #*****************************************************
 
-if [ $# -lt 1 ]
+if [ $# -lt 2 ]
 then
     runUsage
     exit 1
 fi
 
 CharlesExportFile=$1
-OutputDir=$2
+AppName=$2
 
 runMain
 #*****************************************************
