@@ -379,7 +379,7 @@ runParseAllMdediaFile()
         #add label
         #if no label mapping cfg file, please comment out below funtion
         # and mapping file checking function
-        runGenerateMediaLabel
+runGenerateMediaLabel
 #add resolution label
 runGenerateResulotionLabel
 
