@@ -28,8 +28,8 @@ runInint()
     MediaFormat=""
     let "FileOutputIndex = 0"
 
-    HeadLine="Index,FileName,Type,Format,AppLabel,SubLabel,PicW,PicH,Size,CR,URL"
-    AllMediaHeadLine="Domain,Index,FileName,Type,Format,AppLabel,SubLabel,\
+    HeadLine="Index,FileName,Type,Format,AppLabel,SubLabel,SizeLabel,PicW,PicH,Size,CR,URL"
+    AllMediaHeadLine="Domain,Index,FileName,Type,Format,AppLabel,SubLabel,SizeLabel,\
     PicW,PicH,Size,CR,Outputdir,URL"
 
 
@@ -39,6 +39,14 @@ runInint()
     cd ${OutputDir} && OutputDir=`pwd` && cd -
 
     AllMediaFileList="${OutputDir}/${AppName}-${Date}.csv"
+
+    # for resolution label
+    let "FrameSize_90p   = 160  * 90  "
+    let "FrameSize_180p  = 320  * 180 "
+    let "FrameSize_360p  = 640  * 360 "
+    let "FrameSize_540p  = 540  * 960 "
+    let "FrameSize_720p  = 1280 * 720 "
+    let "FrameSize_1080p = 1920 * 1080"
 }
 
 runGetLabelCfgFile()
@@ -254,6 +262,20 @@ runGetBestLabel()
     fi
 }
 
+runGenerateResulotionLabel()
+{
+    let "LabelFrameSize = ${PicW} * ${PicH}"
+
+    [ ${LabelFrameSize} -ge ${FrameSize_1080p} ] && SizeLabel="1080p" && return 0
+    [ ${LabelFrameSize} -ge ${FrameSize_720p}  ] && SizeLabel="720p"  && return 0
+    [ ${LabelFrameSize} -ge ${FrameSize_540p}  ] && SizeLabel="540p"  && return 0
+    [ ${LabelFrameSize} -ge ${FrameSize_360p}  ] && SizeLabel="360p"  && return 0
+    [ ${LabelFrameSize} -ge ${FrameSize_180p}  ] && SizeLabel="180p"  && return 0
+
+    SizeLabel="90p"
+    return 0
+}
+
 runGenerateMediaLabel()
 {
     MatchLabelLog="MatchLabelList.txt"
@@ -285,11 +307,11 @@ runUpdateMediaInfo()
     [ -e ${AllMediaFileList} ] || echo ${AllMediaHeadLine} >${AllMediaFileList}
 
     #update media file info
-    MediaInfo="${FileOutputIndex},${MediaFileName},${MediaType},${MediaFormat},${AppLabel},${SubLabel}"
+    MediaInfo="${FileOutputIndex},${MediaFileName},${MediaType},${MediaFormat},${AppLabel},${SubLabel},${SizeLabel}"
     MediaInfo="${MediaInfo},${PicW},${PicH},${MediaFileSizeInkB},${CompressionRate},${URL}"
 
     MediaInfoForAll="${Domain},${FileOutputIndex},${MediaFileName},${MediaType}"
-    MediaInfoForAll="${MediaInfoForAll},${MediaFormat},${AppLabel},${SubLabel},${PicW},${PicH},${MediaFileSizeInkB}"
+    MediaInfoForAll="${MediaInfoForAll},${MediaFormat},${AppLabel},${SubLabel},${SizeLabel},${PicW},${PicH},${MediaFileSizeInkB}"
     MediaInfoForAll="${MediaInfoForAll},${CompressionRate},${MediaOutputDir},${URL}"
     echo "${MediaInfo}"       >>${MediaListInfo}
     echo "${MediaInfoForAll}" >>${AllMediaFileList}
@@ -324,6 +346,7 @@ runParseAllMdediaFile()
 
         #[ "$MediaType"   != "image" ] && [ "$MediaType"   != "mp4" ] && continue
         [ "$MediaType"   != "image" ] && continue
+
 #[ "$MediaFormat" != "png" ] && continue
 #[ "$MediaType"   != "mp4" ] && continue
         #[ "$MediaFormat" != "jpeg"  ] && continue
@@ -344,6 +367,8 @@ runParseAllMdediaFile()
         #if no label mapping cfg file, please comment out below funtion
         # and mapping file checking function
         runGenerateMediaLabel
+#add resolution label
+runGenerateResulotionLabel
 
         runUpdateMediaInfo
         runOutputMediaInfo
