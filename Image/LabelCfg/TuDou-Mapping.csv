@@ -1,0 +1,8 @@
+Domain,Type,Format,PicW,PicH,AppLabel,SubLabel,Note
+cdnsf.tudou.com,image,jpeg,80,80,TuDou,Small-Icon,
+image.uczzd.cn,image,jpeg,750,422,TuDou,Cover,
+image.uczzd.cn,image,png,750,422,TuDou,Cover,
+r1.ykimg.com,image,jpeg,896,504,TuDou,Cover,
+static.youku.com,image,jpeg,310,310,TuDou,Avatar,
+static.youku.com,image,png,310,310,TuDou,Avatar,
+vthumb.ykimg.com,image,jpeg,448,252,TuDou,Cover,
