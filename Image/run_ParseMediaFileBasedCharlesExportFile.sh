@@ -237,8 +237,8 @@ runGenerateMediaLabel()
     MatchLabelLog="MatchLabelList.txt"
 #MappingFile="Tencent-News-Mapping.csv"
 #MappingFile="Douyin-Mapping.csv"
-MappingFile="HuoShan-Mapping.csv"
-#MappingFile="Kuaishou-Mapping.csv"
+#MappingFile="HuoShan-Mapping.csv"
+MappingFile="Kuaishou-Mapping.csv"
 
     cat ${MappingFile} | grep "${Domain}" |grep "${MediaFormat}" >${MatchLabelLog}
     NumLabel=`wc -l ${MatchLabelLog} | awk '{print $1}'`
