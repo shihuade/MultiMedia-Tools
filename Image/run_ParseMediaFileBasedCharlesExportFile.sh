@@ -28,10 +28,10 @@ runInint()
     MediaFormat=""
     let "FileOutputIndex = 0"
 
-    HeadLine="Index,FileName,Type,Format,AppLabel,SubLabel,SizeLabel,PicW,PicH,Size,CR,URL"
+    HeadLine="Index,FileName,Type,Format,AppLabel,SubLabel,SizeLabel,\
+    SizeIdx,PicW,PicH,Size,CR,URL"
     AllMediaHeadLine="Domain,Index,FileName,Type,Format,AppLabel,SubLabel,SizeLabel,\
-    PicW,PicH,Size,CR,Outputdir,URL"
-
+    SizeIdx,PicW,PicH,Size,CR,Outputdir,URL"
 
     SubDirName=`basename ${CharlesExportFile} | awk 'BEGIN {FS=".csv"} {print $1}'`
     OutputDir="${DefaultOutputDir}/${SubDirName}"
@@ -46,7 +46,16 @@ runInint()
     let "FrameSize_360p  = 640  * 360 "
     let "FrameSize_540p  = 540  * 960 "
     let "FrameSize_720p  = 1280 * 720 "
+    let "FrameSize_960p  = 1280 * 960 "
     let "FrameSize_1080p = 1920 * 1080"
+
+    let "FrameSizeIndex_90p   = 1 "
+    let "FrameSizeIndex_180p  = 2 "
+    let "FrameSizeIndex_360p  = 3 "
+    let "FrameSizeIndex_540p  = 4 "
+    let "FrameSizeIndex_720p  = 5 "
+    let "FrameSizeIndex_960p  = 6 "
+    let "FrameSizeIndex_1080p = 7"
 }
 
 runGetLabelCfgFile()
@@ -266,13 +275,15 @@ runGenerateResulotionLabel()
 {
     let "LabelFrameSize = ${PicW} * ${PicH}"
 
-    [ ${LabelFrameSize} -ge ${FrameSize_1080p} ] && SizeLabel="1080p" && return 0
-    [ ${LabelFrameSize} -ge ${FrameSize_720p}  ] && SizeLabel="720p"  && return 0
-    [ ${LabelFrameSize} -ge ${FrameSize_540p}  ] && SizeLabel="540p"  && return 0
-    [ ${LabelFrameSize} -ge ${FrameSize_360p}  ] && SizeLabel="360p"  && return 0
-    [ ${LabelFrameSize} -ge ${FrameSize_180p}  ] && SizeLabel="180p"  && return 0
+    [ ${LabelFrameSize} -ge ${FrameSize_1080p} ] && SizeLabel="1080p" && SizeIdx=7 && return 0
+    [ ${LabelFrameSize} -ge ${FrameSize_960p}  ] && SizeLabel="960p"  && SizeIdx=6 && return 0
+    [ ${LabelFrameSize} -ge ${FrameSize_720p}  ] && SizeLabel="720p"  && SizeIdx=5 && return 0
+    [ ${LabelFrameSize} -ge ${FrameSize_540p}  ] && SizeLabel="540p"  && SizeIdx=4 && return 0
+    [ ${LabelFrameSize} -ge ${FrameSize_360p}  ] && SizeLabel="360p"  && SizeIdx=3 && return 0
+    [ ${LabelFrameSize} -ge ${FrameSize_180p}  ] && SizeLabel="180p"  && SizeIdx=2 && return 0
 
     SizeLabel="90p"
+    SizeIdx=1
     return 0
 }
 
@@ -307,11 +318,11 @@ runUpdateMediaInfo()
     [ -e ${AllMediaFileList} ] || echo ${AllMediaHeadLine} >${AllMediaFileList}
 
     #update media file info
-    MediaInfo="${FileOutputIndex},${MediaFileName},${MediaType},${MediaFormat},${AppLabel},${SubLabel},${SizeLabel}"
+    MediaInfo="${FileOutputIndex},${MediaFileName},${MediaType},${MediaFormat},${AppLabel},${SubLabel},${SizeLabel}, ${SizeIdx}"
     MediaInfo="${MediaInfo},${PicW},${PicH},${MediaFileSizeInkB},${CompressionRate},${URL}"
 
     MediaInfoForAll="${Domain},${FileOutputIndex},${MediaFileName},${MediaType}"
-    MediaInfoForAll="${MediaInfoForAll},${MediaFormat},${AppLabel},${SubLabel},${SizeLabel},${PicW},${PicH},${MediaFileSizeInkB}"
+    MediaInfoForAll="${MediaInfoForAll},${MediaFormat},${AppLabel},${SubLabel},${SizeLabel},${SizeIdx},${PicW},${PicH},${MediaFileSizeInkB}"
     MediaInfoForAll="${MediaInfoForAll},${CompressionRate},${MediaOutputDir},${URL}"
     echo "${MediaInfo}"       >>${MediaListInfo}
     echo "${MediaInfoForAll}" >>${AllMediaFileList}
@@ -332,6 +343,8 @@ runOutputMediaInfo()
     echo -e "\033[32m CompressionRate is: ${CompressionRate}     \033[0m"
     echo -e "\033[32m AppLabel        is: ${AppLabel}            \033[0m"
     echo -e "\033[32m SubLabel        is: ${SubLabel}            \033[0m"
+    echo -e "\033[32m SizeLabel       is: ${SizeLabel}           \033[0m"
+    echo -e "\033[32m SizeIdx         is: ${SizeIdx}             \033[0m"
     echo -e "\033[32m ****************************************** \033[0m"
 }
 
