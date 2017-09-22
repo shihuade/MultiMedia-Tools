@@ -22,11 +22,12 @@ runUsage()
 runInit()
 {
     TranscodePattern="FFTrans"
+    TimeInfo=`date +%Y%m%d-%H%M`
 
     MP4ParserScript="../MP4Info/run_ParseMP4Info.sh"
     AllMP4Info="${InputDir}/Report_AllMP4Info_${Label}.csv"
     AllMP4InfoParserConsole="${InputDir}/Report_AllMP4InfoDetail_${Label}.txt"
-    TranscodeSummaryInfo="${InputDir}/Report_TranscodeSummary_${Label}.csv"
+    TranscodeSummaryInfo="${InputDir}/Report_TranscodeSummary_${Label}_${TimeInfo}.csv"
 
     HeadLine="MP4File, Params, OriginSize(MBs), TranscodedSize(MBs), Delta(%), Time(s), SHA1-Org, SHA1-Trans"
 
@@ -69,42 +70,13 @@ runGetAllMP4StaticInfo()
     ${Command}
 }
 
-runTranscodeInit()
-{
-    CRFParam=$1
-    Label="Opt_crf_${CRFParam}"
-    CommandBR="-crf ${CRFParam}"
-    OptCommand="-deblock 1 -trellis 2 -bf 4 -refs 5 -subq 9"
-    #OptCommand="-deblock 1 -trellis 2 -bf 4 -refs 5 -subq 9"
-
-    CommandDenoise="atadenoise=0a=0.1:0b=5.0:1a=0.1:1b=5.0:2a=0.1:2b=5.0"
-    CommandBright="colorlevels=rimax=0.902:gimax=0.902:bimax=0.902  -pix_fmt yuv420p"
-    CommandSharpen="unsharp=lx=9:ly=9:la=0.5:cx=9:cy=9:ca=0.5"
-
-    OutputFileSuffix="${TranscodePattern}"
-    #**********************************
-    runInit
-    #**********************************
-
-}
-
-
-runx264OptParams()
-{
-    #x264OptsPlus="-x264opts b-adapt=2  -x264opts direct=auto -x264opts me=umh -x264opts merange=24 -x264opts  partitions=all  -x264opts subme=11  -x264opts trellis=2  -x264opts rc-lookahead=60"
-    #optimization params set
-    #x264Opts="-x264opts scenecut 20 -x264opts bframes 4 -x264opts b-adapt=2 -x264opts ref 5  -x264opts direct=auto -x264opts me=umh -x264opts merange=24 -x264opts  partitions=all  -x264opts subme=11  -x264opts trellis=2  -x264opts rc-lookahead=60 -x264opts qcomp=0.50 -x264opts nr 1000 -x264opts deblock 2"
-    echo " above setting is time cost params setting for x264"
-
-}
-
 runTranscodeAll()
 {
 
     ParamsIFrame=(30)
-    ParamsBFNum=(3)
-    ParamsRef=(4)
-    ParamsQCom=(0.50)
+    ParamsBFNum=(3 2)
+    ParamsRef=(4 2)
+    ParamsQCom=(0.5)
     ParamsNR=(400)
     ParamsDeblock=(0)
 
@@ -123,7 +95,6 @@ ParamsRCPBRatio=(1.40)
 
     ParamsPreset=("veryfast")
     Label=""
-    #   x264OptsPlus="-x264opts b-adapt=2  -x264opts direct=auto -x264opts me=umh -x264opts merange=24 -x264opts  partitions=all  -x264opts subme=11  -x264opts trellis=2  -x264opts rc-lookahead=60"
 
     #**********************************
     runInit
@@ -152,13 +123,8 @@ x264OptsFrmStruct="-x264opts scenecut=${IFrame}:psy-rd=${psy}:subme=${subme}:tre
 x264OptRC="-qcomp ${QCom}  -rc-lookahead ${rclook} -crf ${crf}"
 x264OptME="-refs ${Ref}"
 x264OptDeNoise="-deblock ${Deblock} -nr ${NR} -movflags faststart"
-
-
 x264Opts=" ${x264OptsFrmStruct} ${x264OptRC} ${x264OptME} ${x264OptDeNoise}"
 
-#OutputFileSuffix="${TranscodePattern}_${preset}_scut_${IFrame}_Bf_${BFNum}_Ref_${Ref}psy${psy}"
-#OutputFileSuffix="${OutputFileSuffix}_crf_${crf}_qcom_${QCom}_nr_${NR}_debl_${Deblock}"
-#OutputFileSuffix="${TranscodePattern}_${preset}_psyd_${psy}_subme_${subme}_trel_${treils}"
 OutputFileSuffix="${TranscodePattern}_I_${IFrame}_ip_${ipratio}_bf_${BFNum}_ref_${Ref}"
 OutputFileSuffix="${OutputFileSuffix}_crf_${crf}_lk_${rclook}_qc_${QCom}_nr_${NR}"
 OutputFileSuffix="${OutputFileSuffix}_sme_${subme}_tr_${treils}_dr_${direct}_db_${Deblock}_psy_${psy}"
@@ -181,23 +147,9 @@ done
 done
 done
 
-
-#ffmpeg -i  Test-01-NoTrans-CR10-IFrame-0s-CR8.mp4 -c:v libx264 -profile:v high -level 3.1 -x264opts scenecut=40:psy-rd=1.0,0.10:subme=8:trellis=2:direct=auto:vbv-maxrate=4000:vbv-bufsize=8000 -bf 3 -refs 4 -crf 22 -qcomp 0.56 -rc-lookahead 30 -deblock 0  -nr 0 -c:a copy -y Test-01-NoTrans-CR10-IFrame-0s-CR8.mp4_FFMPEG_V9.mp4
-
-#ffmpeg -i  Test-01-NoTrans-CR10-IFrame-0s-CR8.mp4 -c:v libx264 -profile:v high -level 3.1 -x264opts scenecut=40:psy-rd=1.0,0.0:subme=8:trellis=2:direct=auto:vbv-maxrate=4000:vbv-bufsize=8000:pbratio=1.4 -bf 3 -refs 4 -crf 22 -qcomp 0.56 -rc-lookahead 30 -deblock 0  -nr 0 -s  -c:a copy540x960 -movflags faststart -c:a copy -y Test-01-NoTrans-CR10-IFrame-0s-CR8.mp4_FFMPEG_V9_crf21_db3-nr100.mp4
-
-# -c:v libx264 -profile:v high -level 3.1 -x264opts scenecut=40:psy-rd=1.0,0.0:subme=8:trellis=2:direct=auto:vbv-maxrate=4000:vbv-bufsize=8000:pbratio=1.4 -bf 3 -refs 4 -crf 22 -qcomp 0.56 -rc-lookahead 30 -deblock 0  -nr 0 -s 540x960 -movflags faststart -c:a copy -y
-
-#ffmpeg -i Test-1-1080p.mp4   -c:v libx264 -profile:v high -level 3.1 -x264opts scenecut=40:psy-rd=1.0,0.0:subme=8:trellis=2:direct=auto:vbv-maxrate=4000:vbv-bufsize=8000:ipratio=1.5 -bf 3 -refs 4 -crf 22 -qcomp 0.56 -rc-lookahead 30 -deblock 0  -nr 0 -s 540x960 -movflags faststart -c:a copy -y Test-1-1080p.mp4_pcTest_ipratio_1.5.mp4
-
-#ffmpeg -i ~/Desktop/Test-01-1080p-allI.mp4 -c:v libx264 -profile:v high -level 3.1  -x264opts scenecut=40:psy-rd=1.0,0.00:subme=8:trellis=2:direct=auto:vbv-maxrate=4000:vbv-bufsize=8000:ipratio=1.5 -bf 3 -refs 4 -crf 20 -qcomp 0.55 -rc-lookahead 30 -deblock 0  -nr 0  -s 480x848  -c:a copy  -movflags faststart  -y  ~/Desktop/Test-01-1080p-allI.mp4_crf20_ip1.5
-#
-#   -c:v libx264 -preset veryfast -profile:v high -level 3.1 -x264opts scenecut=40:psy-rd=1.0,0.0:subme=4:trellis=2:ipratio=1.2 -bf 3 -refs 4 -qcomp 0.50  -rc-lookahead 20 -crf 21 -deblock 0 -nr 400  -c:a copy -movflags faststart -y
-
-#ffmpeg -i ~/Downloads/268187939317096448_BoaIFJraSj.mp4 -c:v libx264 -preset fast -profile:v high -level 3.1 -x264opts scenecut=40:psy-rd=1.0,0.0:vbv-maxrate=4000:vbv-bufsize=8000 -bf 3 -refs 4 -qcomp 0.50  -crf 30 -deblock 4 -nr 600  -c:a copy -movflags faststart -y ~/Desktop/Test-01-crf30-db5.mp4
+#ffmpeg -i /Users/huade/Desktop/V3.3-Slow-01-copy-only.mp4 -c:a libfdk_aac -profile:a aac_he -b:a 128k -vbr 4 -c:v libx264 -profile:v high -level 3.1 -x264opts scenecut=30:subme=2:trellis=1 -bf 3 -refs 4 -rc-lookahead 20 -crf 21 -qcomp 0.52 -deblock 0 -nr 500  -movflags faststart -use_editlist 0 -y ~/Desktop/Copy-Only-ffmpeg-trans-01.mp4
 
 }
-
 
 runFFMPEGTransWithFilter()
 {
@@ -209,11 +161,35 @@ runFFMPEGTransWithFilter()
     #ffmpeg -i 1827259258.mp4 -c:a copy -c:v libx264 -profile:v high -level 3.1 -crf 24 -vf curves=lighter -pix_fmt yuv420p -y 1827259258.mp4_ligther_crf24.mp4
 }
 
+runTrascodeWithMultiParamerList()
+{
+    runInit
+echo "TranscodePattern is --$TranscodePattern----"
+    MP4Plus=" -movflags faststart -use_editlist 0 "
+    CodecOpts=" -c:a copy -c:v libx264 -profile:v high -level 3.1 "
+
+    OutputFileSuffix="${TranscodePattern}_Slow_crf21"
+    x264Opts=" -x264opts scenecut=30:subme=2:trellis=1 "
+    x264OptsPlus="-bf 3 -refs 4 -rc-lookahead 20 -crf 21 -qcomp 0.52 -deblock 0 -nr 500  "
+    runTranscodeAllMP4WithOneParamSetting
+
+    OutputFileSuffix="${TranscodePattern}_Middle_crf22"
+    x264Opts="  -x264opts scenecut=30:subme=0:trellis=0 "
+    x264OptsPlus=" -bf 2 -refs 2 -rc-lookahead 10 -crf 22 -qcomp 0.54 -deblock 0 -nr 450 "
+    runTranscodeAllMP4WithOneParamSetting
+
+    OutputFileSuffix="${TranscodePattern}_SuperFast"
+    x264Opts=" "
+    x264OptsPlus=" -preset superfast -crf 25 "
+    runTranscodeAllMP4WithOneParamSetting
+}
+
 runTranscodeAllMP4WithOneParamSetting()
 {
 
     for Mp4File in ${InputDir}/*${Pattern}*.mp4
     do
+
         #for transcoded files, skip
         OriginFlag=`echo "$Mp4File" | grep "${TranscodePattern}"`
         [ -z "${OriginFlag}" ] || continue
@@ -227,7 +203,7 @@ runTranscodeAllMP4WithOneParamSetting()
         #[ -z "${ExcludeFlag}" ] || continue
 
         OutputFile="${Mp4File}_${OutputFileSuffix}.mp4"
-        TransCommand="ffmpeg -i $Mp4File ${CodecOpts} ${x264Opts} ${x264OptsPlus}"
+        TransCommand="ffmpeg -i $Mp4File ${CodecOpts} ${x264Opts} ${x264OptsPlus} ${MP4Plus}"
 
         TransCommand="$TransCommand -y $OutputFile"
 
@@ -238,8 +214,6 @@ runTranscodeAllMP4WithOneParamSetting()
         echo -e "\033[32m ****************************************************** \033[0m"
 
         StartTime=`date +%s`
-${TransCommand}
-${TransCommand}
         ${TransCommand}
         EndTime=`date +%s`
 
@@ -275,7 +249,8 @@ runMain()
 {
     runCheck
 
-    runTranscodeAll
+#runTranscodeAll
+    runTrascodeWithMultiParamerList
     runPrompt
 
 }
