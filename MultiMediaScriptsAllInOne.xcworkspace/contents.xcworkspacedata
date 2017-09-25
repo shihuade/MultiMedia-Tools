@@ -35,6 +35,12 @@
       location = "group:Image">
    </FileRef>
    <FileRef
+      location = "group:ImageView">
+   </FileRef>
+   <FileRef
+      location = "group:python">
+   </FileRef>
+   <FileRef
       location = "group:webp">
    </FileRef>
 </Workspace>
