@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <!-- 加载bootstrap来提供样式-->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <!-- 加载jQuery -->
+    <script src="./jquery.min.js"></script>
+    <style>
+        body,img{padding:0;margin:0;}
+        a{text-decoration: none;}
+        html,body,.imglist{
+           width: 100%;
+        } 
+        img {
+            display: inline-block;
+        }
+        .header {
+            text-align: center;
+            padding-top: 70px;
+            width: 400px;
+            margin: auto;
+        }
+        .total_num {
+            width: 200px;
+        }
+        .btn {
+            margin-left: 30px;
+            width: 70px;
+        }
+        .left {
+            width: 50%;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+        .right {
+            width: 50%;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <input type="text" class="total_num input-medium search-query" placeholder="请输入对比图片总数">
+        <button type="submit" class="btn btn-success" onclick="start()">确认</button>
+    </div>
+    
+    <div class="imglist"></div>
+
+<script>
+    function start(){
+        var total_num=Number($(".total_num").val())
+        $(".imglist > div").remove()
+        initImglist(total_num)
+    }
+    function initImglist(num) {
+        for (var i = 1; i < num+1; i++) {
+            var dom_left = $("<img class='left' src='./images/" + i + ".jpeg'/><img class='right' src='./images/" + i + "-02.jpeg'/>");
+            var item = $("<div></div>").append(dom_left)
+            $(".imglist").append(item);
+        }
+    }
+</script>
+
+</body>
+
+</html>
