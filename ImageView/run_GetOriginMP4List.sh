@@ -14,7 +14,6 @@ runUsage()
     echo -e "\033[31m ***************************************************** \033[0m"
 }
 
-
 runGetOriginMp4List()
 {
     #*****************************************************
@@ -26,6 +25,7 @@ runGetOriginMp4List()
 
     PreName=""
     let "OriginIdx = 0"
+    OriginMP4List=""
     for mp4 in ${InputMp4Dir}/*.mp4
     do
 
@@ -33,12 +33,13 @@ runGetOriginMp4List()
         Mp4Name=`echo ${Mp4Name} | awk 'BEGIN {FS=".mp4"} {print $1}'`
 
         [ "$Mp4Name" = "$PreName" ] && continue
+        OriginMP4List="${OriginMP4List}  ${Mp4Name}.mp4"
 
-        echo "${OriginIdx} ${Mp4Name}.mp4 " >>${OrinMp4List}
         PreName="${Mp4Name}"
         let "OriginIdx += 1"
     done
 
+    echo "${OriginMP4List}" >${OrinMp4List}
     echo -e "\033[32m ***************************************** \033[0m"
     echo -e "\033[32m   MP4Num      is: ${OriginIdx}            \033[0m"
     echo -e "\033[32m   InputMp4Dir is: ${InputMp4Dir}          \033[0m"

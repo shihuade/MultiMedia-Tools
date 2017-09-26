@@ -24,17 +24,15 @@ runPrompt()
     echo -e "\033[32m *************************************** \033[0m"
 }
 
-runParseOneComparisonPictureFromMP4()
+runGetOnePictureFromMP4()
 {
     #file from MP4File01
     Format="image2"
     TempFFMPEGImageLog="Log_FFMPEG_ImageParse.txt"
     Command="ffmpeg -ss ${TimeStamp} -i ${InputMp4} -an  -vframes 1 -f ${Format} -y ${OutputImage}"
 
-    runPrompt
-
-$Command  #2>>${TempFFMPEGImageLog}
-    [ $? -ne 0 ] && return 1
+    $Command  2>>${TempFFMPEGImageLog}
+    [ $? -ne 0 ] && "runGetOnePictureFromMP4 failed!" && exit 1
 }
 
 runCheck()
@@ -50,9 +48,8 @@ runCheck()
 runMain()
 {
     runCheck
-
-    runParseOneComparisonPictureFromMP4
-    return $?
+    runGetOnePictureFromMP4
+    runPrompt
 }
 
 #*************************************************************************************
