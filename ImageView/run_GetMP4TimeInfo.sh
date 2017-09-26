@@ -21,7 +21,7 @@ runPareseTimeStampInfo()
     # Duration: 00:00:13.95, start: 0.000000, bitrate: 2644 kb/s
     #*************************************************************************
     CheckMP4="${InputMp4}"
-    TranscodeLog="log_temp.txt"
+    TranscodeLog="Log_temp.txt"
     ffmpeg -i  ${CheckMP4} -c copy -y ${CheckMP4}_copy.mp4 2>${TranscodeLog}
     rm -f ${CheckMP4}_copy.mp4
 

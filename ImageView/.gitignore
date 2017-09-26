@@ -1,3 +1,5 @@
-ViewModule/image/*
+ViewModule/images/*
+*.csv
+*.txt
 *.jpeg
 *.webp
