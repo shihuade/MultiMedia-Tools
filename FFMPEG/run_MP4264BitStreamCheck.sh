@@ -114,6 +114,9 @@ runPromptForFFMPEGCutMp4Failed()
     echo -e "\033[31m   cut one clip failed!                   \033[0m"
     echo -e "\033[31m ***************************************** \033[0m"
     let "ClipFailedNum += 1"
+    FailedIndexList="${FailedIndexList} ${ClipIndex}"
+    FailedTimeStampList="${FailedTimeStampList} ${TimeStamp}"
+
 
     echo -e "\033[31m ----ClipFailedNum ${ClipFailedNum} \033[0m" >>${LogForFailedCut}
     runPromptForCutOneClip >>${LogForFailedCut}
@@ -126,26 +129,32 @@ runPromptForAllCut()
     echo -e "\033[31m   cut failed summary begin                      \033[0m"
     echo -e "\033[31m *********************************************** \033[0m"
     cat ${LogForFailedCut}
+    echo -e "\033[31m   FailedIndexList     is ${FailedIndexList}     \033[0m"
+    echo -e "\033[31m   FailedTimeStampList is ${FailedTimeStampList} \033[0m"
+    echo -e "\033[31m   cut failed summary end                        \033[0m"
     echo -e "\033[31m *********************************************** \033[0m"
-    echo -e "\033[31m   cut failed summary end            \033[0m"
+    echo -e "\033[31m   cut failed summary end                        \033[0m"
     echo -e "\033[31m *********************************************** \033[0m"
 
     echo -e "\033[31m *********************************************** \033[0m"
-    echo -e "\033[32m ClipNum        is ${ClipNum}        \033[0m"
-    echo -e "\033[31m ClipFailedNum  is ${ClipFailedNum}  \033[0m"
+    echo -e "\033[32m ClipNum        is ${ClipNum}                    \033[0m"
+    echo -e "\033[31m ClipFailedNum  is ${ClipFailedNum}              \033[0m"
     echo -e "\033[31m *********************************************** \033[0m"
 }
 
 runFFMPEGCutMp4()
 {
-    FrameInterval="0.6"
-    Duration="00:00:00.305"
+    FrameInterval="0.2"
+    Duration="00:00:00.10"
     CutLog="Log_FFMPEGCut.txt"
     LogForFailedCut="Log_FailedCut.txt"
     date >${LogForFailedCut}
+
+    FailedIndexList=""
+    FailedTimeStampList=""
     let "ClipIndex     = 0"
     let "ClipFailedNum = 0"
-    let "ClipNum       = 5"
+    let "ClipNum       = 50"
 
 
     InputMP4File="/Users/huade/Desktop/CopyVideo/Camera-copy-01.mp4"
@@ -174,7 +183,6 @@ runFFMPEGCutMp4()
         let "ClipIndex += 1"
     done
 
-#ffmpeg -i /Users/huade/Desktop/CopyVideo/Camera-copy-01.mp4 -ss 2.5 -t  00:00:00.305 -c copy -use_editlist 0 -y /Users/huade/Desktop/CopyVideo/Camera-copy-01.mp4_Index_4_2.5_00:00:00.305.mp4
 }
 
 
