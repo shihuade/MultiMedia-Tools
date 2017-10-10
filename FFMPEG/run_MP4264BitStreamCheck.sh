@@ -100,6 +100,7 @@ runPromptForCutOneClip()
     echo -e "\033[33m ClipNum       is ${ClipNum}                 \033[0m"
     echo -e "\033[33m ClipFailedNum is ${ClipFailedNum}           \033[0m"
     echo -e "\033[33m TimeStamp     is ${TimeStamp}               \033[0m"
+    echo -e "\033[33m DurationIdx   is ${DurationIdx}             \033[0m"
     echo -e "\033[33m Duration      is ${Duration}                \033[0m"
     echo -e "\033[33m MP4File       is ${MP4File}                 \033[0m"
     echo -e "\033[33m OutputFile    is ${OutputFile}              \033[0m"
@@ -114,9 +115,8 @@ runPromptForFFMPEGCutMp4Failed()
     echo -e "\033[31m   cut one clip failed!                   \033[0m"
     echo -e "\033[31m ***************************************** \033[0m"
     let "ClipFailedNum += 1"
-    FailedIndexList="${FailedIndexList} ${ClipIndex}"
-    FailedTimeStampList="${FailedTimeStampList} ${TimeStamp}"
-
+    FailedIndexList="${FailedIndexList} ${ClipIndex}-${DurationIdx}"
+    FailedTimeStampList="${FailedTimeStampList} ${TimeStamp}-${Duration}"
 
     echo -e "\033[31m ----ClipFailedNum ${ClipFailedNum} \033[0m" >>${LogForFailedCut}
     runPromptForCutOneClip >>${LogForFailedCut}
@@ -136,7 +136,7 @@ runPromptForAllCut()
     echo -e "\033[31m ************************************************** \033[0m"
 
     echo -e "\033[31m ************************************************** \033[0m"
-    echo -e "\033[32m ClipNum                is ${ClipNum}               \033[0m"
+    echo -e "\033[32m ClipNumSuccessNum      is ${ClipNumSuccessNum}     \033[0m"
     echo -e "\033[31m ClipFailedNum          is ${ClipFailedNum}         \033[0m"
     echo -e "\033[32m SuccessedIndexList     is ${SuccessedIndexList}    \033[0m"
     echo -e "\033[32m SuccessedTimeStampList is ${SuccessedTimeStampList}\033[0m"
@@ -145,8 +145,8 @@ runPromptForAllCut()
 
 runCutOneClip()
 {
-    OutputFile="${InputMP4File}_Index_${i}_${TimeStamp}_${Duration}.mp4"
-    CMD_Clip="ffmpeg -i ${InputMP4File} -ss ${TimeStamp} -t  ${Duration} -c copy -use_editlist 0 -y ${OutputFile}"
+    OutputFile="${AllIOutputMP4}_Index_${i}_DurIdx_${DurationIdx}_${TimeStamp}_${Duration}.mp4"
+    CMD_Clip="ffmpeg -i ${AllIOutputMP4} -ss ${TimeStamp} -t  ${Duration} -c copy -use_editlist 0 -y ${OutputFile}"
     runPromptForCutOneClip
 
     ${CMD_Clip} 2>${CutLog}
@@ -156,12 +156,24 @@ runCutOneClip()
     runCheckOneMP4File
     [ $? -ne 0 ] && echo "cut failed!" && runPromptForFFMPEGCutMp4Failed && return 1
 
-    return 0
+    let "ClipNumSuccessNum += 1"
+    SuccessedIndexList="${SuccessedIndexList} ${ClipIndex}-${DurationIdx}"
+    SuccessedTimeStampList="${SuccessedTimeStampList} ${TimeStamp}-${Duration}"
+}
+
+runAllITranscode()
+{
+    AllIOutputMP4="${InputMP4File}_All_I.mp4"
+    ffmpeg -i ${InputMP4File} -c:a copy -c:v libx264 -intra -use_editlist 0 -y ${AllIOutputMP4}
+    if [ $? -ne 0 ]; then
+        echo " All I transcode failed!"
+        exit 1
+    fi
 }
 
 runFFMPEGCutMp4()
 {
-    FrameInterval="0.3"
+    FrameInterval="0.2"
     Duration="00:00:00.10"
     CutLog="Log_FFMPEGCut.txt"
     LogForFailedCut="Log_FailedCut.txt"
@@ -171,13 +183,19 @@ runFFMPEGCutMp4()
     SuccessedIndexList=""
     FailedTimeStampList=""
     SuccessedTimeStampList=""
-    let "ClipIndex     = 0"
-    let "ClipFailedNum = 0"
-    let "ClipNum       = 30"
+    FailedDurationList=""
+    SuccessedDutationList=""
+    let "ClipIndex         = 0"
+    let "ClipFailedNum     = 0"
+    let "ClipNumSuccessNum = 0"
+    let "ClipNum           = 3"
 
 
-    InputMP4File="/Users/huade/Desktop/CopyVideo/Camera-copy-01.mp4"
-    for((i=0; i< ${ClipNum}; i++))
+    InputMP4File="/Users/huade/Desktop/BitStreamCheck/Camera-copy-01.mp4"
+    runAllITranscode
+
+for((i=0; i< ${ClipNum}; i++))
+#for((i=4; i< 5; i++))
     do
         TimeStamp=`echo  "scale=3; ${FrameInterval} * $i " | bc`
         IntNum=`echo ${TimeStamp} | awk 'BEGIN {FS="."} {print $1}'`
@@ -187,16 +205,18 @@ runFFMPEGCutMp4()
         else
             TimeStamp="00:00:${TimeStamp}"
         fi
+let "DurationIdx = 0"
+for((j=1; j<3; j++))
+do
+DurationVal=`echo  "scale=3; 0.1 * $j " | bc`
+Duration="00:00:0${DurationVal}"
+runCutOneClip
+let "DurationIdx += 1"
 
-        runCutOneClip
-        if [ $? -eq 0 ]; then
-            SuccessedIndexList="${SuccessedIndexList} ${ClipIndex}"
-            SuccessedTimeStampList="${SuccessedTimeStampList} ${TimeStamp}"
-        fi
+done
         let "ClipIndex += 1"
     done
 
-#ffmpeg -i /Users/huade/Desktop/CopyVideo/Camera-copy-01.mp4 -ss 00:00:08.4 -t  00:00:00.20 -c copy -use_editlist 0 -y /Users/huade/Desktop/CopyVideo/Camera-copy-01.mp4_Index_28_00:00:08.4_00:00:00.20.mp4
 }
 
 
