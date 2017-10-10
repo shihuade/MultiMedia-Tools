@@ -4,6 +4,8 @@
 runInint()
 {
     MP4Dir="./montage-duet"
+    InputMP4File="/Users/huade/Desktop/BitStreamCheck/Camera-copy-01.mp4"
+
 
     JMLog="Log_JMDec.txt"
     FFMPEGLog="Log_FFMPEGExtract.txt"
@@ -163,8 +165,20 @@ runCutOneClip()
 
 runAllITranscode()
 {
-    AllIOutputMP4="${InputMP4File}_All_I.mp4"
-    ffmpeg -i ${InputMP4File} -c:a copy -c:v libx264 -intra -use_editlist 0 -y ${AllIOutputMP4}
+    AllIOutputMP4="${InputMP4File}_All_I_JP.mp4"
+    #AllIOutputMP4="${InputMP4File}_I_20.mp4"
+    #AllIOutputMP4="${InputMP4File}_No_B.mp4"
+
+    #-intra -strict -2 -filter_complex color=s=480x864:c=black[bg];[0:v]scale=480:864,setsar=1:1[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2:shortest=1[out] -map [out] -map 0:a -c:a copy -use_editlist 0
+
+    #-intra -strict -2 -filter_complex color=s=480x864:c=black[bg];[0:v]scale=480:864,setsar=1:1[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2:shortest=1[out] -map [out] -map 0:a -c:a copy -use_editlist 0
+
+
+    #  ffmpeg -i ${InputMP4File} -c:a copy -c:v libx264 -x264opts keyint=20:min-keyint=20:bframes=0 -use_editlist 0 -y ${AllIOutputMP4}
+    #    ffmpeg -i ${InputMP4File} -c:a copy -c:v libx264 -intra -use_editlist 0 -y ${AllIOutputMP4}
+
+    ffmpeg -i ${InputMP4File} -intra -strict -2 -filter_complex 'color=s=480x864:c=black[bg];[0:v]scale=480:864,setsar=1:1[fg];[bg][fg]overlay=x=(main_w-overlay_w)/2:y=(main_h-overlay_h)/2:shortest=1[out]' -map [out] -map 0:a -c:a copy -use_editlist 0 -y ${AllIOutputMP4}
+
     if [ $? -ne 0 ]; then
         echo " All I transcode failed!"
         exit 1
@@ -173,7 +187,7 @@ runAllITranscode()
 
 runFFMPEGCutMp4()
 {
-    FrameInterval="0.2"
+    FrameInterval="0.1"
     Duration="00:00:00.10"
     CutLog="Log_FFMPEGCut.txt"
     LogForFailedCut="Log_FailedCut.txt"
@@ -188,11 +202,7 @@ runFFMPEGCutMp4()
     let "ClipIndex         = 0"
     let "ClipFailedNum     = 0"
     let "ClipNumSuccessNum = 0"
-    let "ClipNum           = 3"
-
-
-    InputMP4File="/Users/huade/Desktop/BitStreamCheck/Camera-copy-01.mp4"
-    runAllITranscode
+    let "ClipNum           = 8"
 
 for((i=0; i< ${ClipNum}; i++))
 #for((i=4; i< 5; i++))
@@ -206,7 +216,7 @@ for((i=0; i< ${ClipNum}; i++))
             TimeStamp="00:00:${TimeStamp}"
         fi
 let "DurationIdx = 0"
-for((j=1; j<3; j++))
+for((j=1; j<10; j++))
 do
 DurationVal=`echo  "scale=3; 0.1 * $j " | bc`
 Duration="00:00:0${DurationVal}"
@@ -227,8 +237,12 @@ runMain()
 #runCheckAllMp4
 #runPromptAll
 
+runAllITranscode
+
+
 runFFMPEGCutMp4
-runPromptForAllCut
+runPromptForAllCut >Log_Summary.txt
+cat Log_Summary.txt
 }
 
 #**************
