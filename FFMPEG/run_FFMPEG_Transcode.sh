@@ -192,20 +192,7 @@ runTrascodeWithMultiParamerList()
     OutputFileSuffix="${TranscodePattern}_Slow_crf22"
     x264Opts=" -x264opts scenecut=30:subme=2:trellis=1 "
     x264OptsPlus="-bf 3 -refs 4 -rc-lookahead 20 -crf 22 -qcomp 0.52 -deblock 0 -nr 500  "
-runTranscodeAllMP4WithOneParamSetting
-
-#**************************************************************
-OutputFileSuffix="${TranscodePattern}_Slow_crf22_error"
-x264Opts=" -x264opts scenecut=30:subme=2:trellis=1 "
-FFMPEGOption=" -xerror"
-x264OptsPlus="-bf 3 -refs 4 -rc-lookahead 20 -crf 22 -qcomp 0.52 -deblock 0 -nr 500  "
-runTranscodeAllMP4WithOneParamSetting
-
-ffmpeg  -i /Users/huade/Desktop/CopyVideo//Camera-copy-04.mp4  -c:a copy -c:v libx264 -profile:v high -level 3.1   -x264opts scenecut=30:subme=2:trellis=1  -bf 3 -refs 4 -rc-lookahead 20 -crf 22 -qcomp 0.52 -deblock 0 -nr 500    -movflags faststart -use_editlist 0  -y /Users/huade/Desktop/CopyVideo//Camera-copy-04.mp4_FFTrans_Slow_crf22.mp4
-
-ffmpeg  -i /Users/huade/Desktop/CopyVideo//Camera-copy-04.mp4-compact.mp4  -c:a copy -c:v libx264 -profile:v high -level 3.1   -x264opts scenecut=30:subme=2:trellis=1  -bf 3 -refs 4 -rc-lookahead 20 -crf 22 -qcomp 0.52 -deblock 0 -nr 500    -movflags faststart -use_editlist 0  -y /Users/huade/Desktop/CopyVideo//Camera-copy-04.mp4-compact.mp4.ffmpeg.mp4
-
-
+    runTranscodeAllMP4WithOneParamSetting
 
     OutputFileSuffix="${TranscodePattern}_SuperFast_crf26"
     x264Opts=" "
