@@ -22,13 +22,13 @@ runInit()
     TranscodePattern="FFTrans"
     MP4CheckScript="./run_CheckTranscodedMP4.sh"
 
-    OutputFileSuffix="${TranscodePattern}_server_ultra"
+    OutputFileSuffix="${TranscodePattern}_server"
 
     MP4Option=" -movflags faststart -use_editlist 0 "
-    CodecOpts=" -c:a copy -c:v libx264 -profile:v high -level 3.1  -preset ultrafast"
-    x264Opts=" -x264opts scenecut=30:subme=0:trellis=0 "
-    x264OptsPlus=" -bf 2 -refs 2 -rc-lookahead 10 -crf 24 -qcomp 0.54 -deblock 0 -nr 450 "
-    x264OptsPlus=""
+    CodecOpts=" -c:a copy -c:v libx264 -profile:v high -level 3.1 "
+    x264Opts=" -x264opts scenecut=30:subme=2:trellis=1 "
+    x264OptsPlus=" -bf 3 -refs 4 -rc-lookahead 20 -crf 23 -qcomp 0.52 -deblock 0 -nr 500 "
+
     let "SuccedNum = 0"
     let "FailedNum = 0"
 }
@@ -43,9 +43,10 @@ runPromptForOneMp4()
 
 runPromptForOneMp4Failed()
 {
-    echo -e "\033[32m ****************************************************** \033[0m"
-    echo -e "\033[32m  Transcode checked failed!                             \033[0m"
-    echo -e "\033[32m ****************************************************** \033[0m"
+    echo -e "\033[31m ****************************************************** \033[0m"
+    echo -e "\033[31m  Mp4File is ${Mp4File}                                 \033[0m"
+    echo -e "\033[31m  Transcode checked failed!                             \033[0m"
+    echo -e "\033[31m ****************************************************** \033[0m"
 }
 
 runPromptForOneMp4Succeeded()
