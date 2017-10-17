@@ -6,8 +6,17 @@
 configuration: --cc=/usr/bin/clang --prefix=/opt/ffmpeg --extra-version=tessus --enable-avisynth --enable-fontconfig --enable-gpl --enable-libass --enable-libbluray --enable-libfreetype --enable-libgsm --enable-libmodplug --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopus --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libx264 --enable-libx265 --enable-libxavs --enable-libxvid --enable-libzmq --enable-libzvbi --enable-version3 --disable-ffplay --disable-indev=qtkit --enable-libopenjpeg --enable-libvpx --enable-libxavs --enable-libopenh264 --enable-libx264 --enable-libx265 --enable-libkvazaar --enable-libilbc --enable-libwavpack
 
 #actual configure on mac
-./configure --cc=/usr/bin/clang --prefix=/opt/ffmpeg --extra-version=tessus --enable-avisynth --enable-fontconfig --enable-gpl --enable-libass --enable-libbluray --enable-libfreetype --enable-libgsm --enable-libmodplug --enable-libmp3lame  --enable-libopus --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libtheora --enable-libvidstab  --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libx264 --enable-libx265 --enable-libxvid --enable-libzmq --enable-version3 --disable-ffplay --disable-indev=qtkit --enable-libopenjpeg  --enable-libopenh264  --enable-libkvazaar --enable-libilbc  --enable-libfdk-aac --enable-nonfree --enable-encoder=aac
+./configure --cc=/usr/bin/clang --prefix=/opt/ffmpeg --extra-version=tessus --enable-avisynth --enable-fontconfig --enable-gpl --enable-libass --enable-libbluray --enable-libfreetype --enable-libgsm --enable-libmodplug --enable-libmp3lame  --enable-libopus --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libtheora --enable-libvidstab  --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libx264 --enable-libx265 --enable-libxvid --enable-libzmq --enable-version3 --disable-ffplay --disable-indev=qtkit --enable-libopenjpeg  --enable-libkvazaar --enable-libilbc  --enable-libfdk-aac --enable-nonfree --enable-encoder=aac --enable-libwebp
 
+#*****************************************************************************
+#   #ffmpeg to webp
+#*****************************************************************************
+#clip mp4
+# ffmpeg -i input.mp4 -ss 00:00:00 -t  00:00:06 -c copy  -strict -2 output.mp4
+# ffmpeg -i input.mp4 -vf scale=-1:240 -r 10  -loop 0  -y output.webp
+#get one frame from webp
+#  webpmux -get frame 1 Input.webp  -o Output.png
+#*****************************************************************************
 
 
 #*****************************************************************************

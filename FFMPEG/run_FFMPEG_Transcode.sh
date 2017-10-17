@@ -163,25 +163,75 @@ runFFMPEGTransWithFilter()
 
 runTrascodeWithMultiParamerList()
 {
+#ffmpeg -f avfoundation -framerate 30 -video_size 1280x720 -i "0:0" -vcodec libx264 -preset ultrafast -acodec libmp3lame -ar 44100 -ac 1 -target pal-vcd ./hello.mpg -f flv rtmp://localhost:1935/zbcs/room
+#ffmpeg -f avfoundation -r 30 -video_size 1280x720 -i "0:0" -vcodec libx264 -preset ultrafast -acodec libmp3lame -ar 44100 -ac 1 -target pal-vcd ./hello.mpg -f flv rtmp://localhost:1935/zbcs/room
+
+#ffmpeg -xerror -i /Users/huade/Desktop/Video-01//V70920-094757.mp4  -c:a copy -c:v libx264 -profile:v high -level 3.1   -x264opts scenecut=30:subme=2:trellis=1  -bf 3 -refs 4 -rc-lookahead 20 -crf 24 -qcomp 0.52 -deblock 0 -nr 500    -movflags faststart -use_editlist 0  -y /Users/huade/Desktop/Video-01//V70920-094757.mp4_FFTrans_Slow_crf24.mp4
+
+#ffmpeg -xerror -i /Users/huade/Desktop/Video-01//V70920-094757.mp4  -c:a copy -c:v libx264 -profile:v baseline -level 3.1 -preset ultrafast  -movflags faststart -use_editlist 0  -y /Users/huade/Desktop/Video-01//V70920-094757.mp4_FFTrans_Slow_crf24.mp4
+
     runInit
-echo "TranscodePattern is --$TranscodePattern----"
+    echo "TranscodePattern is --$TranscodePattern----"
     MP4Plus=" -movflags faststart -use_editlist 0 "
     CodecOpts=" -c:a copy -c:v libx264 -profile:v high -level 3.1 "
 
-    OutputFileSuffix="${TranscodePattern}_Slow_crf21"
-    x264Opts=" -x264opts scenecut=30:subme=2:trellis=1 "
-    x264OptsPlus="-bf 3 -refs 4 -rc-lookahead 20 -crf 21 -qcomp 0.52 -deblock 0 -nr 500  "
-    runTranscodeAllMP4WithOneParamSetting
+    #**************************************************************
+    #server transcode scheme, which will be optimize
+    OutputFileSuffix="${TranscodePattern}_sever"
+    x264Opts=" -x264opts scenecut=30:subme=7:trellis=1 "
+    x264OptsPlus=" -bf 3 -refs 4 -crf 24  -deblock 0 "
+#runTranscodeAllMP4WithOneParamSetting
 
-    OutputFileSuffix="${TranscodePattern}_Middle_crf22"
+
+    OutputFileSuffix="${TranscodePattern}_Middle_crf24"
     x264Opts="  -x264opts scenecut=30:subme=0:trellis=0 "
-    x264OptsPlus=" -bf 2 -refs 2 -rc-lookahead 10 -crf 22 -qcomp 0.54 -deblock 0 -nr 450 "
-    runTranscodeAllMP4WithOneParamSetting
+    x264OptsPlus=" -bf 2 -refs 2 -rc-lookahead 10 -crf 24 -qcomp 0.54 -deblock 0 -nr 450 "
+#    runTranscodeAllMP4WithOneParamSetting
 
-    OutputFileSuffix="${TranscodePattern}_SuperFast"
+    #**************************************************************
+    OutputFileSuffix="${TranscodePattern}_Slow_crf22"
+    x264Opts=" -x264opts scenecut=30:subme=2:trellis=1 "
+    x264OptsPlus="-bf 3 -refs 4 -rc-lookahead 20 -crf 22 -qcomp 0.52 -deblock 0 -nr 500  "
+runTranscodeAllMP4WithOneParamSetting
+
+#**************************************************************
+OutputFileSuffix="${TranscodePattern}_Slow_crf22_error"
+x264Opts=" -x264opts scenecut=30:subme=2:trellis=1 "
+FFMPEGOption=" -xerror"
+x264OptsPlus="-bf 3 -refs 4 -rc-lookahead 20 -crf 22 -qcomp 0.52 -deblock 0 -nr 500  "
+runTranscodeAllMP4WithOneParamSetting
+
+ffmpeg  -i /Users/huade/Desktop/CopyVideo//Camera-copy-04.mp4  -c:a copy -c:v libx264 -profile:v high -level 3.1   -x264opts scenecut=30:subme=2:trellis=1  -bf 3 -refs 4 -rc-lookahead 20 -crf 22 -qcomp 0.52 -deblock 0 -nr 500    -movflags faststart -use_editlist 0  -y /Users/huade/Desktop/CopyVideo//Camera-copy-04.mp4_FFTrans_Slow_crf22.mp4
+
+ffmpeg  -i /Users/huade/Desktop/CopyVideo//Camera-copy-04.mp4-compact.mp4  -c:a copy -c:v libx264 -profile:v high -level 3.1   -x264opts scenecut=30:subme=2:trellis=1  -bf 3 -refs 4 -rc-lookahead 20 -crf 22 -qcomp 0.52 -deblock 0 -nr 500    -movflags faststart -use_editlist 0  -y /Users/huade/Desktop/CopyVideo//Camera-copy-04.mp4-compact.mp4.ffmpeg.mp4
+
+
+
+    OutputFileSuffix="${TranscodePattern}_SuperFast_crf26"
     x264Opts=" "
-    x264OptsPlus=" -preset superfast -crf 25 "
-    runTranscodeAllMP4WithOneParamSetting
+    x264OptsPlus=" -preset superfast -crf 26 "
+#    runTranscodeAllMP4WithOneParamSetting
+
+
+    OutputFileSuffix="${TranscodePattern}_Server_crf30"
+    x264Opts=" "
+    x264OptsPlus=" -deblock 0 -trellis 1 -bf 3 -refs 4 -subq 7 -crf 30  "
+#    runTranscodeAllMP4WithOneParamSetting
+
+    OutputFileSuffix="${TranscodePattern}_Server_crf24"
+    x264Opts=" "
+    x264OptsPlus=" -deblock 0 -trellis 1 -bf 3 -refs 4 -subq 7 -crf 24"
+#    runTranscodeAllMP4WithOneParamSetting
+
+    OutputFileSuffix="${TranscodePattern}_Superfast_crf25"
+    x264Opts=" "
+    x264OptsPlus="-preset superfast -crf 25"
+#    runTranscodeAllMP4WithOneParamSetting
+
+    OutputFileSuffix="${TranscodePattern}_Utrafast_crf29"
+    x264Opts=" "
+    x264OptsPlus="-preset ultrafast -crf 29"
+#    runTranscodeAllMP4WithOneParamSetting
 }
 
 runTranscodeAllMP4WithOneParamSetting()
@@ -203,7 +253,7 @@ runTranscodeAllMP4WithOneParamSetting()
         #[ -z "${ExcludeFlag}" ] || continue
 
         OutputFile="${Mp4File}_${OutputFileSuffix}.mp4"
-        TransCommand="ffmpeg -i $Mp4File ${CodecOpts} ${x264Opts} ${x264OptsPlus} ${MP4Plus}"
+        TransCommand="ffmpeg ${FFMPEGOption} -i $Mp4File ${CodecOpts} ${x264Opts} ${x264OptsPlus} ${MP4Plus}"
 
         TransCommand="$TransCommand -y $OutputFile"
 
