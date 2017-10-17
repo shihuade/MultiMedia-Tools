@@ -75,6 +75,7 @@ runCheckOneMP4()
 runOutputParseInfo()
 {
     echo -e "\033[32m ***************************************** \033[0m"
+    echo "  MP4File:  $MP4File"
     echo -e "\033[33m ***************************************** \033[0m"
     echo "  Video info                                      "
     echo "  VideoBitRate(kbps):  $VideoBitRate"
@@ -110,7 +111,7 @@ runCheckOriginAndTranscodeMP4File()
     runCheckOneMP4File
     let "OriginDuration = ${VideoDuration}"
 
-    MP4File="${OrigintMp4File}"
+    MP4File="${TranscodeMP4File}"
     runCheckOneMP4File
     let "TranscodeDuration = ${VideoDuration}"
 
