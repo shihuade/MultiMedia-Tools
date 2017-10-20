@@ -1,0 +1,176 @@
+
+Syntax: x265 [options] infile [-o] outfile
+    infile can be YUV or Y4M
+    outfile is raw HEVC bitstream
+
+Executable Options:
+-h/--help                        Show this help text and exit
+-V/--version                     Show version info and exit
+
+Output Options:
+-o/--output <filename>           Bitstream output file name
+-D/--output-depth 8|10|12        Output bit depth (also internal bit depth). Default 8
+   --log-level <string>          Logging level: none error warning info debug full. Default info
+   --no-progress                 Disable CLI progress reports
+   --csv <filename>              Comma separated log file, if csv-log-level > 0 frame level statistics, else one line per run
+   --csv-log-level <integer>     Level of csv logging, if csv-log-level > 0 frame level statistics, else one line per run: 0-2
+
+Input Options:
+   --input <filename>            Raw YUV or Y4M input file name. `-` for stdin
+   --fps <float|rational>        Source frame rate (float or num/denom), auto-detected if Y4M
+   --input-res WxH               Source picture size [w x h], auto-detected if Y4M
+-f/--frames <integer>            Maximum number of frames to encode. Default all
+   --seek <integer>              First frame to encode
+
+Quality reporting metrics:
+   --[no-]ssim                   Enable reporting SSIM metric scores. Default disabled
+   --[no-]psnr                   Enable reporting PSNR metric scores. Default disabled
+
+Profile, Level, Tier:
+-P/--profile <string>            Enforce an encode profile: main, main10, mainstillpicture
+   --level-idc <integer|float>   Force a minimum required decoder level (as '5.0' or '50')
+   --[no-]high-tier              If a decoder level is specified, this modifier selects High tier of that level
+   --uhd-bd                      Enable UHD Bluray compatibility support
+   --[no-]allow-non-conformance  Allow the encoder to generate profile NONE bitstreams. Default disabled
+
+Threading, performance:
+   --pools <integer,...>         Comma separated thread count per thread pool (pool per NUMA node)
+                                 '-' implies no threads on node, '+' implies one thread per core on node
+-F/--frame-threads <integer>     Number of concurrently encoded frames. 0: auto-determined by core count
+   --[no-]wpp                    Enable Wavefront Parallel Processing. Default enabled
+   --[no-]slices <integer>       Enable Multiple Slices feature. Default 1
+   --[no-]pmode                  Parallel mode analysis. Default disabled
+   --[no-]pme                    Parallel motion estimation. Default disabled
+   --[no-]asm <bool|int|string>  Override CPU detection. Default: auto
+
+Presets:
+-p/--preset <string>             Trade off performance for compression efficiency. Default medium
+                                 ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow, or placebo
+-t/--tune <string>               Tune the settings for a particular type of source or situation:
+                                 psnr, ssim, grain, zerolatency, fastdecode
+
+Quad-Tree size and depth:
+-s/--ctu <64|32|16>              Maximum CU size (WxH). Default 64
+   --min-cu-size <64|32|16|8>    Minimum CU size (WxH). Default 8
+   --max-tu-size <32|16|8|4>     Maximum TU size (WxH). Default 32
+   --tu-intra-depth <integer>    Max TU recursive depth for intra CUs. Default 1
+   --tu-inter-depth <integer>    Max TU recursive depth for inter CUs. Default 1
+   --limit-tu <0..4>             Enable early exit from TU recursion for inter coded blocks. Default 0
+
+Analysis:
+   --rd <1..6>                   Level of RDO in mode decision 1:least....6:full RDO. Default 3
+   --[no-]psy-rd <0..5.0>        Strength of psycho-visual rate distortion optimization, 0 to disable. Default 2.0
+   --[no-]rdoq-level <0|1|2>     Level of RDO in quantization 0:none, 1:levels, 2:levels & coding groups. Default 0
+   --[no-]psy-rdoq <0..50.0>     Strength of psycho-visual optimization in RDO quantization, 0 to disable. Default 0.0
+   --dynamic-rd <0..4.0>         Strength of dynamic RD, 0 to disable. Default 0.00
+   --[no-]ssim-rd                Enable ssim rate distortion optimization, 0 to disable. Default disabled
+   --[no-]rd-refine              Enable QP based RD refinement for rd levels 5 and 6. Default disabled
+   --[no-]early-skip             Enable early SKIP detection. Default disabled
+   --[no-]rskip                  Enable early exit from recursion. Default enabled
+
+Coding tools:
+-w/--[no-]weightp                Enable weighted prediction in P slices. Default enabled
+   --[no-]weightb                Enable weighted prediction in B slices. Default disabled
+   --[no-]cu-lossless            Consider lossless mode in CU RDO decisions. Default disabled
+   --[no-]signhide               Hide sign bit of one coeff per TU (rdo). Default enabled
+
+Temporal / motion search options:
+   --max-merge <1..5>            Maximum number of merge candidates. Default 2
+   --ref <integer>               max number of L0 references to be allowed (1 .. 16) Default 3
+   --limit-refs <0|1|2|3>        Limit references per depth (1) or CU (2) or both (3). Default 3
+   --me <string>                 Motion search method dia hex umh star full. Default 1
+-m/--subme <integer>             Amount of subpel refinement to perform (0:least .. 7:most). Default 2 
+   --merange <integer>           Motion search range. Default 57
+   --[no-]rect                   Enable rectangular motion partitions Nx2N and 2NxN. Default disabled
+   --[no-]amp                    Enable asymmetric motion partitions, requires --rect. Default disabled
+   --[no-]limit-modes            Limit rectangular and asymmetric motion predictions. Default 0
+
+Spatial / intra options:
+   --[no-]strong-intra-smoothing Enable strong intra smoothing for 32x32 blocks. Default enabled
+   --[no-]constrained-intra      Constrained intra prediction (use only intra coded reference pixels) Default disabled
+   --[no-]b-intra                Enable intra in B frames in veryslow presets. Default disabled
+   --[no-]fast-intra             Enable faster search method for angular intra predictions. Default disabled
+   --rdpenalty <0..2>            penalty for 32x32 intra TU in non-I slices. 0:disabled 1:RD-penalty 2:maximum. Default 0
+
+Slice decision options:
+   --[no-]open-gop               Enable open-GOP, allows I slices to be non-IDR. Default enabled
+-I/--keyint <integer>            Max IDR period in frames. -1 for infinite-gop. Default 250
+-i/--min-keyint <integer>        Scenecuts closer together than this are coded as I, not IDR. Default: auto
+   --no-scenecut                 Disable adaptive I-frame decision
+   --scenecut <integer>          How aggressively to insert extra I-frames. Default 40
+   --intra-refresh               Use Periodic Intra Refresh instead of IDR frames
+   --rc-lookahead <integer>      Number of frames for frame-type lookahead (determines encoder latency) Default 20
+   --lookahead-threads <integer> Number of threads to be dedicated to perform lookahead only. Default 0
+   --bframes <integer>           Maximum number of consecutive b-frames (now it only enables B GOP structure) Default 4
+   --b-adapt <0..2>              0 - none, 1 - fast, 2 - full (trellis) adaptive B frame scheduling. Default 2
+   --[no-]b-pyramid              Use B-frames as references. Default enabled
+
+Rate control, Adaptive Quantization:
+   --bitrate <integer>           Target bitrate (kbps) for ABR (implied). Default 0
+   --crf <float>                 Quality-based VBR (0-51). Default 28.0
+   --vbv-maxrate <integer>       Max local bitrate (kbit/s). Default 0
+   --vbv-bufsize <integer>       Set size of the VBV buffer (kbit). Default 0
+   --vbv-init <float>            Initial VBV buffer occupancy (fraction of bufsize or in kbits). Default 0.90
+   --pass                        Multi pass rate control.
+                                   - 1 : First pass, creates stats file
+                                   - 2 : Last pass, does not overwrite stats file
+                                   - 3 : Nth pass, overwrites stats file
+   --[no-]multi-pass-opt-analysis   Refine analysis in 2 pass based on analysis information from pass 1
+   --[no-]multi-pass-opt-distortion Use distortion of CTU from pass 1 to refine qp in 2 pass
+   --stats                       Filename for stats file in multipass pass rate control. Default x265_2pass.log
+   --[no-]analyze-src-pics       Motion estimation uses source frame planes. Default disable
+   --[no-]slow-firstpass         Enable a slow first pass in a multipass rate control mode. Default enabled
+   --[no-]strict-cbr             Enable stricter conditions and tolerance for bitrate deviations in CBR mode. Default disabled
+   --analysis-mode <string|int>  save - Dump analysis info into file, load - Load analysis buffers from the file. Default 0
+   --analysis-file <filename>    Specify file name used for either dumping or reading analysis data.
+   --refine-level <1..10>        Level of analysis refinement indicates amount of info stored/reused in save/load mode, 1:least....10:most. Default 5
+   --aq-mode <integer>           Mode for Adaptive Quantization - 0:none 1:uniform AQ 2:auto variance 3:auto variance with bias to dark scenes. Default 1
+   --aq-strength <float>         Reduces blocking and blurring in flat and textured areas (0 to 3.0). Default 1.00
+   --[no-]aq-motion              Adaptive Quantization based on the relative motion of each CU w.r.t., frame. Default disabled
+   --qg-size <int>               Specifies the size of the quantization group (64, 32, 16, 8). Default 32
+   --[no-]cutree                 Enable cutree for Adaptive Quantization. Default enabled
+   --[no-]rc-grain               Enable ratecontrol mode to handle grains specifically. turned on with tune grain. Default disabled
+
+Loop filters (deblock and SAO):
+   --[no-]deblock                Enable Deblocking Loop Filter, optionally specify tC:Beta offsets Default enabled
+   --[no-]sao                    Enable Sample Adaptive Offset. Default enabled
+   --[no-]limit-sao              Limit Sample Adaptive Offset types. Default disabled
+
+VUI options:
+   --sar <width:height|int>      Sample Aspect Ratio, the ratio of width to height of an individual pixel.
+                                 Choose from 0=undef, 1=1:1("square"), 2=12:11, 3=10:11, 4=16:11,
+                                 5=40:33, 6=24:11, 7=20:11, 8=32:11, 9=80:33, 10=18:11, 11=15:11,
+                                 12=64:33, 13=160:99, 14=4:3, 15=3:2, 16=2:1 or custom ratio of <int:int>. Default 0
+   --videoformat <string>        Specify video format from undef, component, pal, ntsc, secam, mac. Default undef
+   --range <string>              Specify black level and range of luma and chroma signals as full or limited Default limited
+   --colorprim <string>          Specify color primaries from undef, bt709, bt470m, bt470bg, smpte170m,
+                                 smpte240m, film, bt2020. Default undef
+   --transfer <string>           Specify transfer characteristics from undef, bt709, bt470m, bt470bg, smpte170m,
+                                 smpte240m, linear, log100, log316, iec61966-2-4, bt1361e, iec61966-2-1,
+                                 bt2020-10, bt2020-12, smpte-st-2084, smpte-st-428, arib-std-b67. Default undef
+   --master-display <string>     SMPTE ST 2086 master display color volume info SEI (HDR)
+                                    format: G(x,y)B(x,y)R(x,y)WP(x,y)L(max,min)
+   --max-cll <string>            Emit content light level info SEI as "cll,fall" (HDR)
+   --[no-]hdr                    Control dumping of HDR SEI packet. If max-cll or master-display has non-zero values, this is enabled. Default disabled
+   --[no-]hdr-opt                Add luma and chroma offsets for HDR/WCG content. Default disabled
+   --min-luma <integer>          Minimum luma plane value of input source picture
+   --max-luma <integer>          Maximum luma plane value of input source picture
+
+Bitstream options:
+   --[no-]repeat-headers         Emit SPS and PPS headers at each keyframe. Default disabled
+   --[no-]info                   Emit SEI identifying encoder and parameters. Default enabled
+   --[no-]hrd                    Enable HRD parameters signaling. Default disabled
+   --[no-]temporal-layers        Enable a temporal sublayer for unreferenced B frames. Default disabled
+   --[no-]aud                    Emit access unit delimiters at the start of each access unit. Default disabled
+   --log2-max-poc-lsb <integer>  Maximum of the picture order count
+   --[no-]vui-timing-info        Emit VUI timing information in the bistream. Default enabled
+   --[no-]vui-hrd-info           Emit VUI HRD information in the bistream. Default enabled
+   --[no-]opt-qp-pps             Dynamically optimize QP in PPS (instead of default 26) based on QPs in previous GOP. Default enabled
+   --[no-]opt-ref-list-length-pps  Dynamically set L0 and L1 ref list length in PPS (instead of default 0) based on values in last GOP. Default enabled
+   --[no-]multi-pass-opt-rps     Enable storing commonly used RPS in SPS in multi pass mode. Default disabled
+   --[no-]opt-cu-delta-qp        Optimize to signal consistent CU level delta QPs in frame. Default disabled
+
+Use --log-level full --help for a full listing
+
+
+Complete documentation may be found at http://x265.readthedocs.org/en/default/cli.html
