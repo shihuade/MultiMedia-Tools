@@ -1,0 +1,40 @@
+
+HM software: Decoder Version [16.17] (including RExt)[Mac OS X][GCC 4.2.1][64 bit] 
+        --help                   this help text
+  -b,   --BitstreamFile          bitstream input file name
+  -o,   --ReconFile              reconstructed YUV output file name
+                                 YUV writing is skipped if omitted
+  -w,   --WarnUnknowParameter    warn for unknown configuration parameters
+                                 instead of failing
+  -s,   --SkipFrames             number of frames to skip before random access
+  -d,   --OutputBitDepth         bit depth of YUV output luma component
+                                 (default: use 0 for native depth)
+  -d,   --OutputBitDepthC        bit depth of YUV output chroma component
+                                 (default: use 0 for native depth)
+        --OutputColourSpaceConvert
+                                 Colour space conversion to apply to input 444
+                                 video. Permitted values are (empty
+                                 string=UNCHANGED) UNCHANGED, YCrCbtoYCbCr or
+                                 GBRtoRGB
+  -t,   --MaxTemporalLayer       Maximum Temporal Layer to be decoded. -1 to
+                                 decode all layers
+        --SEIDecodedPictureHash  Control handling of decoded picture hash SEI messages
+                                 	1: check hash in SEI messages if available in the bitstream
+                                 	0: ignore SEI message
+        --SEINoDisplay           Control handling of decoded no display SEI
+                                 messages
+  -l,   --TarDecLayerIdSetFile   targetDecLayerIdSet file name. The file should
+                                 include white space separated LayerId values to
+                                 be decoded. Omitting the option or a value of
+                                 -1 in the file decodes all layers.
+  -w,   --RespectDefDispWindow   Only output content inside the default display window
+                                 
+        --SEIColourRemappingInfoFilename
+                                 Colour Remapping YUV output file name. If empty, no remapping is applied (ignore SEI message)
+                                 
+        --OutputDecodedSEIMessagesFilename
+                                 When non empty, output decoded SEI messages to the indicated file. If file is '-', then output to stdout
+                                 
+        --ClipOutputVideoToRec709Range
+                                 If true then clip output video to the Rec. 709
+                                 Range on saving

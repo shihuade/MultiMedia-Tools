@@ -23,7 +23,7 @@ runUsage()
 runInit()
 {
     FileNamePattern="x264Enc"
-    MP4ParserScript="../MP4Info/run_ParseMP4Info.sh"
+    MP4ParserScript="../../MP4Info/run_ParseMP4Info.sh"
     x264EncParserScript="./run_PareseX264EncLog.sh"
     x264EncLog=""
     x264EncPerfInfo=""
