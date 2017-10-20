@@ -13,6 +13,7 @@ runUsage()
 runInit()
 {
     Encoder="KS265Encoder"
+    Decoder="HMDecoder"
 
     Profile="main"
     Level="42"
@@ -22,6 +23,7 @@ runInit()
     FramNum="1000"
 
     ScriptYUVInfo="./run_ParseYUVInfo.sh"
+    HMDecLog="Log_HMDec.txt"
     let "FailedNum    = 0"
     let "SucceededNum = 0"
 }
@@ -51,32 +53,91 @@ runPromptKS265Enc()
 
 runKS265EncodeOneYUV()
 {
-    Suffix="KS265_Enc"
+    KS265DecSuffix="KS265_Enc"
     InputYUV="${YUVFile}"
-    OutputBitStream="${InputYUV}_${Suffix}.265"
+    OutputBitStream="${InputYUV}_${KS265DecSuffix}.265"
     ReconstructYUV="${OutputBitStream}_rec.yuv"
 
-    KS265EncOption="-wdt ${YUVWidth}  -hgt ${YUVHeight} -fr ${FrameRate} -frms ${FramNum} "
-    #KS265EncCMD="${Encoder} -i ${InputYUV} ${KS265EncOption} -b ${OutputBitStream} -o ${ReconstructYUV}"
-    KS265EncCMD="${Encoder} -i ${InputYUV} ${KS265EncOption} -b ${OutputBitStream}"
+    #KS265EncOption="-wdt ${YUVWidth}  -hgt ${YUVHeight} -fr ${FrameRate} -frms ${FramNum} "
+    KS265EncCMD="${Encoder} -i ${InputYUV} ${KS265EncOption} -b ${OutputBitStream} -o ${ReconstructYUV}"
+    #KS265EncCMD="${Encoder} -i ${InputYUV} ${KS265EncOption} -b ${OutputBitStream}"
 
     runPromptKS265Enc
 
     ${KS265EncCMD}
-    if [ -$? -eq 0 ];then
-        let "SucceededNum += 1"
-    else
+    if [ -$? -ne 0 ];then
         let "FailedNum  += 1"
+        return 1
+    fi
+}
+
+runPromptHMDec()
+{
+    echo -e "\033[32m ****************************************************** \033[0m"
+    echo -e "\033[32m *********  HM Decoder Check!  ************************ \033[0m"
+    echo -e "\033[32m ****************************************************** \033[0m"
+    echo -e "\033[32m SucceededNum    is : $SucceededNum                     \033[0m"
+    echo -e "\033[32m FailedNum       is : $FailedNum                        \033[0m"
+    echo -e "\033[32m InputBitStream  is : $InputBitStream                   \033[0m"
+    echo -e "\033[32m OutputYUV       is : $OutputYUV                        \033[0m"
+    echo -e "\033[32m HMDecCMD        is : $HMDecCMD                         \033[0m"
+    echo -e "\033[32m HMDecCMD        is : $HMDecCMD                         \033[0m"
+    echo -e "\033[32m ****************************************************** \033[0m"
+}
+
+runCheckWithHMDecoder()
+{
+    Suffix="HM_Dec"
+    InputBitStream="${OutputBitStream}"
+    OutputYUV="${InputBitStream}_${Suffix}.yuv"
+
+    HMDecCMD=" "
+    HMDecCMD="${Decoder} -b ${InputBitStream} ${HMDecCMD} -o ${OutputYUV}"
+
+    runPromptHMDec
+
+    ${HMDecCMD} >${HMDecLog}
+    if [ -$? -ne 0 ];then
+        let "FailedNum  += 1"
+        return 1
+    fi
+
+    HMDecYUVSHA=`openssl sha1 ${OutputYUV}| awk '{print $2}'`
+    KSRecYUVSHA=`openssl sha1 ${ReconstructYUV}| awk '{print $2}'`
+
+    echo -e "\033[33m HMDecYUVSHA is : $HMDecYUVSHA  \033[0m"
+    echo -e "\033[33m KSRecYUVSHA is : $KSRecYUVSHA  \033[0m"
+
+    if [ "${HMDecYUVSHA}" != "${KSRecYUVSHA}" ];then
+        echo -e "\033[33m rec yuv not equal to HM dec yuv \033[0m"
+        let "FailedNum  += 1"
+        return 1
     fi
 }
 
 runKS265EncodeAll()
 {
-    for YUVFile in ${InputYUVDir}/*.yuv
+    for YUVFile in ${InputYUVDir}/*${Pattern}*.yuv
     do
+        Flag=`echo $YUVFile | grep KS265_Enc`
+        [ ! -z "${Flag}" ] && continue
+
         runParseYUVFileInfo
         runKS265EncodeOneYUV
+        [ -$? -ne 0 ] && continue
+        runCheckWithHMDecoder
+        [ -$? -ne 0 ] && continue
+
+        let "SucceededNum += 1"
     done
+}
+
+promtAll()
+{
+    echo -e "\033[32m ****************************************************** \033[0m"
+    echo -e "\033[32m SucceededNum    is : $SucceededNum                     \033[0m"
+    echo -e "\033[32m FailedNum       is : $FailedNum                        \033[0m"
+    echo -e "\033[32m ****************************************************** \033[0m"
 }
 
 runCheck()
@@ -91,6 +152,8 @@ runMain()
     runInit
 
     runKS265EncodeAll
+
+    promtAll
 }
 #*****************************************************
 if [ $# -lt 1 ]

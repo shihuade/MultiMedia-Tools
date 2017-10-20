@@ -52,7 +52,7 @@ runKS265DecodeOneStream()
 
 runKS265DecodeAll()
 {
-    for H265Stream in ${InputBitStreamDir}/*.265
+    for H265Stream in ${InputBitStreamDir}/*${Pattern}*.265
     do
         runKS265DecodeOneStream
     done
