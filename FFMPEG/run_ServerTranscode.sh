@@ -17,17 +17,46 @@ runUsage()
     exit 1
 }
 
+
+runInitx264Sever()
+{
+    OutputFileSuffix="${TranscodePattern}_server_psy-rd"
+    x264Opts=" -x264-params scenecut=30:subme=2:trellis=1:psy-rd=1 "
+    x264OptsPlus=" -bf 3 -refs 4 -rc-lookahead 20 -crf 23 -qcomp 0.52 -deblock 0 -nr 500 "
+
+    CodecOpts=" -c:a copy -c:v libx264 -profile:v high -level 3.1 "
+    CodecOpts="${CodecOpts} ${x264Opts} ${x264OptsPlus}"
+}
+
+runInitx264Plus()
+{
+    #x264 transcode
+    OutputFileSuffix="${TranscodePattern}_x264_crf30"
+    x264Opts=" -x264-params profile=high:crf=30:psy-rd=1 "
+    x264OptsPlus=" "
+
+    CodecOpts=" -c:a copy -c:v libx264"
+    CodecOpts="${CodecOpts} ${x264Opts} ${x264OptsPlus}"
+}
+
+runInitx265()
+{
+    # for x265 transcode
+    OutputFileSuffix="${TranscodePattern}_server_x265"
+    x265Opts=" -x265-params profile=main:crf=26:psy-rd=1 "
+    CodecOpts=" -c:a copy -c:v libx265 "
+    CodecOpts=" ${CodecOpts} ${x265Opts}  "
+}
+
 runInit()
 {
     TranscodePattern="FFTrans"
     MP4CheckScript="./run_CheckTranscodedMP4.sh"
-
-    OutputFileSuffix="${TranscodePattern}_server"
-
     MP4Option=" -movflags faststart -use_editlist 0 "
-    CodecOpts=" -c:a copy -c:v libx264 -profile:v high -level 3.1 "
-    x264Opts=" -x264opts scenecut=30:subme=2:trellis=1 "
-    x264OptsPlus=" -bf 3 -refs 4 -rc-lookahead 20 -crf 23 -qcomp 0.52 -deblock 0 -nr 500 "
+
+runInitx264Sever
+#runInitx264Plus
+#runInitx265
 
     let "SuccedNum = 0"
     let "FailedNum = 0"
@@ -91,7 +120,7 @@ runTranscodeAllMP4()
         [ -z "${OriginFlag}" ] || continue
 
         OutputFile="${Mp4File}_${OutputFileSuffix}.mp4"
-        TransCommand="ffmpeg -xerror -i ${Mp4File} ${CodecOpts} ${x264Opts} ${x264OptsPlus} ${MP4Option} -y ${OutputFile}"
+        TransCommand="ffmpeg -xerror -i ${Mp4File} ${CodecOpts} ${MP4Option} -y ${OutputFile}"
 
         runPromptForOneMp4
 
