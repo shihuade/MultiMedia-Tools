@@ -29,10 +29,12 @@ runGetOnePictureFromMP4()
     #file from MP4File01
     Format="image2"
     TempFFMPEGImageLog="Log_FFMPEG_ImageParse.txt"
-    Command="ffmpeg -ss ${TimeStamp} -i ${InputMp4} -an  -vframes 1 -f ${Format} -y ${OutputImage}"
+    Command="ffmpeg -ss ${TimeStamp} -i ${InputMp4} -an  -vframes 1 -q 0 -f ${Format} -y ${OutputImage}"
 
     $Command  2>>${TempFFMPEGImageLog}
     [ $? -ne 0 ] && "runGetOnePictureFromMP4 failed!" && exit 1
+
+    #ffmpeg -ss 9.66 -i /Users/huade/Desktop/Video//V70922-085911.mp4_FFTrans_Slow_crf21.mp4 -an  -vframes 1 -q 0 -f image2 -y ~/Desktop/Test-q0.jpeg
 }
 
 runCheck()

@@ -26,8 +26,8 @@ runInit()
     [ -d ${ImageDirForView} ] && rm -rf ${ImageDirForView}
     mkdir -p ${ImageDirForView}
 
-    let "PicNum    = 10"
-    let "ImageIdx  = 0"
+    let "PicNum    = 20"
+    let "ImageIdx  = 1"
     let "MP4Idx    = 0"
     let "MP4Num    = 0"
 
