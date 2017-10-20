@@ -1,0 +1,59 @@
+ c,-c:                 configuration file name
+ version,-v, -V:       print version information
+ tune,-tune:           default, selfshow, game, movie, screen
+ preset,-preset:       ultrafast, superfast, veryfast, fast, medium, slow, veryslow, placebo
+ latency,-latency:     zerolatency, lowdelay, livestreaming, offline
+ profileid,-profile:   main or main still profile, 1 or 3
+ temperalLayer,-tlayer: works with QY265LATENCY_ZERO, separate P frames into temporal layers, 0 or 1
+ shortload,-sload:     default false for shorting the loading time of playing movies
+ WorkingPath,-p:       Working path on IOS (Document dir)
+ InputFile,-i:         original YUV input file name
+ BitstreamFile,-b:     bitstream output file name
+ CalcPsnr,-psnr:       calc psnr (0: don't 1: only summary 2: each frame and summary
+ CalcSsim,-ssim:       calc ssim (0: don't 1: only summary 2: each frame and summary
+ MD5,-md5:             calc MD5 (0: don't 1:  each frame
+ DumpBitstream,-dumpbs: enable dump bitstream
+ ReconFile,-o:         reconstructed YUV output file name
+ RedirectLog,-r:       enable log redirection to file
+ LogFilePath,-l:       redirected log file name
+ LogLevel,-log:        log level (-1: dbg; 0: info; 1:warn; 2:err; 3:fatal)
+ SourceWidth,-wdt:     Source picture width
+ SourceHeight,-hgt:    Source picture height
+ FrameToBeEncoded,-frms: number of frames to be encoded (default=all)
+ FrameRate,-fr:        Frame Rate, <double> value
+ RCType,-rc:           0: disable,1: cbr, 2: abr, 3: crf
+ Crf,-crf:             quality based vbr,0~51, default 30
+ AqMode,-aq:           ap mode,0 disable, 1 auto variance, , default 0
+ AqStrength,-aqs:      AQ strength ,0~3.0, default 1.0
+ do64x64,-do64:        default true, false: closing 64x64 for videos<=720
+ FrameSkip,-frameskip: enable frameskip (default=false)
+ qpmin:                minimal qp, valid when RCType != 0, 0~51
+ qpmax:                maximal qp, valid when RCType != 0, 1~51, qpmax = 0 means 51
+ FixedQp,-fixqp:       1: fixed qp for all frames, e.g., disable hierarchy qp, only used for test and compare coding tools
+ fRateTolerance,-ratetol: default 2.0f,0.5 is suitable to reduce the largest bitrate, and 0.1 is to make the bitrate stable 
+ IntMeSearchMethod,-me: ME: 0: DIA, 1: HEX, 2: UMH, 3:EPZS, 4: CROSS
+ SubMeSearchMethod,-subme: sub me, 0 :disable 1: fast, 2: square full
+ SearchRange,-merange: search range
+ EnableWaveFront,-wpp: enable wave front
+ FrameParallel,-fpp:   1: enable frame level parallel
+ HeaderBeforeKeyframe,-hbk:  paramter set before I frame (default=true)
+ MinIntraPeriod,-imin: Minimun Period of I-Frame, to avoid too frequent I frames
+ LookaheadFrames,-lookahead: lookahead frame number,>0
+ BiPredFrames,-bframes: bframes number,0 or 2^loggopsize-1
+ ActiveRefNum,-ref:    Active ref frame number
+ ActiveRefNumFrm0InGop,-ref0: active ref number for first frame in Gop
+ InterTuDecision,-intertu: enable inter tu decision,1: FAST MODE 0: only 4 sub tus
+ TransformSkip,-ts:    enable transform skip, 0(default):disabled, 1: enable
+ HardamardInter,-hadinter: 0: no had inter, 1: check had inter
+ InterPartMode,-part:  0: only inter 2Nx2N, 1: check 2NxN/Nx2N/NxN
+ pass, -pass:          Multi pass rate control,0,disable 2pass encode method; 1: first pass; 2: second pass;
+ DeblockFilter,-df:    enable deblocking filter
+ SAO,-sao:             0: OFF, 1: sao super fast, 2: sao very fast, 3: sao fast, 4: sao BO, EO0, EO1
+ StrongIntraSmoothing,-sis: enable Strong Intra Smoothing
+ RDOQ,-rdoq:           enable rdoq
+ Bitrate,-br:          BitRrate in kbps
+ VbvBufSize,-vbv-bufsize: vbv buf size in kbits
+ VbvMaxRate,-vbv-maxrate: vbv maxrate in kbps
+ QP,-qp:               Quantization Parameter
+ ThreadNum,-threads:   thread number
+ IntraPeriod,-iper:    intra period in frames, (-1: only first frame)

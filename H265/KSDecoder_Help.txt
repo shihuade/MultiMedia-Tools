@@ -1,0 +1,11 @@
+ c,-c:                 configuration file name
+ version,-v,-V:        print version information
+ InputFile,-b:         original bs input file name
+ ReconFile,-o:         reconstructed YUV output file name
+ FrameToBeDecoded,-frms: number of frames to be decoded (default=all)
+ Threads,-threads:      thread number
+ MD5,-md5:              enable md5 calc
+ RedirectLog,-r:       enable log redirection to file
+ LogFilePath,-l:       redirected log file name
+ LogLevel,-log:        log level (-1: dbg; 0: info; 1:warn; 2:err; 3:fatal)
+ WorkingPath,-p:       Working path on IOS (Document dir)
