@@ -37,7 +37,7 @@ runPromptHMEnc()
 {
     echo -e "\033[32m ****************************************************** \033[0m"
     echo -e "\033[32m InputYUV        is : $InputYUV                         \033[0m"
-    echo -e "\033[32m OutputYUV is : $OutputYUV                  \033[0m"
+    echo -e "\033[32m OutputBitStream is : $OutputBitStream                  \033[0m"
     echo -e "\033[32m ReconstructYUV  is : $ReconstructYUV                   \033[0m"
     echo -e "\033[32m HMEncOption     is : $HMEncOption                      \033[0m"
     echo -e "\033[32m HMEncOptionPlus is : $HMEncOptionPlus                  \033[0m"
@@ -49,7 +49,7 @@ runPromptHMDec()
 {
     echo -e "\033[32m ****************************************************** \033[0m"
     echo -e "\033[32m InputBitSteam   is : $InputBitSteam                    \033[0m"
-    echo -e "\033[32m OutputBitStream is : $OutputBitStream                  \033[0m"
+    echo -e "\033[32m OutputYUV       is : $OutputYUV                        \033[0m"
     echo -e "\033[32m HMDecOption     is : $HMDecOption                      \033[0m"
     echo -e "\033[32m HMDecCMD        is : $HMDecCMD                         \033[0m"
     echo -e "\033[32m ****************************************************** \033[0m"
