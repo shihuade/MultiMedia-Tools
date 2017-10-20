@@ -5,16 +5,16 @@
       location = "group:VideoView">
    </FileRef>
    <FileRef
+      location = "group:H264">
+   </FileRef>
+   <FileRef
+      location = "group:H265">
+   </FileRef>
+   <FileRef
       location = "group:StreamEye">
    </FileRef>
    <FileRef
       location = "group:submodule">
-   </FileRef>
-   <FileRef
-      location = "group:x264">
-   </FileRef>
-   <FileRef
-      location = "group:JM">
    </FileRef>
    <FileRef
       location = "group:FFMPEG">
@@ -33,6 +33,9 @@
    </FileRef>
    <FileRef
       location = "group:Image">
+   </FileRef>
+   <FileRef
+      location = "group:YUVTools">
    </FileRef>
    <FileRef
       location = "group:ImageView">
