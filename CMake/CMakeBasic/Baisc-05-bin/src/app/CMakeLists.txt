@@ -8,7 +8,4 @@ set(APP_SRC main.c)
 
 add_executable(hello ${APP_SRC})
 
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-
-
 target_link_libraries(hello libhello)
