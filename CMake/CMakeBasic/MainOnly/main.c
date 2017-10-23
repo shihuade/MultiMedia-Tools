@@ -3,7 +3,7 @@
 int main()
 {
 
-    printf("hello world! /n");
+    printf("hello, my first cmake test! \n");
 
     return 0;
 }
