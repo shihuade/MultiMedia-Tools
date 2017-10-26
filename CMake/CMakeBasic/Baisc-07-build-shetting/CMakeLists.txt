@@ -11,6 +11,10 @@ cmake_minimum_required(VERSION 3.8)
 
 project(HELLO)
 
+set( CMAKE_VERBOSE_MAKEFILE on )
+set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Release)
+
 #*************************************
 # set output bin/lib path
 #*************************************
