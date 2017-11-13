@@ -17,6 +17,8 @@
 #
 #********************************************************************************
 
+#webpinfo -bitstream_info Test.mp4_idx_10_q_80_sns_50.webp >Test.mp4_idx_10_q_80_sns_50.webp.txt
+
 runUsage()
 {
     echo -e "\033[31m *********************************** \033[0m"
@@ -83,9 +85,9 @@ runOutputWebpLog()
 
 runGenerateAnimationWebP()
 {
-    let "PicNum        = 20"
-    let "OutPicW       = 540"
-    let "OutPicH       = 960"
+    let "PicNum        = 8"
+    let "OutPicW       = 240"
+    let "OutPicH       = 360"
     let "FrameInterval = 1"
     Format="image2"
     TranscodeLog="FFMPEGCopyLog.txt"
@@ -120,19 +122,17 @@ runGenerateAnimationWebP()
 
         #output file
         OutputImage="${MP4File}_idx_${i}_q_${JPEGQP}.jpg"
-        OutputImage_02="${MP4File}_idx_${i}_q_6.jpg"
-        OutputWebP="${MP4File}_idx_${i}_q_${WebPQP}_sns_${SNS}.webp"
+        OutputWebP="${MP4File}_idx_${i}_q_${WebPQP}.webp"
 
-        #FFMPEGPicCMD="ffmpeg -i ${MP4File} -an -ss ${TimeStamp} -s ${OutPicW}x${OutPicH} -qscale 8 -vframes 1 -f ${Format} -y ${OutputImage}"
-        FFMPEGPicCMD="ffmpeg -ss ${TimeStamp} -i ${MP4File} -an -qscale ${JPEGQP} -vframes 1 -f ${Format} -y ${OutputImage}"
-        FFMPEGPicCMD_02="ffmpeg -ss ${TimeStamp} -i ${MP4File} -an -qscale 6 -vframes 1 -f ${Format} -y ${OutputImage_02}"
-        #WebPCommand="cwebp ${OutputImage} -q 100  -lossless -o ${OutputWebP}"
-        WebPCommand="cwebp ${OutputImage} -q ${WebPQP} -sns ${SNS} -o ${OutputWebP}"
+        FFMPEGPicCMD="ffmpeg -ss ${TimeStamp} -i ${MP4File} -an  -s ${OutPicH}x${OutPicW} -qscale 8 -vframes 1 -f ${Format} -y ${OutputImage}"
+#FFMPEGPicCMD="ffmpeg -ss ${TimeStamp} -i ${MP4File} -an -qscale ${JPEGQP} -vframes 1 -f ${Format} -y ${OutputImage}"
+
+#WebPCommand="cwebp ${OutputImage} -q ${WebPQP} -sns ${SNS} -blend_alpha 0xd0 -o ${OutputWebP}"
+WebPCommand="cwebp ${OutputImage} -q ${WebPQP} -sns ${SNS}  -o ${OutputWebP}"
         CleanCMD="${CleanCMD} ${OutputImage} ${OutputWebP}"
 
         #run ffmpeg extract command
         ${FFMPEGPicCMD} 2>>${LogFile}
-        ${FFMPEGPicCMD_02} 2>>${LogFile}
         [ $? -ne 0 ] && echo "failed to extract ${i}th jpge file!" && exit 1
 
         #run webp transcode command
@@ -148,12 +148,15 @@ runGenerateAnimationWebP()
             break
         fi
 
-        if [ $i -eq 0 ]; then
-            AnimationParam02="-frame ${OutputWebP} +200+b"
-            AnimationParam01="-frame ${OutputWebP} +200"
+        if [ $i -eq 1 ]; then
+            AnimationParam02="-frame ${OutputWebP} +100"
+            AnimationParam01="-frame ${OutputWebP} +100"
+        elif [ $i -eq ${PicNum} ]; then
+            AnimationParam02="${AnimationParam02}"
+            AnimationParam01="${AnimationParam01} -frame ${OutputWebP} +100"
         else
-            AnimationParam02="-frame ${OutputWebP} +200 ${AnimationParam02}"
-            AnimationParam01="${AnimationParam01} -frame ${OutputWebP} +200"
+            AnimationParam02="-frame ${OutputWebP} +100 ${AnimationParam02}"
+            AnimationParam01="${AnimationParam01} -frame ${OutputWebP} +100"
         fi
 
 #runOutputWebpLog
@@ -163,7 +166,7 @@ runGenerateAnimationWebP()
     #generate animation webp
     #*************************************************************************
     WebPAnimationCMD="webpmux ${AnimationParam01} ${AnimationParam02}"
-    WebPAnimationCMD="${WebPAnimationCMD} -loop 1000 -bgcolor 255,255,255,255 -o ${AnimationWebp}"
+    WebPAnimationCMD="${WebPAnimationCMD} -loop 0 -bgcolor 255,255,255,255 -o ${AnimationWebp}"
     echo -e "\033[32m ***************************************** \033[0m"
     echo -e "\033[32m WebPAnimationCMD  is: ${WebPAnimationCMD} \033[0m"
     echo -e "\033[32m AnimationWebp     is: ${AnimationWebp}    \033[0m"
