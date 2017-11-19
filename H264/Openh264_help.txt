@@ -1,0 +1,52 @@
+
+ Wels SVC Encoder Usage:
+
+ Syntax: welsenc.exe -h
+ Syntax: welsenc.exe welsenc.cfg
+ Syntax: welsenc.exe welsenc.cfg [options]
+
+ Supported Options:
+  -bf          Bit Stream File
+  -org         Original file, example: -org src.yuv
+  -sw          the source width
+  -sh          the source height
+  -utype       usage type
+  -savc        simulcast avc
+  -frms        Number of total frames to be encoded
+  -frin        input frame rate
+  -numtl       Temporal layer number (default: 1)
+  -iper        Intra period (default: -1) : must be a power of 2 of GOP size (or -1)
+  -nalsize     the Maximum NAL size. which should be larger than the each layer slicesize when slice mode equals to SM_SIZELIMITED_SLICE
+  -spsid       SPS/PPS id strategy: 0:const, 1: increase, 2: sps list, 3: sps list and pps increase, 4: sps/pps list
+  -cabac       Entropy coding mode(0:cavlc 1:cabac 
+  -complexity  Complexity mode (default: 0),0: low complexity, 1: medium complexity, 2: high complexity
+  -denois      Control denoising  (default: 0)
+  -scene       Control scene change detection (default: 0)
+  -bgd         Control background detection (default: 0)
+  -aq          Control adaptive quantization (default: 0)
+  -ltr         Control long term reference (default: 0)
+  -ltrnum      Control the number of long term reference((1-4):screen LTR,(1-2):video LTR 
+  -threadIdc   0: auto(dynamic imp. internal encoder); 1: multiple threads imp. disabled; > 1: count number of threads 
+  -loadbalancing   0: turn off loadbalancing between slices when multi-threading available; 1: (default value) turn on loadbalancing between slices when multi-threading available
+  -deblockIdc  Loop filter idc (0: on, 1: off, 
+  -alphaOffset AlphaOffset(-6..+6): valid range 
+  -betaOffset  BetaOffset (-6..+6): valid range
+  -rc          rate control mode: -1-rc off; 0-quality mode; 1-bitrate mode; 2: buffer based mode,can't control bitrate; 3: bitrate mode based on timestamp input;
+  -tarb        Overall target bitrate
+  -maxbrTotal  Overall max bitrate
+  -maxqp       Maximum Qp (default: 51, or for screen content usage: 35)
+  -minqp       Minimum Qp (default: 0, or for screen content usage: 26)
+  -numl        Number Of Layers: Must exist with layer_cfg file and the number of input layer_cfg file must equal to the value set by this command
+  The options below are layer-based: (need to be set with layer id)
+  -lconfig     (Layer) (spatial layer configure file)
+  -drec        (Layer) (reconstruction file);example: -drec 0 rec.yuv.  Setting the reconstruction file, this will only functioning when dumping reconstruction is enabled
+  -dprofile    (Layer) (layer profile);example: -dprofile 0 66.  Setting the layer profile, this should be the same for all layers
+  -dw          (Layer) (output width)
+  -dh          (Layer) (output height)
+  -frout       (Layer) (output frame rate)
+  -lqp         (Layer) (base quality layer qp : must work with -ldeltaqp or -lqparr)
+  -ltarb       (Layer) (spatial layer target bitrate)
+  -lmaxb       (Layer) (spatial layer max bitrate)
+  -slcmd       (Layer) (spatial layer slice mode): pls refer to layerX.cfg for details ( -slcnum: set target slice num; -slcsize: set target slice size constraint ; -slcmbnum: set the first slice mb num under some slice modes) 
+  -trace       (Level)
+
