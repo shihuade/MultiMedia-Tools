@@ -74,11 +74,11 @@ function BuildOpenh264 {
     cd ${CWD}
 }
 
-function LipoFatLib() {
+function LipoFatLib {
     LipoCommand=""
     for arch in ${TargetArch[@]}
     do
-        TargetDir="${ThinLibDir}/${arch}"
+        TargetDir="${ThinLibDir}/${arch}/lib"
         if [ -e ${TargetDir}/${CODEC_LIB} ]; then
                 LipoCommand="${LipoCommand} -arch ${arch} ${TargetDir}/${CODEC_LIB}"
         fi
@@ -113,7 +113,6 @@ function Check {
     do
         Flag=`echo "${SimArch} ${DeviceArch}" | grep ${arch}`
         [ "${Flag}X" = "X" ] && Usage && exit 1
-
     done
 }
 
