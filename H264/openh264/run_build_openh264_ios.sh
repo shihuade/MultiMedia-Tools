@@ -9,6 +9,15 @@
 #
 #***********************************************************
 
+function Usage {
+    echo -e "\033[32m ******************************************** \033[0m"
+    echo -e "\033[32m  usage: $0 \$archs                           \033[0m"
+    echo -e "\033[32m  archs: i386 x86_64 for simulator            \033[0m"
+    echo -e "\033[32m         armv7 armv7s arm64 for device        \033[0m"
+    echo -e "\033[32m  example: $0 armv7  arm64                    \033[0m"
+    echo -e "\033[32m ******************************************** \033[0m"
+}
+
 function InitVar {
     CWD=`pwd`
     SOURCE="openh264"
@@ -99,8 +108,19 @@ function LibpoFatForAll {
     LipoFatLib
 }
 
+function Check {
+    for arch in ${TargetArch[@]}
+    do
+        Flag=`echo "${SimArch} ${DeviceArch}" | grep ${arch}`
+        [ "${Flag}X" = "X" ] && Usage && exit 1
+
+    done
+}
+
 function Main {
     InitVar
+    Check
+
     CheckGasScript
     CheckOpenh264Source
 
@@ -112,7 +132,7 @@ function Main {
 
 if [ $# -lt 1 ]
 then
-    runUsage
+    Usage
     exit 1
 fi
 TargetArch="$@"
