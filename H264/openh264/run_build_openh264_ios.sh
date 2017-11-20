@@ -27,7 +27,7 @@ function InitVar {
 
 function CheckGasScript {
     if [ ! -r $GAS_PREPROCESSOR ];then
-        echo "\033[21m gas-preprocessor.pl not found. Trying to install...\033[0m"
+        echo -e "\033[32m gas-preprocessor.pl not found. Trying to install...\033[0m"
         rm -rf gas-preprocessor
         git clone ${GASRepos}
         cp  gas-preprocessor/gas-preprocessor.pl ${GAS_PREPROCESSOR}
@@ -37,7 +37,7 @@ function CheckGasScript {
 
 function CheckOpenh264Source {
     if [ ! -r ${SOURCE} ]; then
-        echo "\033[31m openh264 source not found. Trying to download...\033[0m"
+        echo -e "\033[32m openh264 source not found. Trying to download...\033[0m"
         git clone ${Openh264Repos}
     fi
 }
@@ -50,18 +50,17 @@ function BuildOpenh264 {
         [ -d "${TargetDir}" ] && rm -rf ${TargetDir}
         mkdir -p ${TargetDir}
 
-        echo "\033[32m ********************************** \033[0m"
-        echo "\033[32m building arch is ${arch}           \033[0m"
-        echo "\033[32m please wait...                     \033[0m"
-        echo "\033[32m ********************************** \033[0m"
+        echo -e "\033[32m ********************************** \033[0m"
+        echo -e "\033[32m building arch is ${arch}           \033[0m"
+        echo -e "\033[32m please wait...                     \033[0m"
+        echo -e "\033[32m ********************************** \033[0m"
         make OS=ios ARCH=${arch} clean >iOS_Build.log
-        make OS=ios ARCH=${arch} BUILDTYPE=Release
+        make OS=ios ARCH=${arch} BUILDTYPE=Release HAVE_GTEST=No PREFIX="${TargetDir}" install-static
         if [ $? -ne 0 ]; then
             echo -e "\033[31m Build failed for ios with ARCH=${arch} \033[0m"
             cd ${CWD}
             exit 1
         fi
-        mv ${CODEC_LIB}  ${TargetDir}
     done
     cd ${CWD}
 }
@@ -83,10 +82,10 @@ function LipoFatLib() {
     LipoCommand="lipo -create ${LipoCommand} -output ${TargetFatLibDir}/${CODEC_LIB}"
     ${LipoCommand}
 
-    echo "\033[32m ******************************************** \033[0m"
-    echo "\033[32m LipoCommand is ${LipoCommand}                \033[0m"
-    echo "\033[32m arch info for final openh264 lib:            \033[0m"
-    echo "\033[32m ******************************************** \033[0m"
+    echo -e "\033[32m ******************************************** \033[0m"
+    echo -e "\033[32m LipoCommand is ${LipoCommand}                \033[0m"
+    echo -e "\033[32m arch info for final openh264 lib:            \033[0m"
+    echo -e "\033[32m ******************************************** \033[0m"
     lipo -info ${TargetFatLibDir}/${CODEC_LIB}
 }
 
@@ -105,7 +104,7 @@ function Main {
     CheckGasScript
     CheckOpenh264Source
 
-#BuildOpenh264
+    BuildOpenh264
 
     LibpoFatForAll
 }
