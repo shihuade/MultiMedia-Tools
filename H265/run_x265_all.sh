@@ -34,3 +34,7 @@ mediainfo --Details=1  Input.mp4  | grep "slice_type B"
 mediainfo --Details=1  Input.mp4  | grep "slice_type P"
 #*****************************************************************************
 
+
+
+
+

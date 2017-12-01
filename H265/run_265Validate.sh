@@ -1,4 +1,7 @@
 #!/bin/bash
+#***************************************************************************
+#  validate 265 bitstream via HM decoder
+#***************************************************************************
 
 runUsage()
 {
@@ -31,7 +34,7 @@ runPromptHMDec()
     echo -e "\033[32m ****************************************************** \033[0m"
 }
 
-runKS265DecodeOneStream()
+runValidateOneStream()
 {
     Suffix="HM_Dec"
     InputBitStream="${H265Stream}"
@@ -43,18 +46,18 @@ runKS265DecodeOneStream()
     runPromptHMDec
 
     ${HMDecCMD}
-    if [ -$? -eq 0 ];then
+    if [ $? -eq 0 ];then
         let "SucceededNum += 1"
     else
         let "FailedNum  += 1"
     fi
 }
 
-runKS265DecodeAll()
+runValidateAll()
 {
     for H265Stream in ${InputBitStreamDir}/*${Pattern}*.265
     do
-        runKS265DecodeOneStream
+        runValidateOneStream
     done
 }
 
@@ -69,7 +72,7 @@ runMain()
 
     runInit
 
-    runKS265DecodeAll
+    runValidateAll
 }
 #*****************************************************
 if [ $# -lt 1 ]

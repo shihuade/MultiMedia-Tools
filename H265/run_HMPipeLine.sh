@@ -29,7 +29,7 @@ runInitHMEncParams()
 
 runInitHMDecParams()
 {
-    HMEncoder="HMDecoder"
+    HMDecoder="HMDecoder"
     Suffix="HMDec"
 }
 
@@ -84,7 +84,7 @@ runEncodeWithHM()
 runDecodeWithHM()
 {
     #HMDecOption="--OutputDecodedSEIMessagesFilename HMDec_SEI_Info.txt "
-    HMDecCMD="${HMEncoder} -b ${InputBitSteam} ${HMDecOption} -o ${OutputYUV} "
+    HMDecCMD="${HMDecoder} -b ${InputBitSteam} ${HMDecOption} -o ${OutputYUV} "
 
     runPromptHMDec
     #encode with HM encoder
