@@ -18,11 +18,16 @@ runInit()
 runInitCfg()
 {
     CFGBase="--cc=/usr/bin/clang --prefix=/opt/ffmpeg --extra-version=tessus --enable-gpl --enable-nonfree"
-    CFGComDisable01="--disable-avdevice --disable-swresample --disable-swresample --disable-swscale --disable-postproc --disable-avfilter"
-    CFGComDisable02="--disable-network --disable-dwt --disable-lsp --disable-lzo --disable-mdct --disable-rdft --disable-fft --disable-faan --disable-pixelutils"
-    CFGEnable="--enable-libx264   --enable-libfdk-aac --enable-encoder=aac --disable-ffplay --disable-indev=qtkit"
+    #CFGComDisable01="--disable-avdevice --disable-swresample --disable-swscale --disable-postproc --disable-avfilter"
+    #ffmpeg_deps="avcodec avfilter avformat swresample"
+    #avresample avutil
+    CFGComDisable01="--disable-avdevice  --disable-swscale --disable-postproc"
+#CFGComDisable02="--disable-network --disable-dwt --disable-lsp --disable-lzo --disable-mdct --disable-rdft --disable-fft --disable-faan --disable-pixelutils"
+CFGComDisable02="--disable-network --disable-lsp --disable-lzo  --disable-faan --disable-pixelutils"
+    CFGComDisable03="--disable-ffplay --disable-ffprobe  --disable-ffserver --disable-indev=qtkit"
+    CFGEnable="--enable-libx264   --enable-libfdk-aac --enable-encoder=aac"
 
-    AllCfg="${CFGBase} ${CFGComDisable01} ${CFGComDisable02} ${CFGEnable}"
+    AllCfg="${CFGBase} ${CFGComDisable01} ${CFGComDisable02} ${CFGComDisable03} ${CFGEnable}"
 
     echo -e "\033[32m ************************************************************ \033[0m"
     echo  -e "\033[32m  AllCfg is ${AllCfg}"
