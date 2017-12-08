@@ -8,6 +8,10 @@ configuration: --cc=/usr/bin/clang --prefix=/opt/ffmpeg --extra-version=tessus -
 #actual configure on mac
 ./configure --cc=/usr/bin/clang --prefix=/opt/ffmpeg --extra-version=tessus --enable-avisynth --enable-fontconfig --enable-gpl --enable-libass --enable-libbluray --enable-libfreetype --enable-libgsm --enable-libmodplug --enable-libmp3lame  --enable-libopus --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libtheora --enable-libvidstab  --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libx264 --enable-libx265 --enable-libxvid --enable-libzmq --enable-version3 --disable-ffplay --disable-indev=qtkit --enable-libopenjpeg  --enable-libkvazaar --enable-libilbc  --enable-libfdk-aac --enable-nonfree --enable-encoder=aac --enable-libwebp
 
+
+#transcode only(mini ffmpeg)
+./configure --cc=/usr/bin/clang --prefix=/opt/ffmpeg --extra-version=tessus --enable-gpl --enable-nonfree --disable-avdevice --disable-swresample --disable-swresample --disable-swscale --disable-postproc --disable-avfilter --disable-network --disable-dwt --disable-lsp --disable-lzo --disable-mdct --disable-rdft --disable-fft --disable-faan --disable-pixelutils --enable-libx264   --enable-libfdk-aac --enable-encoder=aac --disable-ffplay --disable-indev=qtkit
+
 #*****************************************************************************
 #   #ffmpeg to webp
 #*****************************************************************************
