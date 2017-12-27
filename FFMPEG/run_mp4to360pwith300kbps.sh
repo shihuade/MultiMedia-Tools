@@ -76,12 +76,17 @@ runScaleOutputResolutionAndFPS()
 runGenerateFFCMD()
 {
     #ffmpeg -i 01.mp4  -c:a aac -ab 64k -c:v libx264 -preset slow -pix_fmt yuv420p -profile:v high -level 31 -crf 24 -maxrate 2000k -bufsize 4000k -r  25 -filter_complex '[0:v]scale=268:480' -movflags faststart -fflags igndts -max_interleave_delta 0 -use_editlist 0 -y 01.mp4_480x268_crf24.mp4
-    vCRF="25"
+
+    #check pts
+    # ffprobe -hide_banner -select_streams v -show_frames -read_intervals %+#5 $MP4File
+    vCRF="27"
     vMaxRate="2000k"
     vBufSize="4000k"
 
     OutputFile="${MP4File}_${OutPicW}x${OutPicH}_${OutFPS}.mp4"
-    FFMPEGPicCMD="ffmpeg -i ${MP4File}  -c:a aac -ab 64k -c:v libx264 -preset slow -pix_fmt yuv420p -profile:v high -level 31 -crf ${vCRF} -maxrate ${vMaxRate} -bufsize ${vBufSize} -r ${OutFPS} -filter_complex '[0:v]scale=${OutPicW}:${OutPicH}' -movflags faststart -fflags igndts -max_interleave_delta 0 -use_editlist 0 -y ${OutputFile}"
+
+    FFMPEGPicCMD="ffmpeg -i ${MP4File}  -c:a libfdk_aac -ab 64k -c:v libx264 -preset slow -pix_fmt yuv420p -profile:v high -level 31 -crf ${vCRF} -maxrate ${vMaxRate} -bufsize ${vBufSize} -r 25 -vf scale=iw*0.5:ih*0.5 -movflags faststart -fflags igndts -max_interleave_delta 0 -use_editlist 0 -y ${OutputFile}"
+
 }
 
 runGenerate360P300kbps()
@@ -122,7 +127,7 @@ runMain()
 
     runPromt
 
-    #runGenerate360P300kbps
+    runGenerate360P300kbps
 }
 
 #*****************************************************
