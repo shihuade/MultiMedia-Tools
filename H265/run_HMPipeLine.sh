@@ -21,7 +21,7 @@ runInitHMEncParams()
     YUVWidth="1280"
     YUVHeight="720"
     FrameRate="30"
-    FramNum="4"
+    FramNum="1000"
 
     Suffix="HMEnc"
     HMEncCfgFile="./HMConfigure/encoder_lowdelay_main.cfg"
@@ -48,7 +48,7 @@ runPromptHMEnc()
 runPromptHMDec()
 {
     echo -e "\033[32m ****************************************************** \033[0m"
-    echo -e "\033[32m InputBitSteam   is : $InputBitSteam                    \033[0m"
+    echo -e "\033[32m InputBitStream   is : $InputBitStream                    \033[0m"
     echo -e "\033[32m OutputYUV       is : $OutputYUV                        \033[0m"
     echo -e "\033[32m HMDecOption     is : $HMDecOption                      \033[0m"
     echo -e "\033[32m HMDecCMD        is : $HMDecCMD                         \033[0m"
@@ -84,11 +84,24 @@ runEncodeWithHM()
 runDecodeWithHM()
 {
     #HMDecOption="--OutputDecodedSEIMessagesFilename HMDec_SEI_Info.txt "
-    HMDecCMD="${HMDecoder} -b ${InputBitSteam} ${HMDecOption} -o ${OutputYUV} "
+    HMDecCMD="${HMDecoder} -b ${InputBitStream} ${HMDecOption} -o ${OutputYUV} "
 
     runPromptHMDec
     #encode with HM encoder
     ${HMDecCMD}
+}
+
+runH265ToMP4()
+{
+    OutputMp4="${InputBitStream}.mp4"
+    FFCommand="ffmpeg -i ${InputBitStream} -framerate ${FrameRate} -c copy  -bsf:v hevc_mp4toannexb -y ${OutputMp4}"
+
+    echo -e "\033[32m ************************************************ \033[0m"
+    echo -e "\033[32m OutputMp4 is : $OutputMp4                        \033[0m"
+    echo -e "\033[32m FFCommand is : $FFCommand                        \033[0m"
+    echo -e "\033[32m ************************************************ \033[0m"
+
+    ${FFCommand}
 }
 
 runCheck()
@@ -111,11 +124,12 @@ runMain()
     runEncodeWithHM
 
     #HM decoder
-    InputBitSteam="${OutputBitStream}"
-    OutputYUV="${InputBitSteam}_${Suffix}.yuv"
-
     runInitHMDecParams
+    InputBitStream="${OutputBitStream}"
+    OutputYUV="${InputBitStream}_${Suffix}.yuv"
     runDecodeWithHM
+
+    runH265ToMP4
 }
 
 #****************************************************************

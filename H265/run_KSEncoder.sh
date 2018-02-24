@@ -35,7 +35,8 @@ runParseYUVFileInfo()
     YUVHeight="${YUVInfo[1]}"
     FrameRate="${YUVInfo[2]}"
 
-    [ -z "${FrameRate}" ] && FrameRate="30"
+    [  "${FrameRate}X" = "X" ] && FrameRate="30"
+    return 0
 }
 
 runPromptKS265Enc()
@@ -44,6 +45,7 @@ runPromptKS265Enc()
     echo -e "\033[32m SucceededNum    is : $SucceededNum                     \033[0m"
     echo -e "\033[32m FailedNum       is : $FailedNum                        \033[0m"
     echo -e "\033[32m InputYUV        is : $InputYUV                         \033[0m"
+    echo -e "\033[32m FrameInfo       is : $YUVWidth x $YUVHeight $FrameRate \033[0m"
     echo -e "\033[32m OutputBitStream is : $OutputBitStream                  \033[0m"
     echo -e "\033[32m ReconstructYUV  is : $ReconstructYUV                   \033[0m"
     echo -e "\033[32m KS265EncOption  is : $KS265EncOption                   \033[0m"
@@ -58,7 +60,7 @@ runKS265EncodeOneYUV()
     OutputBitStream="${InputYUV}_${KS265DecSuffix}.265"
     ReconstructYUV="${OutputBitStream}_rec.yuv"
 
-    #KS265EncOption="-wdt ${YUVWidth}  -hgt ${YUVHeight} -fr ${FrameRate} -frms ${FramNum} "
+    KS265EncOption="-wdt ${YUVWidth}  -hgt ${YUVHeight} -fr ${FrameRate} -frms ${FramNum} "
     KS265EncCMD="${Encoder} -i ${InputYUV} ${KS265EncOption} -b ${OutputBitStream} -o ${ReconstructYUV}"
     #KS265EncCMD="${Encoder} -i ${InputYUV} ${KS265EncOption} -b ${OutputBitStream}"
 
@@ -81,7 +83,6 @@ runPromptHMDec()
     echo -e "\033[32m InputBitStream  is : $InputBitStream                   \033[0m"
     echo -e "\033[32m OutputYUV       is : $OutputYUV                        \033[0m"
     echo -e "\033[32m HMDecCMD        is : $HMDecCMD                         \033[0m"
-    echo -e "\033[32m HMDecCMD        is : $HMDecCMD                         \033[0m"
     echo -e "\033[32m ****************************************************** \033[0m"
 }
 
@@ -92,7 +93,7 @@ runCheckWithHMDecoder()
     OutputYUV="${InputBitStream}_${Suffix}.yuv"
 
     HMDecCMD=" "
-    HMDecCMD="${Decoder} -b ${InputBitStream} ${HMDecCMD} -o ${OutputYUV}"
+    HMDecCMD="${Decoder} -b ${InputBitStream}  -o ${OutputYUV}"
 
     runPromptHMDec
 
@@ -115,19 +116,32 @@ runCheckWithHMDecoder()
     fi
 }
 
+runH265ToMP4()
+{
+    InputBitStream="${OutputBitStream}"
+    OutputMp4="${InputBitStream}.mp4"
+    FFCommand="ffmpeg -i ${InputBitStream} -framerate ${FrameRate} -c copy  -bsf:v hevc_mp4toannexb -y ${OutputMp4}"
+
+    echo -e "\033[32m ************************************************ \033[0m"
+    echo -e "\033[32m OutputMp4 is : $OutputMp4                        \033[0m"
+    echo -e "\033[32m FFCommand is : $FFCommand                        \033[0m"
+    echo -e "\033[32m ************************************************ \033[0m"
+
+    ${FFCommand}
+}
 runKS265EncodeAll()
 {
     for YUVFile in ${InputYUVDir}/*${Pattern}*.yuv
     do
         Flag=`echo $YUVFile | grep KS265_Enc`
         [ ! -z "${Flag}" ] && continue
-
         runParseYUVFileInfo
         runKS265EncodeOneYUV
-        [ -$? -ne 0 ] && continue
-        runCheckWithHMDecoder
-        [ -$? -ne 0 ] && continue
+        [ $? -ne 0 ] && continue
 
+#        runCheckWithHMDecoder
+#        [ $? -ne 0 ] && continue
+        runH265ToMP4
         let "SucceededNum += 1"
     done
 }

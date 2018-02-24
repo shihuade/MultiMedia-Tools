@@ -80,13 +80,13 @@ then
 		    if [ $ARCH = "arm64" ]
 		    then
 		        HOST="--host=aarch64-apple-darwin"
-			XARCH="-arch aarch64"
+			    XARCH="-arch aarch64"
 		    else
 		        HOST="--host=arm-apple-darwin"
-			XARCH="-arch arm"
+			    XARCH="-arch arm"
 		    fi
-                    CFLAGS="$CFLAGS -fembed-bitcode -mios-version-min=7.0"
-                    ASFLAGS="$CFLAGS"
+            CFLAGS="$CFLAGS -fembed-bitcode -mios-version-min=7.0"
+            ASFLAGS="$CFLAGS"
 		fi
 
 		XCRUN_SDK=`echo $PLATFORM | tr '[:upper:]' '[:lower:]'`
