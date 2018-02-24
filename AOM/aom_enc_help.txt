@@ -1,0 +1,137 @@
+Usage: aomenc <options> -o dst_filename src_filename 
+
+Options:
+            --help                     	Show usage options and exit
+  -c <arg>, --cfg=<arg>                	Config file to use
+  -D,       --debug                    	Debug mode (makes output deterministic)
+  -o <arg>, --output=<arg>             	Output filename
+            --codec=<arg>              	Codec to use
+  -p <arg>, --passes=<arg>             	Number of passes (1/2)
+            --pass=<arg>               	Pass to execute (1/2)
+            --fpf=<arg>                	First pass statistics file name
+            --limit=<arg>              	Stop encoding after n input frames
+            --skip=<arg>               	Skip the first n input frames
+            --good                     	Use Good Quality Deadline
+  -q,       --quiet                    	Do not print encode progress
+  -v,       --verbose                  	Show encoder parameters
+            --psnr                     	Show PSNR in status line
+            --webm                     	Output WebM (default when WebM IO is enabled)
+            --ivf                      	Output IVF
+  -P,       --output-partitions        	Makes encoder output partitions. Requires IVF output!
+            --q-hist=<arg>             	Show quantizer histogram (n-buckets)
+            --rate-hist=<arg>          	Show rate histogram (n-buckets)
+            --disable-warnings         	Disable warnings about potentially incorrect encode settings.
+  -y,       --disable-warning-prompt   	Display warnings, but do not prompt user to continue.
+            --test-decode=<arg>        	Test encode/decode mismatch
+                                       	  off, fatal, warn
+
+Encoder Global Options:
+            --yv12                     	Input file is YV12 
+            --i420                     	Input file is I420 (default)
+            --i422                     	Input file is I422
+            --i444                     	Input file is I444
+            --i440                     	Input file is I440
+  -u <arg>, --usage=<arg>              	Usage profile number to use
+  -t <arg>, --threads=<arg>            	Max number of threads to use
+            --profile=<arg>            	Bitstream profile number to use
+  -w <arg>, --width=<arg>              	Frame width
+  -h <arg>, --height=<arg>             	Frame height
+            --stereo-mode=<arg>        	Stereo 3D video format
+                                       	  mono, left-right, bottom-top, top-bottom, right-left
+            --timebase=<arg>           	Output timestamp precision (fractional seconds)
+            --fps=<arg>                	Stream frame rate (rate/scale)
+            --error-resilient=<arg>    	Enable error resiliency features
+  -b <arg>, --bit-depth=<arg>          	Bit depth for codec (8 for version <=1, 10 or 12 for version 2)
+                                       	  8, 10, 12
+            --lag-in-frames=<arg>      	Max number of frames to lag
+            --monochrome               	Monochrome video (no chroma planes)
+
+Rate Control Options:
+            --drop-frame=<arg>         	Temporal resampling threshold (buf %)
+            --resize-mode=<arg>        	Frame resize mode
+            --resize-denominator=<arg> 	Frame resize denominator
+            --resize-kf-denominator=<a 	Frame resize keyframe denominator
+            --superres-mode=<arg>      	Frame super-resolution mode
+            --superres-denominator=<ar 	Frame super-resolution denominator
+            --superres-kf-denominator= 	Frame super-resolution keyframe denominator
+            --superres-qthresh=<arg>   	Frame super-resolution qindex threshold
+            --superres-kf-qthresh=<arg 	Frame super-resolution keyframe qindex threshold
+            --end-usage=<arg>          	Rate control mode
+                                       	  vbr, cbr, cq, q
+            --target-bitrate=<arg>     	Bitrate (kbps)
+            --min-q=<arg>              	Minimum (best) quantizer
+            --max-q=<arg>              	Maximum (worst) quantizer
+            --undershoot-pct=<arg>     	Datarate undershoot (min) target (%)
+            --overshoot-pct=<arg>      	Datarate overshoot (max) target (%)
+            --buf-sz=<arg>             	Client buffer size (ms)
+            --buf-initial-sz=<arg>     	Client initial buffer size (ms)
+            --buf-optimal-sz=<arg>     	Client optimal buffer size (ms)
+
+Twopass Rate Control Options:
+            --bias-pct=<arg>           	CBR/VBR bias (0=CBR, 100=VBR)
+            --minsection-pct=<arg>     	GOP min bitrate (% of target)
+            --maxsection-pct=<arg>     	GOP max bitrate (% of target)
+
+Keyframe Placement Options:
+            --kf-min-dist=<arg>        	Minimum keyframe interval (frames)
+            --kf-max-dist=<arg>        	Maximum keyframe interval (frames)
+            --disable-kf               	Disable keyframe placement
+
+AV1 Specific Options:
+            --cpu-used=<arg>           	CPU Used (0..8)
+            --dev-sf=<arg>             	Dev Speed (0..255)
+            --auto-alt-ref=<arg>       	Enable automatic alt reference frames
+            --sharpness=<arg>          	Loop filter sharpness (0..7)
+            --static-thresh=<arg>      	Motion detection threshold
+            --tile-columns=<arg>       	Number of tile columns to use, log2
+            --tile-rows=<arg>          	Number of tile rows to use, log2 (set to 0 while threads > 1)
+            --tile-loopfilter-v=<arg>  	Enable loop filter across vertical tile boundary
+            --tile-loopfilter-h=<arg>  	Enable loop filter across horizontal tile boundary
+            --arnr-maxframes=<arg>     	AltRef max frames (0..15)
+            --arnr-strength=<arg>      	AltRef filter strength (0..6)
+            --tune=<arg>               	Distortion metric tuned with
+                                       	  psnr, ssim, cdef-dist, daala-dist
+            --cq-level=<arg>           	Constant/Constrained Quality level
+            --max-intra-rate=<arg>     	Max I-frame bitrate (pct)
+            --max-inter-rate=<arg>     	Max P-frame bitrate (pct)
+            --gf-cbr-boost=<arg>       	Boost for Golden Frame in CBR mode (pct)
+            --lossless=<arg>           	Lossless mode (0: false (default), 1: true)
+            --enable-cdef=<arg>        	Enable the constrained directional enhancement filter (0: false, 1: true (default))
+            --enable-qm=<arg>          	Enable quantisation matrices (0: false (default), 1: true)
+            --qm-min=<arg>             	Min quant matrix flatness (0..15), default is 8
+            --qm-max=<arg>             	Max quant matrix flatness (0..15), default is 15
+            --enable-dist-8x8=<arg>    	Enable dist-8x8 (0: false (default), 1: true)
+            --frame-parallel=<arg>     	Enable frame parallel decodability features (0: false (default), 1: true)
+            --aq-mode=<arg>            	Adaptive quantization mode (0: off (default), 1: variance 2: complexity, 3: cyclic refresh)
+            --deltaq-mode=<arg>        	Delta qindex mode (0: off (default), 1: deltaq 2: deltaq + deltalf)
+            --frame-boost=<arg>        	Enable frame periodic boost (0: off (default), 1: on)
+            --noise-sensitivity=<arg>  	Noise sensitivity (frames to blur)
+            --tune-content=<arg>       	Tune content type
+                                       	  default, screen
+            --color-space=<arg>        	The color space of input content:
+                                       	  unspecified, bt601, bt709, smpte170, smpte240, bt2020ncl, bt2020cl, sRGB, ictcp
+            --transfer-function=<arg>  	The transfer function of input content:
+                                       	  unknown, bt709, pq, hlg
+            --chroma-sample-position=< 	The chroma sample position when chroma 4:2:0 is signaled:
+                                       	  unknown, vertical, colocated
+            --min-gf-interval=<arg>    	min gf/arf frame interval (default 0, indicating in-built behavior)
+            --max-gf-interval=<arg>    	max gf/arf frame interval (default 0, indicating in-built behavior)
+            --sb-size=<arg>            	Superblock size to use
+                                       	  dynamic, 64, 128
+            --num-tile-groups=<arg>    	Maximum number of tile groups, default is 1
+            --mtu-size=<arg>           	MTU size for a tile group, default is 0 (no MTU targeting), overrides maximum number of tile groups
+            --disable-tempmv=<arg>     	Disable temporal mv prediction (default is 0)
+  -b <arg>, --bit-depth=<arg>          	Bit depth for codec (8 for version <=1, 10 or 12 for version 2)
+                                       	  8, 10, 12
+            --input-bit-depth=<arg>    	Bit depth of input
+
+Stream timebase (--timebase):
+  The desired precision of timestamps in the output, expressed
+  in fractional seconds. Default is 1/1000.
+
+Included encoders:
+
+    av1    - AOMedia Project AV1 Encoder 0.1.0-7949-ga07a3b285 (default)
+
+        Use --codec to switch to a non-default encoder.
+
