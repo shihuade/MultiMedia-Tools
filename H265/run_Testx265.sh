@@ -90,7 +90,7 @@ runx265WithParamVal()
 
         EncCommand="x265 --psnr --input ${InputYUV} --fps ${FPS} --input-res ${PicW}x${PicH} --output  ${X265Stream} "
         EncCommand="${EncCommand} ${ParamName} ${ParamVal} ${ParamPlus} "
-        MP4Command="ffmpeg -framerate ${FPS} -i ${X265Stream} -c copy -y ${OutputMp4}"
+        MP4Command="ffmpeg -framerate ${FPS}  -setpts=PTS-STARTPTS -i ${X265Stream} -c copy -y ${OutputMp4}"
 
         echo -e "\033[32m ***************************************** \033[0m"
         echo "  InputYUV        is ${InputYUV}"
@@ -109,7 +109,7 @@ runx265WithParamVal()
         EndTime=`date +%s`
 
         #generate mp4 file based on bitstream
-        ${MP4Command}
+        ${MP4Command} 2>MP4Gen.txt
 
         #update x265 enc performance data
         runUpdatex265EncStatic
