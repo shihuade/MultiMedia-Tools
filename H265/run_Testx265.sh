@@ -11,7 +11,7 @@ runUsage()
     echo "  Usage:                                                   "
     echo "      $0  \$Input  \$option                                "
     echo "                                                           "
-    echo "      $0  \$InputYUV:    YUV for x264 encoding             "
+    echo "      $0  \$InputYUV:    YUV for x265 encoding             "
     echo "                                                           "
     echo "      $0  \$InputYUVDir  for all YUVs testing              "
     echo "                                                           "
@@ -26,9 +26,9 @@ runInit()
     FileNamePattern="x265"
     MP4ParserScript="../MP4Info/run_ParseMP4Info.sh"
     YUVInfoScript="./run_ParseYUVInfo.sh"
-    x264EncParserScript="./run_PareseX264EncLog.sh"
-    x264EncLog=""
-    x264EncPerfInfo=""
+    x265EncParserScript="./run_ParseX265Log.sh"
+    x265EncLog=""
+    x265EncPerfInfo=""
 
     ReportDir="${CurDir}/Report_x265"
     BitStreamDir="${CurDir}/BitStream_x265"
@@ -38,15 +38,15 @@ runInit()
     AllMP4Info="${ReportDir}/Report_${FileNamePattern}_AllMP4Info_${EncParamName}.csv"
     AllMP4InfoParserConsole="${ReportDir}/Report_${FileNamePattern}_AllMP4InfoDetail_${EncParamName}.txt"
 
-    x264EncReport="${ReportDir}/Report_${FileNamePattern}_Summary_${EncParamName}.csv"
+    x265EncReport="${ReportDir}/Report_${FileNamePattern}_Summary_${EncParamName}.csv"
 
     HeadLine="YUVFile, ParaName, ParamVal, CR, YUVSize(KBs), BitStreamSize(kBs)"
-    HeadLine="${HeadLine},BitRate, PSNRY, PSNRU,  PSNRV, FPS, Time(s), SHA1-Org, SHA1-Trans"
+    HeadLine="${HeadLine},BitRate, GlobalPSNR, FPS, Time(s), SHA1-Org, SHA1-Trans"
 
-    echo "${HeadLine}">${x264EncReport}
+    echo "${HeadLine}">${x265EncReport}
 }
 
-runUpdatex264EncStatic()
+runUpdatex265EncStatic()
 {
     #parse origin and transcoded mp4 files' info
     YUVName=`basename $InputYUV`
@@ -64,15 +64,15 @@ runUpdatex264EncStatic()
     SHA1Trans=`openssl sha1 $OutputBitStream  | awk '{print $2}'`
 
     #BitRate, PSNRY, PSNRU,  PSNRV, FPS
-    x264EncPerfInfo=`${x264EncParserScript} ${x264EncLog}`
+    x265EncPerfInfo=`${x265EncParserScript} ${x265EncLog}`
 
-    x264EncStatic="${YUVName}, ${EncParamName}, ${EncParam}, ${CompressRate}, ${YUVSize}, ${BitstreamSize}"
-    x264EncStatic="${x264EncStatic}, ${x264EncPerfInfo}, ${EncodeTime}, ${SHA1Org}, ${SHA1Trans}"
+    x265EncStatic="${YUVName}, ${EncParamName}, ${EncParam}, ${CompressRate}, ${YUVSize}, ${BitstreamSize}"
+    x265EncStatic="${x265EncStatic}, ${x265EncPerfInfo}, ${EncodeTime}, ${SHA1Org}, ${SHA1Trans}"
 
-    echo "${x264EncStatic}" >>${x264EncReport}
+    echo "${x265EncStatic}" >>${x265EncReport}
 }
 
-runx264EncParam()
+runx265WithEncParam()
 {
     YUVInfo=(`${YUVInfoScript} $InputYUV`)
     PicW=${YUVInfo[0]}
@@ -86,9 +86,9 @@ runx264EncParam()
         EncParam="${aEncParam[$i]}"
         EncParamString=`echo ${EncParam} | awk '{for(i=1; i<=NF; i++) printf("%s_", $i) }'`
         YUVName=`basename $InputYUV`
-        OutputBitStream="${BitStreamDir}/${YUVName}_${FileNamePattern}_${EncParamName}_${EncParamString}.264"
-        OutputMp4="${BitStreamDir}/${YUVName}_${FileNamePattern}_${EncParamName}_${EncParamString}.264.mp4"
-        x264EncLog="${BitStreamDir}/${YUVName}_${FileNamePattern}_${EncParamName}_${EncParamString}_enc.txt"
+        OutputBitStream="${BitStreamDir}/${YUVName}_${FileNamePattern}_${EncParamName}_${EncParamString}.265"
+        OutputMp4="${BitStreamDir}/${YUVName}_${FileNamePattern}_${EncParamName}_${EncParamString}.265.mp4"
+        x265EncLog="${BitStreamDir}/${YUVName}_${FileNamePattern}_${EncParamName}_${EncParamString}_enc.txt"
         EncCommand="x265 --input ${InputYUV} --fps ${FPS} --input-res ${PicW}x${PicH} --output  ${OutputBitStream} "
         EncCommand="${EncCommand} ${EncParamArg} ${EncParam}  --psnr  ${EncParamPlus} "
         MP4Command="ffmpeg -framerate ${FPS} -i ${OutputBitStream} -c copy -y ${OutputMp4}"
@@ -97,7 +97,7 @@ runx264EncParam()
         echo "  EncParam        is ${EncParamArg} ${EncParam}"
         echo "  InputYUV        is ${InputYUV}"
         echo "  OutputBitStream is ${OutputBitStream}"
-        echo "  x264EncLog      is ${x264EncLog}"
+        echo "  x265EncLog      is ${x265EncLog}"
         echo "  OutputMp4       is ${OutputMp4}"
         echo "  EncCommand      is ${EncCommand}"
         echo "  MP4Command      is ${MP4Command}"
@@ -105,15 +105,15 @@ runx264EncParam()
 
         #start
         StartTime=`date +%s`
-        echo "${EncCommand}" >${x264EncLog}
-        ${EncCommand}      2>>${x264EncLog}
+        echo "${EncCommand}" >${x265EncLog}
+        ${EncCommand}      2>>${x265EncLog}
         EndTime=`date +%s`
 
         #generate mp4 file based on bitstream
         ${MP4Command}
 
-        #update x264 enc performance data
-        runUpdatex264EncStatic
+        #update x265 enc performance data
+        runUpdatex265EncStatic
     done
 }
 
@@ -127,7 +127,7 @@ runGetAllMP4StaticInfo()
 runPrompt()
 {
     echo -e "\033[32m ************************************************************ \033[0m"
-    echo "     x264EncReport:       ${x264EncReport}                                      "
+    echo "     x265EncReport:       ${x265EncReport}                                      "
     echo "                                                                                "
     echo "     All mp4 static info: ${AllMP4Info}                                         "
     echo "                                                                                "
@@ -160,7 +160,7 @@ runCheck()
 
 
 
-runx264EncDeblocking()
+runx265EncDeblocking()
 {
     EncParamName="Deblock_CRF23"
     EncParamPlus="--profile main --level 31 --crf 23"
@@ -179,7 +179,7 @@ runx264EncDeblocking()
 
 runInitForTestParams()
 {
-    runx264EncDeblocking
+    runx265EncDeblocking
     runInit
 }
 
@@ -188,7 +188,7 @@ runTestAllYUVs()
     for YUVFile in ${InputYUVDir}/*${Pattern}*.yuv
     do
         InputYUV="$YUVFile"
-        runx264EncParam
+        runx265WithEncParam
     done
 }
 
@@ -198,7 +198,7 @@ runMain()
     runInitForTestParams
 
     [ -d "${Input}" ] && runTestAllYUVs
-    [ -f "${Input}" ] && InputYUV="$Input" && runx264EncParam
+    [ -f "${Input}" ] && InputYUV="$Input" && runx265WithEncParam
 
     #get all mp4 info for which based encoded bitstream
     runGetAllMP4StaticInfo  >${AllMP4InfoParserConsole}
