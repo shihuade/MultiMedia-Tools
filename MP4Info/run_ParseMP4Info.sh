@@ -72,8 +72,8 @@ runParseVideoInfo()
     VideoWidth=`cat ${VideoTrackInfo}       | grep "Width"         | awk 'BEGIN {FS=" "} {print $2}'`
     VideoHeight=`cat ${VideoTrackInfo}      | grep "Height"        | awk 'BEGIN {FS=" "} {print $2}'`
 
-    Profile=`cat ${VideoTrackInfo} | grep "AVC Profile:" | awk 'BEGIN {FS="("} {print $2}' | awk 'BEGIN {FS=")"} {print $1}'`
-    Level=`cat ${VideoTrackInfo} | grep "AVC Level:"   | awk 'BEGIN {FS=" "} {print $3}'`
+    Profile=`cat ${VideoTrackInfo} | grep "Profile:" | awk 'BEGIN {FS="("} {print $2}' | awk 'BEGIN {FS=")"} {print $1}'`
+    Level=`cat ${VideoTrackInfo} | grep "Level:"     | awk 'BEGIN {FS=" "} {print $3}'`
 }
 
 runParseAudioInfo()
