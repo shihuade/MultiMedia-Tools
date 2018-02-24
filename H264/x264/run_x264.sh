@@ -22,14 +22,16 @@ runUsage()
 }
 runInit()
 {
+    CurDir=`pwd`
     FileNamePattern="x264Enc"
     MP4ParserScript="../../MP4Info/run_ParseMP4Info.sh"
+    YUVInfoScript="../../H265/run_ParseYUVInfo.sh"
     x264EncParserScript="./run_PareseX264EncLog.sh"
     x264EncLog=""
     x264EncPerfInfo=""
 
-    ReportDir="${InputYUVDir}/Report"
-    BitStreamDir="${InputYUVDir}/BitStream"
+    ReportDir="${CurDir}/Report"
+    BitStreamDir="${CurDir}/BitStream"
     mkdir -p ${ReportDir}
     mkdir -p ${BitStreamDir}
 
@@ -74,7 +76,10 @@ runUpdatex264EncStatic()
 
 runx264EncParam()
 {
-    FPS=`echo $InputYUV | awk 'BEGIN {FS="fps"} {print $1}' | awk 'BEGIN {FS="_"} {print $NF}'`
+    YUVInfo=(`${YUVInfoScript} $InputYUV`)
+    PicW=${YUVInfo[0]}
+    PicH=${YUVInfo[1]}
+    FPS=${YUVInfo[2]}
     [ -z "$FPS" ] && FPS="30"
 
     ParamNum=${#aEncParam[@]}
@@ -84,7 +89,7 @@ runx264EncParam()
         EncParamString=`echo ${EncParam} | awk '{for(i=1; i<=NF; i++) printf("%s_", $i) }'`
         YUVName=`basename $InputYUV`
         OutputBitStream="${BitStreamDir}/${YUVName}_${FileNamePattern}_${EncParamName}_${EncParamString}.264"
-        OutputMp4="${InputYUV}_${FileNamePattern}_${EncParamName}_${EncParamString}.264.mp4"
+        OutputMp4="${BitStreamDir}/${YUVName}_${FileNamePattern}_${EncParamName}_${EncParamString}.264.mp4"
         x264EncLog="${BitStreamDir}/${YUVName}_${FileNamePattern}_${EncParamName}_${EncParamString}_enc.txt"
         EncCommand="x264 --psnr --fps ${FPS} ${EncParamPlus}"
         EncCommand="${EncCommand} ${EncParamArg} ${EncParam}  -o ${OutputBitStream} ${InputYUV}"
@@ -116,8 +121,7 @@ runx264EncParam()
 
 runGetAllMP4StaticInfo()
 {
-    InputDir=`dirname ${InputYUV}`
-    Command="${MP4ParserScript} ${InputDir} ${AllMP4Info} ${Pattern}"
+    Command="${MP4ParserScript} ${BitStreamDir} ${AllMP4Info} ${Pattern}"
     echo "Parse command is $Command"
     ${Command}
 }
@@ -307,11 +311,10 @@ runx264EncDeblocking()
 
 runFFMPEGx264()
 {
-X264Options="-x264opts keyint=123:min-keyint=20 "
-FFMPEGCMD="ffmpeg -i final.mp4 -c:a copy -c:v libx264  -crf 24  ${X264Options} -y final.mp4.ffmpegx264_crf24.mp4"
+    X264Options="-x264opts keyint=123:min-keyint=20 "
+    FFMPEGCMD="ffmpeg -i final.mp4 -c:a copy -c:v libx264  -crf 24  ${X264Options} -y final.mp4.ffmpegx264_crf24.mp4"
 
-FFMPEGCMD="ffmpeg -i final.mp4 -c:a copy -c:v libx264  -profile:v high -level 31 -crf 24 -x264opts keyint=123:min-keyint=20  -x264opts nr=600 -y final.mp4.ffmpegx264_crf24_02_nr600.mp4"
-
+    FFMPEGCMD="ffmpeg -i final.mp4 -c:a copy -c:v libx264  -profile:v high -level 31 -crf 24 -x264opts keyint=123:min-keyint=20  -x264opts nr=600 -y final.mp4.ffmpegx264_crf24_02_nr600.mp4"
 }
 
 runInitForTestParams()
